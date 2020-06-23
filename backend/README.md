@@ -1,4 +1,4 @@
-#MapIT backend STEP 2020
+# MapIT backend STEP 2020
 
 This is the backend project for the STEP 2020 Capstone Project called "MapIT".
 
