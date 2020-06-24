@@ -19,10 +19,14 @@ package com.example.flexible.helloworld;
 // [START gae_flex_servlet]
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.FileInputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.auth.oauth2.GoogleCredentials;
 
 @WebServlet(name = "helloworld", value = "")
 @SuppressWarnings("serial")
@@ -31,7 +35,23 @@ public class HelloServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     PrintWriter out = resp.getWriter();
+
+    String path = "google-services.json";
+    FileInputStream refreshToken = new FileInputStream(path);
+
+    FirebaseOptions options = new FirebaseOptions.Builder()
+      .setCredentials(GoogleCredentials.getApplicationDefault())
+      .setDatabaseUrl("https://step-34-2020.firebaseio.com")
+      .build();
+
+    FirebaseApp.initializeApp(options);
+
     out.println("Hello, world - App Engine Flexible");
+  }
+
+  @Override
+  public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    doPost(req, resp);
   }
 }
 // [END gae_flex_servlet]

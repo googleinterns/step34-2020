@@ -1,9 +1,6 @@
-# Appengine Helloworld sample for Google App Engine Flexible
+# MapIT backend STEP 2020
 
-<a href="https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/java-docs-samples&page=editor&open_in_editor=flexible/helloworld/README.md">
-<img alt="Open in Cloud Shell" src ="http://gstatic.com/cloudssh/images/open-btn.png"></a>
-
-This sample is used as part of the [Quickstart for Java in the App Engine Flexible Environment](https://cloud.google.com/java/getting-started/hello-world)
+This is the backend project for the STEP 2020 Capstone Project called "MapIT".
 
 ## Setup
 
