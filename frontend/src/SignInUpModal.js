@@ -134,21 +134,18 @@ export default class LogInUp extends Component {
 
     return (
       <div>
-
         <button
           className="RML-btn"
-          onClick={() => this.openModal('login')}
-        >
+          onClick={() => this.openModal('login')}>
           Login
         </button>
 
         <button
           className="RML-btn"
-          onClick={() => this.openModal('register')}
-        >
+          onClick={() => this.openModal('register')}>
           Register
         </button>
-
+        {/* returns the modal with all necessary components */}
         <ReactModalLogin
           visible={this.state.showModal}
           onCloseModal={this.closeModal.bind(this)}
@@ -242,8 +239,7 @@ export default class LogInUp extends Component {
                 placeholder: 'Email',
               },
             ],
-          }}
-        />
+          }}/>
         {loggedIn}
       </div>
     )
