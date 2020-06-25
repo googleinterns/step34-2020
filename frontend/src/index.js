@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Welcome from './components/welcome';
 import * as serviceWorker from './serviceWorker';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <MuiThemeProvider>
+        <Welcome /> 
+    </MuiThemeProvider>, document.getElementById('welcome')
 );
 
 // If you want your app to work offline and load faster, you can change
