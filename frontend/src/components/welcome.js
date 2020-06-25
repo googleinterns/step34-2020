@@ -42,6 +42,20 @@ class Search extends Component {
   		autocomplete.setFields(['address_components', 'formatted_address']);
   		autocomplete.addListener('place-changed', this.handlePlaceSelect); 
 	}
+
+    handlePlaceSelect() {
+        const addressObject = this.autocomplete.getPlace();
+        const address = addressObject.address_components;
+
+        if (address) {
+            this.setState(
+                {
+                    city: address[0].long_name,
+                    query: addressObject.formatted_address,
+                }
+            );
+        }
+    }
 }
 
 export default Search;
