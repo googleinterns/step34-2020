@@ -3,7 +3,6 @@ import { Navbar, Nav, Button } from 'react-bootstrap'
 import style from 'bootstrap/dist/css/bootstrap.css';
 
 class TopNavbar extends React.Component {
-  
   handleTopRightButtonClick() {
     // If the user is signed in
     /* TODO: Route to profile page */
@@ -22,7 +21,11 @@ class TopNavbar extends React.Component {
     	    <Nav.Link href="#map">Map</Nav.Link>
           </Nav>
           <Nav>
-            <Button type="button" variant="primary">Create Event</Button>{' '}
+            <Button 
+                type="button" 
+                variant="primary">
+                Create Event
+            </Button>{' '}
             <TopRightButtonNav onClick={this.handleTopRightButtonClick} />
           </Nav>
       	</Navbar.Collapse>
@@ -34,12 +37,16 @@ class TopNavbar extends React.Component {
 function TopRightButtonNav(props) {
   // If the user is signed in
   return (
-    <Button type="button" variant="secondary" onClick={props.onClick}>Login</Button>
+    <Button 
+        type="button" 
+        variant="secondary" 
+        onClick={props.onClick}>
+        Login
+    </Button>
   );
   
   // If the user is NOT signed in
   // return <Image src="" onClick={this.handleTopRightButtonClick()}/>
-
 }
 
 export default TopNavbar;
