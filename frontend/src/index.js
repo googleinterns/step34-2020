@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Welcome from './components/welcome';
+import App from './App';
 import * as serviceWorker from './serviceWorker';
+<<<<<<< HEAD
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TopNavbar from './Navbar'
 
@@ -11,6 +12,14 @@ ReactDOM.render(
     	<TopNavbar />
         <Welcome /> 
     </div>, document.getElementById('welcome')
+=======
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+>>>>>>> parent of dfdbf7c... basic autocomplete
 );
 
 // If you want your app to work offline and load faster, you can change

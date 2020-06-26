@@ -22,7 +22,7 @@ class Search extends Component {
   	render() {
     	return (
       	    <div>
-    	    	<Script url="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-i8jSh6tWlO0pH0h0EfaLiywM_ilLXk&libraries=places" onLoad={this.handleScriptLoad}/>
+    	    	<Script url="https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad={this.handleScriptLoad}/>
                 <Jumbotron>
                 	<h1>Welcome to MapIT!</h1>
                 	<Form>
