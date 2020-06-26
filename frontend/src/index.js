@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TopNavbar from './Navbar'
 
@@ -15,10 +16,17 @@ ReactDOM.render(
 =======
 
 ReactDOM.render(
+=======
+
+ReactDOM.render(
+>>>>>>> parent of dfdbf7c... basic autocomplete
   <React.StrictMode>
     <App />
   </React.StrictMode>,
   document.getElementById('root')
+<<<<<<< HEAD
+>>>>>>> parent of dfdbf7c... basic autocomplete
+=======
 >>>>>>> parent of dfdbf7c... basic autocomplete
 );
 
