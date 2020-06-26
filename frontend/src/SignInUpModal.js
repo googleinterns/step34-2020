@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
-import App from './App';
-
 export default class LogInUp extends Component {
   constructor(props) {
     super(props);
@@ -124,30 +122,13 @@ export default class LogInUp extends Component {
 
   render() {
     const loggedIn = this.state.loggedIn
-      ? <App /> 
-      : <App />
-      // ? <div>
-      //     <p>You are signed in with: {this.state.loggedIn}</p>
-      //   </div>
-      // : <div>
-      //     <p>You are signed out</p>
-      // </div>;
+    //   ? show profile
+    //   : otherwise redirect to map view
 
     const isLoading = this.state.loading;
 
     return (
       <div>
-        {/* <button
-          className="RML-btn"
-          onClick={() => this.openModal('login')}>
-          Login
-        </button>
-
-        <button
-          className="RML-btn"
-          onClick={() => this.openModal('register')}>
-          Register
-        </button> */}
         {/* returns the modal with all necessary components */}
         <ReactModalLogin
           visible={this.state.showModal}
