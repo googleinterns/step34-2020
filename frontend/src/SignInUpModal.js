@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
+import App from './App';
 
 export default class LogInUp extends Component {
   constructor(props) {
@@ -123,12 +124,14 @@ export default class LogInUp extends Component {
 
   render() {
     const loggedIn = this.state.loggedIn
-      ? <div>
-          <p>You are signed in with: {this.state.loggedIn}</p>
-        </div>
-      : <div>
-          <p>You are signed out</p>
-      </div>;
+      ? <App /> 
+      : <App />
+      // ? <div>
+      //     <p>You are signed in with: {this.state.loggedIn}</p>
+      //   </div>
+      // : <div>
+      //     <p>You are signed out</p>
+      // </div>;
 
     const isLoading = this.state.loading;
 

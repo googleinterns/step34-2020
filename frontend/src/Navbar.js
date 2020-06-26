@@ -15,7 +15,7 @@ class TopNavbar extends React.Component {
       <React.StrictMode>
         <Modal />
       </React.StrictMode>,
-      document.getElementById('root')
+      document.getElementById('login')
     );
     
   }
