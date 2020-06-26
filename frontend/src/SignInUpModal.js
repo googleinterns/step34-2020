@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
+import App from './App';
 
 export default class LogInUp extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      showModal: false,
+      showModal: true,
       loggedIn: false,
       loading: false,
       error: null,
-      initialTab: null,
+      initialTab: 'login',
       recoverPasswordSuccess: null,
     };
   }
@@ -123,18 +124,20 @@ export default class LogInUp extends Component {
 
   render() {
     const loggedIn = this.state.loggedIn
-      ? <div>
-          <p>You are signed in with: {this.state.loggedIn}</p>
-        </div>
-      : <div>
-          <p>You are signed out</p>
-      </div>;
+      ? <App /> 
+      : <App />
+      // ? <div>
+      //     <p>You are signed in with: {this.state.loggedIn}</p>
+      //   </div>
+      // : <div>
+      //     <p>You are signed out</p>
+      // </div>;
 
     const isLoading = this.state.loading;
 
     return (
       <div>
-        <button
+        {/* <button
           className="RML-btn"
           onClick={() => this.openModal('login')}>
           Login
@@ -144,7 +147,7 @@ export default class LogInUp extends Component {
           className="RML-btn"
           onClick={() => this.openModal('register')}>
           Register
-        </button>
+        </button> */}
         {/* returns the modal with all necessary components */}
         <ReactModalLogin
           visible={this.state.showModal}
@@ -211,7 +214,16 @@ export default class LogInUp extends Component {
               },
               {
                 containerClass: 'RML-form-group',
-                label: 'Email',
+                label: 'University name',
+                type: 'text',
+                inputClass: 'RML-form-control',
+                id: 'university',
+                name: 'university',
+                placeholder: 'University/college',
+              },
+              {
+                containerClass: 'RML-form-group',
+                label: 'University Email',
                 type: 'email',
                 inputClass: 'RML-form-control',
                 id: 'email',
@@ -224,6 +236,15 @@ export default class LogInUp extends Component {
                 type: 'password',
                 inputClass: 'RML-form-control',
                 id: 'password',
+                name: 'password',
+                placeholder: 'Password',
+              },
+              {
+                containerClass: 'RML-form-group',
+                label: 'Confirm Password',
+                type: 'password',
+                inputClass: 'RML-form-control',
+                id: 'confirmpassword',
                 name: 'password',
                 placeholder: 'Password',
               }
