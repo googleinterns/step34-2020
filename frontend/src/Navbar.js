@@ -1,6 +1,8 @@
 import React from 'react'
+import ReactDOM from 'react-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap'
 import style from 'bootstrap/dist/css/bootstrap.css';
+import Modal from './SignInUpModal';
 
 class TopNavbar extends React.Component {
   handleTopRightButtonClick() {
@@ -9,6 +11,13 @@ class TopNavbar extends React.Component {
 
     // If the user is not signed in
     /* TODO: Add modal prompt */
+    ReactDOM.render(
+      <React.StrictMode>
+        <Modal />
+      </React.StrictMode>,
+      document.getElementById('login')
+    );
+    
   }
 
   render() {
