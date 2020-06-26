@@ -39,7 +39,7 @@ public class Event {
     public Builder() {
       this.eventId = "";
       this.eventName = "";
-      this.description - "";
+      this.description = "";
       this.location = "";
       this.ownerId = "";
       this.organization = "";
@@ -90,7 +90,7 @@ public class Event {
     public Event build() {
       Event event = new Event();
       event.eventId = this.eventId;
-      event.evenName = this.eventName;
+      event.eventName = this.eventName;
       event.description = this.description;
       event.location = this.location;
       event.ownerId = this.ownerId;
