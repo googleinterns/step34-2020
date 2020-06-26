@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Script from 'react-load-script';
 import { Form, Button, Jumbotron } from 'react-bootstrap'
-import styled from 'styled-components';
-
 
 class Search extends Component {
   
@@ -43,9 +41,7 @@ class Search extends Component {
 
     handleScriptLoad() { 
     	// Declare Options For Autocomplete 
-        // const options = {
-        //     types: ["university"],
-        // };
+
         const types = ["university"];
   		// Initialize Google Autocomplete 
   		/*global google*/
