@@ -211,7 +211,16 @@ export default class LogInUp extends Component {
               },
               {
                 containerClass: 'RML-form-group',
-                label: 'Email',
+                label: 'University name',
+                type: 'text',
+                inputClass: 'RML-form-control',
+                id: 'university',
+                name: 'university',
+                placeholder: 'University/college',
+              },
+              {
+                containerClass: 'RML-form-group',
+                label: 'University Email',
                 type: 'email',
                 inputClass: 'RML-form-control',
                 id: 'email',
@@ -224,6 +233,15 @@ export default class LogInUp extends Component {
                 type: 'password',
                 inputClass: 'RML-form-control',
                 id: 'password',
+                name: 'password',
+                placeholder: 'Password',
+              },
+              {
+                containerClass: 'RML-form-group',
+                label: 'Confirm Password',
+                type: 'password',
+                inputClass: 'RML-form-control',
+                id: 'confirmpassword',
                 name: 'password',
                 placeholder: 'Password',
               }
