@@ -4,11 +4,13 @@ import './index.css';
 import Welcome from './components/welcome';
 import * as serviceWorker from './serviceWorker';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import TopNavbar from './Navbar'
 
 ReactDOM.render(
-    <MuiThemeProvider>
+    <div>
+    	<TopNavbar />
         <Welcome /> 
-    </MuiThemeProvider>, document.getElementById('welcome')
+    </div>, document.getElementById('welcome')
 );
 
 // If you want your app to work offline and load faster, you can change

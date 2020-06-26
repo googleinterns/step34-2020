@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import SearchBar from 'material-ui-search-bar';
 import Script from 'react-load-script';
-import { PropTypes } from 'react';
+import { Form, Button, Jumbotron } from 'react-bootstrap'
+import styled from 'styled-components';
 
 
 class Search extends Component {
@@ -23,21 +23,33 @@ class Search extends Component {
     	return (
       	    <div>
     	    	<Script url="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-i8jSh6tWlO0pH0h0EfaLiywM_ilLXk&libraries=places" onLoad={this.handleScriptLoad}/>
-                <SearchBar id="autocomplete" placeholder="" hintText="Enter your University" value={this.state.query}
-          		style={{
-            		margin: '0 auto',
-            		maxWidth: 800,
-          		}}/>
+                <Jumbotron>
+                	<h1>Welcome to MapIT!</h1>
+                	<Form>
+                		<Form.Group controlId="universityForm">
+                    		<Form.Label>Enter your university</Form.Label>
+                        	<br/>
+                        	<Form.Control id="autocomplete" placeholder="Enter university" />
+                    	</Form.Group>
+                    	<br/>
+                    	<Button variant="primary" type="submit">
+                    		Find Events
+                    	</Button>
+                	</Form>
+                </Jumbotron>
      		</div>
         );
   	}
 
     handleScriptLoad() { 
     	// Declare Options For Autocomplete 
+        // const options = {
+        //     types: ["university"],
+        // };
+        const types = ["university"];
   		// Initialize Google Autocomplete 
   		/*global google*/
-        /*global autocomplete*/
-    	var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'));
+    	var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), types);
   
   		autocomplete.setFields(['address_components', 'formatted_address']);
   		autocomplete.addListener('place-changed', this.handlePlaceSelect); 
@@ -59,5 +71,3 @@ class Search extends Component {
 }
 
 export default Search;
-
-
