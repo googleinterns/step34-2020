@@ -14,6 +14,10 @@
 
 package com.step2020.server.servlets;
 
+import com.step2020.server.common.*;
+import com.step2020.server.managers.*;
+import java.util.Map;
+import java.util.Random;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.FileInputStream;
@@ -21,8 +25,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletConfig;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.Query;
 import com.google.auth.oauth2.GoogleCredentials;
 
 @WebServlet(name = "actionmanager", value = "")
@@ -36,16 +49,25 @@ public class ActionManagerServlet extends HttpServlet {
 
   private String sessionId;
 
+  private UserManager userManager;
+
   private DatabaseReference idRef;
 
   @Override
   public void init(ServletConfig config) {
+    
+    FirebaseOptions options = null;
 
     // Build new Firebase instance for this servlet instance
-    FirebaseOptionsBuilder builder = new FirebaseOptions.Builder()
-      .setCredentials(GoogleCredentials.getApplicationDefault())
-      .setDatabaseUrl("https://step-34-2020.firebaseio.com");
-    FirebaseApp.initializeApp(builder.build());
+    try {
+      options = new FirebaseOptions.Builder()
+	.setCredentials(GoogleCredentials.getApplicationDefault())
+	.setDatabaseUrl("https://step-34-2020.firebaseio.com")
+	.build();
+      FirebaseApp.initializeApp(options);
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    }
 
     // Connect database reference
     idRef = FirebaseDatabase.getInstance().getReference();
@@ -57,16 +79,16 @@ public class ActionManagerServlet extends HttpServlet {
   /*
    * Listens for a new user to enter the site, then sends a unique session id to the client.
    * Once the client has sent a new session request, this method will send the servlet instance session id
-   * to Firebase, where the client will pickup. 
+   * to Firebase, where the client will pickup. This method will also setup the command listener.
    */
   private void listenForNewUserSessionAndSendSessionId() {
-    idRef.child(INBX).addChildEventListener(new ChildEventListener() {
+    idRef.child(INBX).limitToLast(1).addChildEventListener(new ChildEventListener() {
 
       // Listen for when a new child has been added in the inbox
       public void onChildAdded(DataSnapshot snapshot, String prevKey) {
-
+	String key = snapshot.getKey();
 	// Run a transaction with that child so that only this child will be linked with this servlet instance
-        firebase.child(IDBX + "/" + snapshot.getValue()).runTransaction(new Transaction.Handler() { 
+        idRef.child(IDBX + "/" + sessionId).runTransaction(new Transaction.Handler() { 
 	  public Transaction.Result doTransaction(MutableData currentData) {
 
 	    // When the data is null (which should always be the case), set the session id
@@ -77,9 +99,14 @@ public class ActionManagerServlet extends HttpServlet {
             return Transaction.success(currentData);
           }
           
-	  public void onComplete(DatabaseError error, boolean committed, DataSnapshot snapshot) {}
+	  public void onComplete(DatabaseError error, boolean committed, DataSnapshot snapshot) {
+	    if (error == null) {
+	      setupCommandListener();
+	    }
+	  }
 	});       
-	firebase.child(INBX).removeValue();
+	idRef.child(INBX).child(key).removeValueAsync();
+	idRef.child(INBX).limitToLast(1).removeEventListener(this);
       }
 
       public void onCancelled(DatabaseError error) {}
@@ -92,7 +119,43 @@ public class ActionManagerServlet extends HttpServlet {
     });
   }
 
-  public void generateUniqueSessionId() {
+  private void setupCommandListener() {
+    setupUserManager();
+    idRef.child(IDBX).child(this.sessionId).addChildEventListener(new ChildEventListener() {
+
+      // Listen for when a new child has been added in the inbox
+      public void onChildAdded(DataSnapshot snapshot, String prevKey) {
+	String uid = (String)snapshot.child("uid").getValue();
+        Integer code = (Integer)snapshot.child("code").getValue();
+	String key = (String)snapshot.child("key").getValue();
+        Object value = snapshot.child("value").getValue();
+	manageRequests(uid, code, key, value);
+      }
+
+      public void onCancelled(DatabaseError error) {}
+
+      public void onChildChanged(DataSnapshot snapshot, String prevKey) {}
+
+      public void onChildMoved(DataSnapshot snapshot, String prevKey) {}
+
+      public void onChildRemoved(DataSnapshot snapshot) {}
+    });
+  }
+
+  private void manageRequests(String uid, Integer code, String key, Object value) {
+    Map requestValue = null;
+    if (value instanceof Map) {
+      requestValue = (Map) value;
+    }
+
+    switch(code) {
+      case 1:
+	userManager.createUserAndAddToDatabase(requestValue);
+	break;
+    }
+  }
+
+  private void generateUniqueSessionId() {
     StringBuilder idBuilder = new StringBuilder();
     Random random = new Random();
     for(int i = 0; i < 16; i++) {
@@ -100,6 +163,10 @@ public class ActionManagerServlet extends HttpServlet {
       idBuilder.append(digit);
     }
     sessionId = idBuilder.toString();
+  }
+
+  private void setupUserManager() {
+    userManager = new UserManager();
   }
 
   @Override
@@ -110,7 +177,7 @@ public class ActionManagerServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     resp.setContentType("text/plain");
-    resp.getWriter().println("Logs: ");
+    resp.getWriter().println("Session id: " + this.sessionId);
   }
 }
 
