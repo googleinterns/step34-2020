@@ -6,11 +6,11 @@ export default class LogInUp extends Component {
     super(props);
 
     this.state = {
-      showModal: false,
+      showModal: true,
       loggedIn: false,
       loading: false,
       error: null,
-      initialTab: null,
+      initialTab: 'login',
       recoverPasswordSuccess: null,
     };
   }
@@ -134,7 +134,7 @@ export default class LogInUp extends Component {
 
     return (
       <div>
-        <button
+        {/* <button
           className="RML-btn"
           onClick={() => this.openModal('login')}>
           Login
@@ -144,7 +144,7 @@ export default class LogInUp extends Component {
           className="RML-btn"
           onClick={() => this.openModal('register')}>
           Register
-        </button>
+        </button> */}
         {/* returns the modal with all necessary components */}
         <ReactModalLogin
           visible={this.state.showModal}
