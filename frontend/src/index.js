@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Welcome from './components/welcome';
 import * as serviceWorker from './serviceWorker';
+
+import TopNavbar from './Navbar'
 import { Nav } from 'react-bootstrap';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <div>
+    	<TopNavbar />
+        <Welcome /> 
+    </div>, document.getElementById('welcome')
 );
 
 // If you want your app to work offline and load faster, you can change
