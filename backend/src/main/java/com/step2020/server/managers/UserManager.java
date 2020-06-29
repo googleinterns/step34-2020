@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,8 +44,13 @@ public class UserManager {
   // Where we put user inforamtion 
   private static final String USRS = "users";
 
+  // The currentUID this servlet is serving
   private String currentUID;
 
+  // The user info firebase app
+  private FirebaseApp userApp;
+
+  // The database reference for users
   private DatabaseReference usersRef;
 
   public UserManager() {
@@ -58,7 +63,7 @@ public class UserManager {
 	.setCredentials(GoogleCredentials.getApplicationDefault())
 	.setDatabaseUrl("https://step-34-2020-user-info.firebaseio.com")
 	.build();
-      FirebaseApp.initializeApp(options);
+      this.userApp = FirebaseApp.initializeApp(options, "user-info");
     } catch (Exception e) {
       System.err.println(e.toString());
     }
@@ -66,6 +71,8 @@ public class UserManager {
     usersRef = FirebaseDatabase.getInstance().getReference(USRS);
   }
 
+  // Creates a user and adds to the database based on the given information.
+  // Checks to make sure the required fields are inputted.
   public void createUserAndAddToDatabase(Map info) {
     String email = null;
     String password = null;
@@ -90,37 +97,48 @@ public class UserManager {
     }
   } 
 
+  // Creates a user and adds to database based off of the required fields.
   public void createUserAndAddToDatabase(String email, String password, String name) {
+    // Create a new account creation request
     CreateRequest request = new CreateRequest()
       .setEmail(email)
+      .setEmailVerified(false)
       .setPassword(password)
       .setDisplayName(name)
       .setDisabled(false);
 
+    System.out.println("Attempting to create user");
+    
+    // Attempt to create a user, otherwise handle failure.
     UserRecord userRecord = null; 
     try {
       userRecord = FirebaseAuth.getInstance().createUser(request);
     } catch (FirebaseAuthException e) {
-      System.err.println(e);
+      System.err.println(e.toString());
       return;
     }
 
+    // Get the uid and comfirm the creation was successful
     String uid = userRecord.getUid();
     System.out.println("Created authentication user");
     
+    // Build a new user to put into the database
     User user = new User.Builder()
       .withEmail(email)
       .withName(name)
       .withUID(uid)
       .build();
     
+    // Check to make sure the user is not null
     if (user == null) {
       System.err.println("Uid not specified");
       return;
     }
 
+    // Set current uid
     this.currentUID = uid;
 
+    // Add the user to the database
     usersRef.child(uid).setValue(user.getMapRepresentation(), new DatabaseReference.CompletionListener() {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
         if (error == null) {

@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package com.step2020.server.servlets;
 import com.step2020.server.common.*;
 import com.step2020.server.managers.*;
 import java.util.Map;
+import java.util.HashMap;
+import java.lang.Iterable;
+import java.util.Iterator;
 import java.util.Random;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -47,10 +50,13 @@ public class ActionManagerServlet extends HttpServlet {
   // Where we store the session ids
   private static final String IDBX = "idBox";
 
+  // This servlet's sessionId
   private String sessionId;
 
+  // The user manager to access user information
   private UserManager userManager;
 
+  // The database reference to access the database
   private DatabaseReference idRef;
 
   @Override
@@ -82,7 +88,8 @@ public class ActionManagerServlet extends HttpServlet {
    * to Firebase, where the client will pickup. This method will also setup the command listener.
    */
   private void listenForNewUserSessionAndSendSessionId() {
-    idRef.child(INBX).limitToLast(1).addChildEventListener(new ChildEventListener() {
+    Query inboxReference = idRef.child(INBX).limitToLast(1);
+    inboxReference.addChildEventListener(new ChildEventListener() {
 
       // Listen for when a new child has been added in the inbox
       public void onChildAdded(DataSnapshot snapshot, String prevKey) {
@@ -94,19 +101,21 @@ public class ActionManagerServlet extends HttpServlet {
 	    // When the data is null (which should always be the case), set the session id
             if (currentData.getValue() == null) {
               currentData.setValue(sessionId);
+	      addSessionIdToPushedKey(sessionId, key);
             }
 	    // Return successful transaction status
             return Transaction.success(currentData);
           }
           
 	  public void onComplete(DatabaseError error, boolean committed, DataSnapshot snapshot) {
+	    // if the transaction was a success, setup the command listener
 	    if (error == null) {
-	      setupCommandListener();
+	      setupCommandListenerAndManageRequests();
 	    }
 	  }
 	});       
-	idRef.child(INBX).child(key).removeValueAsync();
-	idRef.child(INBX).limitToLast(1).removeEventListener(this);
+	// Remove the event listener
+	inboxReference.removeEventListener(this);
       }
 
       public void onCancelled(DatabaseError error) {}
@@ -119,17 +128,32 @@ public class ActionManagerServlet extends HttpServlet {
     });
   }
 
-  private void setupCommandListener() {
+  // Sets the given key's id with the sessionId so the client knows the servlet is ready
+  private void addSessionIdToPushedKey(String sessionId, String key) {
+    this.idRef.child(INBX).child(key).child("id").setValueAsync(sessionId);
+  }
+
+  // Sets up the command listener for the user to put in commands with a given code
+  private void setupCommandListenerAndManageRequests() {
     setupUserManager();
+
+    // Listens for a new command
     idRef.child(IDBX).child(this.sessionId).addChildEventListener(new ChildEventListener() {
 
-      // Listen for when a new child has been added in the inbox
       public void onChildAdded(DataSnapshot snapshot, String prevKey) {
-	String uid = (String)snapshot.child("uid").getValue();
-        Integer code = (Integer)snapshot.child("code").getValue();
-	String key = (String)snapshot.child("key").getValue();
-        Object value = snapshot.child("value").getValue();
-	manageRequests(uid, code, key, value);
+	// Get data from the new command and put them in the form a map
+	String key = snapshot.getKey();
+	Map<String, String> value = new HashMap();
+        Iterable<DataSnapshot> children = snapshot.getChildren();
+	Iterator<DataSnapshot> iterator = children.iterator();
+	while (iterator.hasNext()) {
+	  DataSnapshot child = iterator.next();
+	  String k = child.getKey();
+	  String v = child.getValue().toString();
+	  value.put(k, v);
+	}
+	// Manages the request based on given key and values from above
+	manageRequests(key, value);
       }
 
       public void onCancelled(DatabaseError error) {}
@@ -142,23 +166,27 @@ public class ActionManagerServlet extends HttpServlet {
     });
   }
 
-  private void manageRequests(String uid, Integer code, String key, Object value) {
-    Map requestValue = null;
-    if (value instanceof Map) {
-      requestValue = (Map) value;
-    }
+  // Manages requests based on the code in the value map
+  private void manageRequests(String key, Map<String, String> value) {
+    // Given the command code, execute the command
+    int code = Integer.parseInt(value.get("code"));
 
-    switch(code) {
+    switch (code) {
+      // Code 1 is creating a user with the email, password, and name
       case 1:
-	userManager.createUserAndAddToDatabase(requestValue);
+	String email = value.get("email");
+	String password = value.get("password");
+	String name = value.get("name");
+	userManager.createUserAndAddToDatabase(email, password, name);
 	break;
     }
+    
   }
 
   private void generateUniqueSessionId() {
     StringBuilder idBuilder = new StringBuilder();
     Random random = new Random();
-    for(int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++) {
       int digit = random.nextInt(10);
       idBuilder.append(digit);
     }
