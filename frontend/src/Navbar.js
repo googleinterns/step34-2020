@@ -23,17 +23,16 @@ class TopNavbar extends React.Component {
   render() {
     return(
       <Navbar bg="light" expand="lg">
-        <Navbar.Brand href="#home">IT</Navbar.Brand>
+        <Navbar.Brand href="#home">MapIT</Navbar.Brand>
       	<Navbar.Toggle aria-controls="basic-navbar-nav"/>
       	<Navbar.Collapse id="basic-navbar-nav">  
-          <Nav className="mr-auto">
-    	    <Nav.Link href="#map">Map</Nav.Link>
-          </Nav>
+          <Nav className="mr-auto"></Nav>
           <Nav>
             <Button 
-                type="button" 
-                variant="primary">
-                Create Event
+              style={{marginRight:".8rem"}}
+              type="button" 
+              variant="primary">
+              Create Event
             </Button>{' '}
             <TopRightButtonNav onClick={this.handleTopRightButtonClick} />
           </Nav>
@@ -46,12 +45,23 @@ class TopNavbar extends React.Component {
 function TopRightButtonNav(props) {
   // If the user is signed in
   return (
-    <Button 
+    <div>
+      <Button 
+        style={{marginRight:".8rem"}}
         type="button" 
         variant="secondary" 
         onClick={props.onClick}>
         Login
-    </Button>
+      </Button>
+      <Button 
+        style={{marginRight:".8rem"}}
+        type="button" 
+        variant="secondary" 
+        onClick={props.onClick}>
+        profile
+      </Button>
+    </div>
+
   );
   
   // If the user is NOT signed in
