@@ -44,11 +44,19 @@ class Profile extends React.Component {
       <div>
         <TopNavbar />
         {/* get user profile picture and user name */}
-        <div className="profilepictureContent" style={{borderBottom:"4px solid grey"}}>
+        <div className="profilepictureContent" 
+          style={{borderBottom:"4px solid grey"}}>
           <div className="profilephoto">
-            <img style={{width:"180px", height:"180px", borderRadius:"80px"}}
-            src={this.state.profilePicture}/> 
-            <h4 style={{marginLeft:"1.8rem", marginTop:".8rem"}}>{this.state.username}</h4>
+            <img style={{
+              width:"180px",
+              height:"180px",
+              borderRadius:"80px"}}
+              src={this.state.profilePicture}/> 
+            <h4 style={{
+              marginLeft:"1.8rem",
+              marginTop:".8rem"}}>
+                {this.state.username}
+            </h4>
           </div>
         </div>
         <div className="content">
