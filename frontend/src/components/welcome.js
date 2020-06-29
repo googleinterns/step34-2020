@@ -3,18 +3,21 @@ import Script from 'react-load-script';
 import { Form, Button, Jumbotron } from 'react-bootstrap'
 
 class Search extends Component {
-
   // Define Constructor
   constructor(props) {
     super(props);
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
+    this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+
+    this.types = ['university'];
+    this.autocomplete = null;
 
     // Declare State
     this.state = {
-      city: '',
-      query: ''
+      query: '',
+      location: '',
+      viewport: '',
     };
-
   }
 
   render() {
@@ -24,7 +27,7 @@ class Search extends Component {
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
           <Form>
-            <Form.Group controlId = "universityForm">
+            <Form.Group>
             <Form.Label> Enter your university </Form.Label> 
             <br/>
             <Form.Control id = "autocomplete" placeholder = "Enter university"/>
@@ -38,13 +41,11 @@ class Search extends Component {
   }
 
   handleScriptLoad() {
-    const types = ["university"];
-
     /*global google*/
-    var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), types);
+    this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
 
-    autocomplete.setFields(['address_components', 'formatted_address']);
-    autocomplete.addListener('place-changed', this.handlePlaceSelect);
+    this.autocomplete.setFields(['address_components', 'formatted_address', 'geometry', 'adr_address']);
+    this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
   handlePlaceSelect() {
@@ -53,8 +54,9 @@ class Search extends Component {
 
     if (address) {
       this.setState({
-        city: address[0].long_name,
-        query: addressObject.formatted_address,
+        query: addressObject.geometry,
+        location: addressObject.geometry.location,
+        viewport: addressObject.geometry.viewport,
       });
     }
   }

@@ -8,10 +8,10 @@ import TopNavbar from './Navbar'
 import { Nav } from 'react-bootstrap';
 
 ReactDOM.render(
-    <div>
+    <React.StrictMode>
     	<TopNavbar />
         <Welcome /> 
-    </div>, document.getElementById('welcome')
+    </React.StrictMode>, document.getElementById('welcome')
 );
 
 // If you want your app to work offline and load faster, you can change
