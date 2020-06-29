@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
+
 export default class LogInUp extends Component {
   constructor(props) {
     super(props);
