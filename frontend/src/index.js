@@ -6,11 +6,13 @@ import * as serviceWorker from './serviceWorker';
 
 import TopNavbar from './Navbar'
 import { Nav } from 'react-bootstrap';
+import Profile from './Profile';
 
 ReactDOM.render(
     <div>
-    	<TopNavbar />
-        <Welcome /> 
+        <Profile />
+    	{/* <TopNavbar />
+        <Welcome />  */}
     </div>, document.getElementById('welcome')
 );
 
