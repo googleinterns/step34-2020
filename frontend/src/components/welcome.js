@@ -8,15 +8,16 @@ class Search extends Component {
     super(props);
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
 
     this.types = ['university'];
     this.autocomplete = null;
 
     // Declare State
     this.state = {
-      query: '',
-      location: '',
-      viewport: '',
+      query: null,
+      location: null,
+      viewport: null,
     };
   }
 
@@ -31,9 +32,10 @@ class Search extends Component {
             <Form.Label> Enter your university </Form.Label> 
             <br/>
             <Form.Control id = "autocomplete" placeholder = "Enter university"/>
+            <Form.Text id="text-muted"></Form.Text>
             </Form.Group> 
             <br/>
-            <Button variant = "primary" type = "submit">Find Events</Button>
+            <Button variant = "primary" type = "submit" onClick = {this.handleButtonClick}>Find Events</Button>
           </Form> 
         </Jumbotron>
       </div>
@@ -51,13 +53,26 @@ class Search extends Component {
   handlePlaceSelect() {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
+    const addressGeometry = addressObject.geometry;
 
     if (address) {
       this.setState({
-        query: addressObject.geometry,
-        location: addressObject.geometry.location,
-        viewport: addressObject.geometry.viewport,
+        query: addressObject.formatted_address,
+        location: addressGeometry.location,
+        viewport: addressGeometry.viewport,
       });
+      console.log(this.state.viewport);
+    }
+  }
+
+  handleButtonClick(event) {
+    var mutedText = document.getElementById('text-muted');
+    if (this.state.viewport == null) {
+      mutedText.innerHTML = 'Please select your university from the drop-down menu.';
+      event.preventDefault();
+    } else {
+      mutedText.innerHTML = '';
+      event.preventDefault();
     }
   }
 }
