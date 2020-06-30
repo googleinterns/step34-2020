@@ -15,6 +15,8 @@
 package com.step2020.server.managers;
 
 import com.step2020.server.common.*;
+import static com.step2020.server.common.Constants.*;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Iterable;
@@ -34,12 +36,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 public class ActionManager {
   
-  // Where we recieve a new session request
-  private static final String INBX = "inbox";
-
-  // Where we store the session ids
-  private static final String IDBX = "idBox";
-
   // This servlet's sessionId
   private String sessionId;
 

@@ -15,6 +15,8 @@
 package com.step2020.server.managers;
 
 import com.step2020.server.common.*;
+import static com.step2020.server.common.Constants.*;
+
 import java.util.Map;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,12 +40,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 public class UserManager {
   
-  // Where we put events associated with user
-  private static final String EVNTS = "events";
-
-  // Where we put user inforamtion 
-  private static final String USRS = "users";
-
   // The currentUID this servlet is serving
   private String currentUID;
 
