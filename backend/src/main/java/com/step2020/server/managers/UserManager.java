@@ -47,28 +47,12 @@ public class UserManager {
   // The currentUID this servlet is serving
   private String currentUID;
 
-  // The user info firebase app
-  private FirebaseApp userApp;
-
   // The database reference for users
   private DatabaseReference usersRef;
 
-  public UserManager() {
-    
-    FirebaseOptions options = null;
-
-    // Build new Firebase instance for this servlet instance
-    try {
-      options = new FirebaseOptions.Builder()
-	.setCredentials(GoogleCredentials.getApplicationDefault())
-	.setDatabaseUrl("https://step-34-2020-user-info.firebaseio.com")
-	.build();
-      this.userApp = FirebaseApp.initializeApp(options, "user-info");
-    } catch (Exception e) {
-      System.err.println(e.toString());
-    }
+  public UserManager() { 
     // Connect database reference
-    usersRef = FirebaseDatabase.getInstance().getReference(USRS);
+    usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com").getReference(USRS);
   }
 
   // Creates a user and adds to the database based on the given information.
