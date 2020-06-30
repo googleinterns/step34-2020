@@ -4,10 +4,9 @@ This is the backend project for the STEP 2020 Capstone Project called "MapIT".
 
 ## Setup
 
-Use either:
+Use:
 
-* `gcloud init`
-* `gcloud beta auth application-default login`
+* `gcloud auth application-default login`
 
 ## Maven
 ### Running locally
