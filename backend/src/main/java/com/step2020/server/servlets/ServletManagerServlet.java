@@ -51,7 +51,8 @@ public class ServletManagerServlet extends HttpServlet {
   // The database reference to access the database
   private DatabaseReference idRef;
 
-  private Set<ActionManager> activeActionManagers;
+  // All active sessions in this servlet
+  private Map<String, ActionManager> activeSessions;
 
   @Override
   public void init(ServletConfig config) { 
@@ -71,8 +72,7 @@ public class ServletManagerServlet extends HttpServlet {
     // Connect database reference
     idRef = FirebaseDatabase.getInstance().getReference();
 
-    // Create a set of action managers
-    activeActionManagers = new HashSet();
+    activeSessions = new HashMap();
     
     // Listen for new sessions
     listenForNewUserSessionAndSendSessionId();
@@ -92,13 +92,16 @@ public class ServletManagerServlet extends HttpServlet {
 	String key = snapshot.getKey();	
     	String sessionId = generateUniqueSessionId();
 	// Run a transaction with that child so that only this child will be linked with this servlet instance
-        idRef.child(IDBX + "/" + sessionId).runTransaction(new Transaction.Handler() { 
+        idRef.child(RQSTS + "/" + sessionId).runTransaction(new Transaction.Handler() { 
 	  public Transaction.Result doTransaction(MutableData currentData) {
 
 	    // When the data is null (which should always be the case), set the session id
             if (currentData.getValue() == null) {
+	      // Create a new action manager for the session and add to active sessions
 	      ActionManager actionManager = new ActionManager(sessionId);
-	      activeActionManagers.add(actionManager);
+	      activeSessions.put(sessionId, actionManager);
+
+	      // Set session ids to firebase
               currentData.setValue(sessionId);
 	      addSessionIdToPushedKey(sessionId, key);
             }
@@ -130,6 +133,7 @@ public class ServletManagerServlet extends HttpServlet {
     this.idRef.child(INBX).child(key).child("id").setValueAsync(sessionId);
   }
 
+  // Returns a new generated unique session id for this servlet instance
   private String generateUniqueSessionId() {
     String sessionId = "";
     do {
@@ -144,8 +148,9 @@ public class ServletManagerServlet extends HttpServlet {
     return sessionId;
   }
 
+  // Check if the current session id is active
   private boolean checkIfSessionIdIsActive(String sessionId) {
-    return this.activeActionManagers.contains(sessionId);
+    return this.activeSessions.containsKey(sessionId);
   }
 
   @Override
@@ -160,7 +165,7 @@ public class ServletManagerServlet extends HttpServlet {
 
   @Override
   public void destroy() {
-    activeActionManagers.clear();
+    this.activeSessions.clear();
   }
 }
 
