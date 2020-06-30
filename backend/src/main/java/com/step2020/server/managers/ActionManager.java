@@ -36,7 +36,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 public class ActionManager {
   
-  // This servlet's sessionId
   private String sessionId;
 
   // The user manager to access user information
@@ -50,21 +49,27 @@ public class ActionManager {
     // Connect database reference
     idRef = FirebaseDatabase.getInstance().getReference();
     setupUserManager();
-    setupCommandListenerAndManageRequests();
+    setupRequestListenerAndManageRequests();
   }
 
   // Sets up the command listener for the user to put in commands with a given code
-  private void setupCommandListenerAndManageRequests() {
+  private void setupRequestListenerAndManageRequests() {
 
     // Listens for a new command
-    idRef.child(IDBX).child(this.sessionId).addChildEventListener(new ChildEventListener() {
+    idRef.child(RQSTS).child(this.sessionId).addChildEventListener(new ChildEventListener() {
 
       public void onChildAdded(DataSnapshot snapshot, String prevKey) {
 	// Get data from the new command and put them in the form a map
 	String key = snapshot.getKey();
+
+	// Create an empty request value
 	Map<String, String> value = new HashMap();
-        Iterable<DataSnapshot> children = snapshot.getChildren();
+        
+	// Get all children and make an iterator to iterate through the children
+	Iterable<DataSnapshot> children = snapshot.getChildren();
 	Iterator<DataSnapshot> iterator = children.iterator();
+
+	// Iterate through each child and put each key value pair into request value
 	while (iterator.hasNext()) {
 	  DataSnapshot child = iterator.next();
 	  String k = child.getKey();
@@ -96,14 +101,43 @@ public class ActionManager {
 	String email = value.get("email");
 	String password = value.get("password");
 	String name = value.get("name");
-	userManager.createUserAndAddToDatabase(email, password, name);
+	userManager.createUserAndAddToDatabase(key, email, password, name);
 	break;
     }
     
   }
 
   private void setupUserManager() {
-    this.userManager = new UserManager();
+    this.userManager = new UserManager(this.sessionId);
+  }
+
+  // Sends a response under the session id and request id and removes the request from the session.
+  public static void sendResponseAndRemoveRequest(String sessionId, String requestId, Map<String, String> response) {
+    DatabaseReference responseRef = FirebaseDatabase.getInstance().getReference();
+    responseRef.child(RSPNSE).child(sessionId).child(requestId).setValue(response, new DatabaseReference.CompletionListener() {
+     public void onComplete(DatabaseError error, DatabaseReference ref) {
+       if (error == null) {
+	 System.out.println("Session ID: " + sessionId);
+	 System.out.println("Request ID: " + requestId);
+	 System.out.println("Successfully sent response");
+	 removeRequest(sessionId, requestId);
+       }
+     } 
+    });
+  }
+
+  // Removes the request through request id from the session id.
+  private static void removeRequest(String sessionId, String requestId) {
+    DatabaseReference responseRef = FirebaseDatabase.getInstance().getReference();
+    responseRef.child(RQSTS).child(sessionId).child(requestId).removeValue(new DatabaseReference.CompletionListener() { 
+     public void onComplete(DatabaseError error, DatabaseReference ref) {
+       if (error == null) {
+	 System.out.println("Session ID: " + sessionId);
+	 System.out.println("Request ID: " + requestId);
+	 System.out.println("Successfully removed request");
+       }
+     } 
+    });
   }
 }
 
