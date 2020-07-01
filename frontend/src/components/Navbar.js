@@ -67,8 +67,8 @@ class TopNavbar extends React.Component {
     return(
       <Navbar bg="dark" expand="lg">
         <Navbar.Brand>MapIT</Navbar.Brand>
-      	<Navbar.Toggle aria-controls="basic-navbar-nav"/>
-      	<Navbar.Collapse id="basic-navbar-nav">  
+        <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+        <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
           <Nav>
             <Button 
@@ -81,7 +81,7 @@ class TopNavbar extends React.Component {
             <LoginButtonNav onClick={this.handleLoginButtonClick} />
             <ProfileButtonNav onClick={this.handleProfileButtonClick} />
           </Nav>
-      	</Navbar.Collapse>
+        </Navbar.Collapse>
       </Navbar>
     )
   }
