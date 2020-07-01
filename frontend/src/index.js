@@ -1,23 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import LandingPage from './pages/LandingPage';
-import MapView from './components/mapView';
 import * as serviceWorker from './serviceWorker';
-import { Nav } from 'react-bootstrap';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Link,
-  Redirect
-} from 'react-router-dom';
+import App from './App';
 
 ReactDOM.render(
-    <Router>
-    	<Route exact path="/" component={LandingPage} />
-        <Route exact path="/map" component={MapView} />
-    </Router>, document.getElementById('root')
+  <div>
+    <App />
+  </div>, document.getElementById('welcome')
 );
 
 // If you want your app to work offline and load faster, you can change

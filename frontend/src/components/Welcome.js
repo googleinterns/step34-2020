@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Script from 'react-load-script';
-import { Form, Button, Jumbotron } from 'react-bootstrap'
+import { Form, Button, Jumbotron } from 'react-bootstrap';
+import TopNavbar from './Navbar';
 
 class Search extends Component {
   // Define Constructor
