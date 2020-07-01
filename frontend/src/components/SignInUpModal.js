@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
+import Profile from './Profile';
+import ReactDOM from 'react-dom';
+import Auth from './auth';
+
 
 export default class LogInUp extends Component {
   constructor(props) {
@@ -16,10 +20,6 @@ export default class LogInUp extends Component {
   }
 
   onLogin() {
-    console.log('__onLogin__');
-    console.log('email: ' + document.querySelector('#email').value);
-    console.log('password: ' + document.querySelector('#password').value);
-
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
@@ -28,26 +28,41 @@ export default class LogInUp extends Component {
         error: true
       })
     } else {
-      this.onLoginSuccess('form');
+      Auth.login({email: email, password: password});
+      if (Auth.isAuthenticated()) {
+        this.onLoginSuccess('form');
+      } else {
+        this.onLoginFail('form', 'Incorrect password')
+      }
     }
   }
 
   onRegister() {
-    console.log('__onRegister__');
-    console.log('login: ' + document.querySelector('#login').value);
-    console.log('email: ' + document.querySelector('#email').value);
-    console.log('password: ' + document.querySelector('#password').value);
-
-    const login = document.querySelector('#login').value;
+    const nickname = document.querySelector('#nickname').value;
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
+    const university = document.querySelector('#university').value;
+    const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    if (!login || !email || !password) {
+    if (!nickname || !email || !password) {
       this.setState({
         error: true
       })
     } else {
-      this.onLoginSuccess('form');
+      Auth.signup({
+        nickname: nickname,
+        email: email,
+        university: university,
+        password:password,
+        confirmpassword: confirmpassword
+      })
+      
+      if (Auth.isAuthenticated()) {
+        this.onLoginSuccess('form');
+      } else {
+        this.onLoginFail('form', 'Incorrect password')
+      }
+      
     }
   }
 
@@ -122,10 +137,14 @@ export default class LogInUp extends Component {
   }
 
   render() {
-    const loggedIn = this.state.loggedIn
-    //   ? show profile
-    //   : otherwise redirect to map view
-
+    if (Auth.isAuthenticated()) {
+      ReactDOM.render(
+        <div>
+          <Profile />
+        </div>,
+        document.getElementById('welcome'))
+    }
+        
     const isLoading = this.state.loading;
 
     return (
@@ -167,7 +186,7 @@ export default class LogInUp extends Component {
             loginInputs: [
               {
                 containerClass: 'RML-form-group',
-                label: 'Email',
+                label: 'University Email',
                 type: 'email',
                 inputClass: 'RML-form-control',
                 id: 'email',
@@ -190,8 +209,8 @@ export default class LogInUp extends Component {
                 label: 'Nickname',
                 type: 'text',
                 inputClass: 'RML-form-control',
-                id: 'login',
-                name: 'login',
+                id: 'nickname',
+                name: 'nickname',
                 placeholder: 'Nickname',
               },
               {
@@ -227,7 +246,7 @@ export default class LogInUp extends Component {
                 type: 'password',
                 inputClass: 'RML-form-control',
                 id: 'confirmpassword',
-                name: 'password',
+                name: 'confirmpassword',
                 placeholder: 'Password',
               }
             ],
@@ -243,7 +262,7 @@ export default class LogInUp extends Component {
               },
             ],
           }}/>
-        {loggedIn}
+        {/* {loggedIn} */}
       </div>
     )
   }
