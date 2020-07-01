@@ -51,7 +51,8 @@ class Profile extends React.Component {
               width:"180px",
               height:"180px",
               borderRadius:"80px"}}
-              src={this.state.profilePicture}/> 
+              src={this.state.profilePicture}
+              alt="" /> 
             <h4 style={{
               marginLeft:"1.8rem",
               marginTop:".8rem"}}>
@@ -93,8 +94,8 @@ class Profile extends React.Component {
               </Button>
             </div>
             <div className="Gallery">
-              <img style={{width:"280px"}} src={event.gallery[0]} />
-              <img style={{width:"280px"}} src={event.gallery[1]} />
+              <img style={{width:"280px"}} src={event.gallery[0]} alt="" />
+              <img style={{width:"280px"}} src={event.gallery[1]} alt="" />
             </div>
           </div>))}
         </div>

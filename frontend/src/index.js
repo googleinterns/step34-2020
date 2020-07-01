@@ -1,16 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Welcome from './components/welcome';
 import * as serviceWorker from './serviceWorker';
-
-import TopNavbar from './Navbar'
-import { Nav } from 'react-bootstrap';
+import App from './App';
 
 ReactDOM.render(
     <div>
-    	<TopNavbar />
-        <Welcome /> 
+        <App />
     </div>, document.getElementById('welcome')
 );
 

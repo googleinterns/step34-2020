@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Script from 'react-load-script';
-import { Form, Button, Jumbotron } from 'react-bootstrap'
+import { Form, Button, Jumbotron } from 'react-bootstrap';
+import TopNavbar from './Navbar';
 
 class Search extends Component {
 
@@ -20,19 +21,22 @@ class Search extends Component {
   render() {
     return ( 
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
-        <Jumbotron >
-          <h1> Welcome to MapIT! </h1> 
-          <Form>
-            <Form.Group controlId = "universityForm">
-            <Form.Label> Enter your university </Form.Label> 
-            <br/>
-            <Form.Control id = "autocomplete" placeholder = "Enter university"/>
-            </Form.Group> 
-            <br/>
-            <Button variant = "primary" type = "submit">Find Events</Button>
-          </Form> 
-        </Jumbotron>
+        <TopNavbar />
+        <div>
+          <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+          <Jumbotron >
+            <h1> Welcome to MapIT! </h1> 
+            <Form>
+              <Form.Group controlId = "universityForm">
+              <Form.Label> Enter your university </Form.Label> 
+              <br/>
+              <Form.Control id = "autocomplete" placeholder = "Enter university"/>
+              </Form.Group> 
+              <br/>
+              <Button variant = "primary" type = "submit">Find Events</Button>
+            </Form> 
+          </Jumbotron>
+        </div>
       </div>
     );
   }
