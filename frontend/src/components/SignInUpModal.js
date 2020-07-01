@@ -186,7 +186,7 @@ export default class LogInUp extends Component {
             loginInputs: [
               {
                 containerClass: 'RML-form-group',
-                label: 'Email',
+                label: 'University Email',
                 type: 'email',
                 inputClass: 'RML-form-control',
                 id: 'email',

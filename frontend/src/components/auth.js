@@ -20,6 +20,7 @@ class Auth extends React.Component {
 	signup(props) {
 		//handle signup
 		console.log(props);
+		this.authenticated = true;
 	}
 
 	logout() {
