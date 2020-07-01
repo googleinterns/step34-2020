@@ -15,14 +15,10 @@
 package com.step2020.server.managers;
 
 import com.step2020.server.common.*;
+import static com.step2020.server.common.Constants.*;
+
 import java.util.Map;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.FileInputStream;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.ChildEventListener;
@@ -38,42 +34,24 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 public class UserManager {
   
-  // Where we put events associated with user
-  private static final String EVNTS = "events";
-
-  // Where we put user inforamtion 
-  private static final String USRS = "users";
-
   // The currentUID this servlet is serving
   private String currentUID;
 
-  // The user info firebase app
-  private FirebaseApp userApp;
+  private String sessionId;
 
   // The database reference for users
   private DatabaseReference usersRef;
 
-  public UserManager() {
-    
-    FirebaseOptions options = null;
+  public UserManager(String sessionId) {
+    this.sessionId = sessionId;
 
-    // Build new Firebase instance for this servlet instance
-    try {
-      options = new FirebaseOptions.Builder()
-	.setCredentials(GoogleCredentials.getApplicationDefault())
-	.setDatabaseUrl("https://step-34-2020-user-info.firebaseio.com")
-	.build();
-      this.userApp = FirebaseApp.initializeApp(options, "user-info");
-    } catch (Exception e) {
-      System.err.println(e.toString());
-    }
     // Connect database reference
-    usersRef = FirebaseDatabase.getInstance().getReference(USRS);
+    usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com").getReference(USRS);
   }
 
   // Creates a user and adds to the database based on the given information.
   // Checks to make sure the required fields are inputted.
-  public void createUserAndAddToDatabase(Map info) {
+  public void createUserAndAddToDatabase(String requestId, Map info) {
     String email = null;
     String password = null;
     String name = null;
@@ -90,15 +68,19 @@ public class UserManager {
       name = info.get("name").toString();
     }
 
-    if (email != null && password != null && name != null) {
-      createUserAndAddToDatabase(email, password, name);
+    if ((requestId != null && !requestId.isEmpty()) && email != null && password != null && name != null) {
+      createUserAndAddToDatabase(requestId, email, password, name);
     } else {
-      System.err.println("Invalid map argument");
+      System.err.println("Invalid map argument or requestId null or empty");
     }
   } 
 
   // Creates a user and adds to database based off of the required fields.
-  public void createUserAndAddToDatabase(String email, String password, String name) {
+  public void createUserAndAddToDatabase(String requestId, String email, String password, String name) {
+    if (requestId != null || !requestId.isEmpty() || email != null || password != null || name != null) {
+      System.err.println("A field is null or requestId is empty");
+      return;
+    }
     // Create a new account creation request
     CreateRequest request = new CreateRequest()
       .setEmail(email)
@@ -111,15 +93,18 @@ public class UserManager {
     
     // Attempt to create a user, otherwise handle failure.
     UserRecord userRecord = null; 
+    /*
     try {
       userRecord = FirebaseAuth.getInstance().createUser(request);
     } catch (FirebaseAuthException e) {
       System.err.println(e.toString());
       return;
     }
-
+   
     // Get the uid and comfirm the creation was successful
-    String uid = userRecord.getUid();
+    // String uid = userRecord.getUid();
+    */
+    String uid = "asdasdasdawdwadaw1321321";
     System.out.println("Created authentication user");
     
     // Build a new user to put into the database
@@ -143,6 +128,12 @@ public class UserManager {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
         if (error == null) {
 	  System.out.println("User created");
+
+	  // Send a response to the client to let them know the account has been created
+	  Map<String, String> response = new HashMap();
+	  response.put("status", "success");
+	  response.put("message", "");
+	  ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
 	}	  
       }
     });
