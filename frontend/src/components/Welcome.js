@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 import Script from 'react-load-script';
 import { Form, Button, Jumbotron } from 'react-bootstrap';
-import TopNavbar from './Navbar';
+import { changeMapState } from "../actions/index";
+import { connect } from "react-redux";
+import TopNavbar from './Navbar'
+
+function mapDispatchToProps(dispatch) {
+  return {
+    changeMapState: mapState => dispatch(changeMapState(mapState))
+  };
+}
 
 class Search extends Component {
   // Define Constructor
@@ -10,6 +18,7 @@ class Search extends Component {
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
+    this.handleStateUpdate = this.handleStateUpdate.bind(this);
 
     this.types = ['university'];
     this.autocomplete = null;
@@ -26,6 +35,7 @@ class Search extends Component {
     return ( 
       <div>
         <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+        <TopNavbar />
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
           <Form>
@@ -49,6 +59,7 @@ class Search extends Component {
 
     this.autocomplete.setFields(['address_components', 'formatted_address', 'geometry', 'adr_address']);
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
+    console.log(this.history);
   }
 
   handlePlaceSelect() {
@@ -62,8 +73,19 @@ class Search extends Component {
         location: addressGeometry.location,
         viewport: addressGeometry.viewport,
       });
-      console.log(this.state.viewport);
+
+      const currentState  = {
+        query: addressObject.formatted_address,
+        location: addressGeometry.location,
+        viewport: addressGeometry.viewport,  
+      }
+      this.props.changeMapState(currentState);
     }
+  }
+
+  handleStateUpdate() {
+    const { currentState } = this.state;
+    this.props.changeMapState({ currentState });
   }
 
   handleButtonClick(event) {
@@ -72,10 +94,14 @@ class Search extends Component {
       mutedText.innerHTML = 'Please select your university from the drop-down menu.';
       event.preventDefault();
     } else {
-      mutedText.innerHTML = '';
-      event.preventDefault();
+      this.props.history.push('/map/');
     }
   }
 }
 
-export default Search;
+const ConnectedSearch = connect(
+  null,
+  mapDispatchToProps
+)(Search);
+
+export default ConnectedSearch;

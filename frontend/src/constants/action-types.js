@@ -1,0 +1,1 @@
+export const CHANGE_MAP_STATE = "CHANGE_MAP_STATE";

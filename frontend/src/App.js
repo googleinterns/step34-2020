@@ -1,16 +1,20 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import { Router, Switch, Route } from 'react-router-dom';
+import MapViewPage from './pages/MapViewPage';
+import { createBrowserHistory } from 'history';
 import Welcome from './components/Welcome';
 
 
+const history = createBrowserHistory();
+
 function App() {
   return (
-    <Router>
+    <Router history={history}>
       <div>
         <Switch>
           <Route exact path="/"  component={Welcome} />
-          {/* <Route exact path="/profile" component={Profile} /> */}
+          <Route path="/map" component={MapViewPage} />
         </Switch>
       </div>
     </Router>
