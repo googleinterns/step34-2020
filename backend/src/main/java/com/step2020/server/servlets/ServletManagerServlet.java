@@ -103,8 +103,11 @@ public class ServletManagerServlet extends HttpServlet {
 
 	      // Set session ids to firebase
               currentData.setValue(sessionId);
-	      addSessionIdToPushedKey(sessionId, key);
-            }
+	      addIdToPushedKey(sessionId, key);
+            } else {
+	      // Abort transaction
+	      return Transaction.abort();
+	    }
 	    // Return successful transaction status
             return Transaction.success(currentData);
           }
@@ -113,12 +116,17 @@ public class ServletManagerServlet extends HttpServlet {
 	    // if the transaction was a success, setup the command listener
 	    if (error == null) {
 	      System.out.println("Transaction Success");
+	    } else {
+	      addIdToPushedKey("failed", key);
+	      System.err.println("Transaction failure reason: " + error.getMessage());
 	    }
 	  }
 	});       
       }
 
-      public void onCancelled(DatabaseError error) {}
+      public void onCancelled(DatabaseError error) {
+        System.err.println("Error code: " + error.getCode() + " message:" + error.getMessage());
+      }
 
       public void onChildChanged(DataSnapshot snapshot, String prevKey) {}
 
@@ -128,8 +136,8 @@ public class ServletManagerServlet extends HttpServlet {
     });
   }
 
-  // Sets the given key's id with the sessionId so the client knows the servlet is ready
-  private void addSessionIdToPushedKey(String sessionId, String key) {
+  // Sets the given key's id with the Id so the client knows the servlet is ready
+  private void addIdToPushedKey(String id, String key) {
     this.idRef.child(INBX).child(key).child("id").setValueAsync(sessionId);
   }
 
