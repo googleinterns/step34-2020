@@ -77,10 +77,6 @@ public class UserManager {
 
   // Creates a user and adds to database based off of the required fields.
   public void createUserAndAddToDatabase(String requestId, String email, String password, String name) {
-    if (requestId != null || !requestId.isEmpty() || email != null || password != null || name != null) {
-      System.err.println("A field is null or requestId is empty");
-      return;
-    }
     // Create a new account creation request
     CreateRequest request = new CreateRequest()
       .setEmail(email)
@@ -93,7 +89,7 @@ public class UserManager {
     
     // Attempt to create a user, otherwise handle failure.
     UserRecord userRecord = null; 
-    /*
+    
     try {
       userRecord = FirebaseAuth.getInstance().createUser(request);
     } catch (FirebaseAuthException e) {
@@ -102,9 +98,9 @@ public class UserManager {
     }
    
     // Get the uid and comfirm the creation was successful
-    // String uid = userRecord.getUid();
-    */
-    String uid = "asdasdasdawdwadaw1321321";
+    String uid = userRecord.getUid();
+    
+    //String uid = "asdasdasdawdwadaw1321321";
     System.out.println("Created authentication user");
     
     // Build a new user to put into the database
@@ -133,6 +129,12 @@ public class UserManager {
 	  Map<String, String> response = new HashMap();
 	  response.put("status", "success");
 	  response.put("message", "");
+	  ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	} else {
+	  // Send a response to the client to let them know the account creation has failed
+	  Map<String, String> response = new HashMap();
+	  response.put("status", "failed");
+	  response.put("message", error.getMessage());
 	  ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
 	}	  
       }
