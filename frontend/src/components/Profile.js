@@ -38,8 +38,18 @@ class Profile extends React.Component {
     };
   }
 
-  initAttributes(){
+  getData(){
     // call the server to retrieve all necessary information about user
+    const ref = eventdb.ref("events");
+    ref.on('value', snapshot => {
+    const event = snapshot.val();
+    this.state.eventslist.push(event)
+    });
+  }
+
+  writeData(){
+    // Use .set method to save changes.
+    // userdb.ref().set()
   }
 
   componentDidMount() {
