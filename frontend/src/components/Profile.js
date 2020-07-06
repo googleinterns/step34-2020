@@ -3,9 +3,7 @@ import TopNavbar from './Navbar';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { userdb } from './userFirebase';
-import { eventdb } from './eventFirebase';
-
+import Firebase from '../Firebase';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -40,10 +38,10 @@ class Profile extends React.Component {
 
   getData(){
     // call the server to retrieve all necessary information about user
-    const ref = eventdb.ref("events");
+    const ref = Firebase.eventsRef.ref("events");
     ref.on('value', snapshot => {
-    const event = snapshot.val();
-    this.state.eventslist.push(event)
+      const event = snapshot.val();
+      this.state.eventslist.push(event)
     });
   }
 
@@ -54,10 +52,10 @@ class Profile extends React.Component {
 
   componentDidMount() {
     // This will retrieve all info from the server.
-    const ref = eventdb.ref("events");
+    const ref = Firebase.eventsRef.ref("events");
     ref.on('value', snapshot => {
-    const event = snapshot.val();
-    this.state.eventslist.push(event)
+      const event = snapshot.val();
+      this.state.eventslist.push(event)
     });
   }
 

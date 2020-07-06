@@ -3,8 +3,6 @@ import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
 import Auth from './auth';
-import { userdb } from './userFirebase';
-import { eventdb } from './eventFirebase';
 
 
 export default class LogInUp extends Component {

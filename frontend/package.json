@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@firebase/util": "^0.2.50",
     "@material-ui/core": "^4.10.2",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@react-firebase/database": "^0.3.11",
@@ -15,7 +16,8 @@
     "material-ui-search-bar": "^0.4.2",
     "mui-autocomplete": "^2.0.1",
     "react": "^16.13.1",
-    "react-bootstrap": "^1.0.1",
+    "react-accessible-accordion": "^3.3.0",
+    "react-bootstrap": "^1.0.0-beta.6",
     "react-dom": "^16.13.1",
     "react-dropdown": "^1.7.0",
     "react-load-script": "0.0.6",
