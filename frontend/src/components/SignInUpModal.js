@@ -3,6 +3,8 @@ import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
 import Auth from './auth';
+import { userdb } from './userFirebase';
+import { eventdb } from './eventFirebase';
 
 
 export default class LogInUp extends Component {
@@ -146,6 +148,10 @@ export default class LogInUp extends Component {
     }
         
     const isLoading = this.state.loading;
+
+    // connect to firebase
+    // const userref = firebase.database().ref()
+    // console.log(userref.child)
 
     return (
       <div>

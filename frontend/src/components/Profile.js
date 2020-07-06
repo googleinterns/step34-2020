@@ -3,6 +3,8 @@ import TopNavbar from './Navbar';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
+import { userdb } from './userFirebase';
+import { eventdb } from './eventFirebase';
 
 
 class Profile extends React.Component {
@@ -12,6 +14,7 @@ class Profile extends React.Component {
     this.state = {
       profilePicture: "https://images.unsplash.com/photo-1503249023995-51b0f3778ccf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
       username: 'Tim',
+      eventslist: [],
       events:[{
         title: 'Club fair',
         description: 'Learn about student organization on campus',
@@ -39,7 +42,17 @@ class Profile extends React.Component {
     // call the server to retrieve all necessary information about user
   }
 
+  componentDidMount() {
+    // This will retrieve all info from the server.
+    const ref = eventdb.ref("events");
+    ref.on('value', snapshot => {
+    const event = snapshot.val();
+    this.state.eventslist.push(event)
+    });
+  }
+
   render() {
+    console.log(this.state.eventslist)
     return (
       <div>
         <TopNavbar />

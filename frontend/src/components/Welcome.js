@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Script from 'react-load-script';
 import { Form, Button, Jumbotron } from 'react-bootstrap';
 import TopNavbar from './Navbar';
+import  { userdb } from './userFirebase';
+
 
 class Search extends Component {
 
@@ -9,16 +11,19 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
+    this.db = 
 
     // Declare State
     this.state = {
       city: '',
-      query: ''
+      query: '',
+      users: [],
     };
 
   }
-
+  
   render() {
+    console.log(this.state.users)
     return ( 
       <div>
         <TopNavbar />
@@ -37,6 +42,7 @@ class Search extends Component {
             </Form> 
           </Jumbotron>
         </div>
+        {this.state.users}
       </div>
     );
   }
