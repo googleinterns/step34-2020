@@ -15,6 +15,7 @@
 package com.step2020.server.managers;
 
 import com.step2020.server.common.*;
+import com.step2020.server.servlets.*;
 import static com.step2020.server.common.Constants.*;
 
 import java.util.Map;
@@ -45,8 +46,13 @@ public class UserManager {
   public UserManager(String sessionId) {
     this.sessionId = sessionId;
 
-    // Connect database reference
-    usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com").getReference(USRS);
+    if (ServletManagerServlet.isOnDeployedServer) {
+      // Connect database reference
+      this.usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com").getReference(USRS);
+    } else {
+      // Connect database reference
+      this.usersRef = FirebaseDatabase.getInstance("https://step-34-2020-test.firebaseio.com").getReference("user-info").child(USRS);
+    }
   }
 
   // Creates a user and adds to the database based on the given information.
@@ -93,7 +99,8 @@ public class UserManager {
     try {
       userRecord = FirebaseAuth.getInstance().createUser(request);
     } catch (FirebaseAuthException e) {
-      System.err.println(e.toString());
+      System.err.println(e.getErrorCode());
+
       return;
     }
    

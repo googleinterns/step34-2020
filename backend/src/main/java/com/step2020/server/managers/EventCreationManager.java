@@ -15,6 +15,7 @@
 package com.step2020.server.managers;
 
 import com.step2020.server.common.*;
+import com.step2020.server.servlets.*;
 import static com.step2020.server.common.Constants.*;
 
 import java.util.Map;
@@ -52,8 +53,15 @@ public class EventCreationManager {
   public EventCreationManager(String sessionId, UserManager userManager) {
     this.sessionId = sessionId;
     this.userManager = userManager;
-    usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com/").getReference();
-    eventsRef = FirebaseDatabase.getInstance("https://step-34-2020-events.firebaseio.com/").getReference();
+    
+    if (ServletManagerServlet.isOnDeployedServer) {
+      usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com/").getReference(); 
+      eventsRef = FirebaseDatabase.getInstance("https://step-34-2020-events.firebaseio.com/").getReference();
+    } else {
+      usersRef = FirebaseDatabase.getInstance("https://step-34-2020-test.firebaseio.com/").getReference("user-info"); 
+      eventsRef = FirebaseDatabase.getInstance("https://step-34-2020-test.firebaseio.com/").getReference("events");
+    }
+    
   }
 
   public void createEvent(String requestId, Map<String, String> eventInfo, List<String> attendees) {
