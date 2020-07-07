@@ -8,16 +8,16 @@ class LandingPage extends Component {
     super(props);
   }
 
-    render() {
-      return (
-          <div>
+  render() {
+    return (
+      <div>
         <Router history={this.props.history}>
           <TopNavbar />
           <Welcome />
         </Router>
-        </div>
-      );
-    }
+      </div>
+    );
+  }
 }
 
 export default LandingPage;

@@ -12,12 +12,10 @@ function rootReducer(state = initialState, action) {
     while (currState.length > 0) {
       currState.pop();
     }
-    var returnThis = Object.assign({}, state, {
+    var updatedState = Object.assign({}, state, {
       articles: currState.concat(action.payload)
     });
-    console.log("hello from reducers!");
-    console.log(returnThis);
-    return returnThis;
+    return updatedState;
   }
   return state;
 }

@@ -39,8 +39,8 @@ class MapView extends Component {
   }
 }
 
-const ConnectedMapView = connect(mapStateToProps);
+const ConnectMapViewToStore = connect(mapStateToProps);
 
 export default GoogleApiWrapper({
   apiKey: 'KEY'
-})(ConnectedMapView(MapView));
+})(ConnectMapViewToStore(MapView));
