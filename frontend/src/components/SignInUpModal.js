@@ -48,7 +48,7 @@ export default class LogInUp extends Component {
     }
   }
 
-  onRegister() {
+  async onRegister() {
     const nickname = document.querySelector('#nickname').value;
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
@@ -56,7 +56,10 @@ export default class LogInUp extends Component {
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
     //Create user account and sign them in
-    fb.requestUserSignUpAndListenForResponse(email, password, nickname,  fb.sessionId + "/" + fb.generateRequestId() , this.onLoginSuccess());
+    let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+    if (isSuccess) {
+      this.onLoginSuccess();
+    }
   }
 
   onRecoverPassword() {

@@ -38,7 +38,7 @@ class Profile extends React.Component {
 
   getData(){
     // call the server to retrieve all necessary information about user
-    const ref = fb.eventsRef.ref("events");
+    const ref = fb.eventsRef.child("events");
     ref.on('value', snapshot => {
       const event = snapshot.val();
       this.state.eventslist.push(event)
@@ -52,7 +52,7 @@ class Profile extends React.Component {
 
   componentDidMount() {
     // This will retrieve all info from the server.
-    const ref = fb.eventsRef.ref("events");
+    const ref = fb.eventsRef.child("events");
     ref.on('value', snapshot => {
       const event = snapshot.val();
       this.state.eventslist.push(event)
