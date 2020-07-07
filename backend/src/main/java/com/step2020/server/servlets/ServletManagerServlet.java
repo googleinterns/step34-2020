@@ -138,7 +138,7 @@ public class ServletManagerServlet extends HttpServlet {
 
   // Sets the given key's id with the Id so the client knows the servlet is ready
   private void addIdToPushedKey(String id, String key) {
-    this.idRef.child(INBX).child(key).child("id").setValueAsync(sessionId);
+    this.idRef.child(INBX).child(key).child("id").setValueAsync(id);
   }
 
   // Returns a new generated unique session id for this servlet instance

@@ -42,7 +42,6 @@ public class Event {
       this.ownerId = "";
       this.organization = "";
       this.imagePath = "";
-      this.attendeesListId = "";
     }
 
     public Builder withEventId(String id) {
