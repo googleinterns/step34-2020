@@ -31,4 +31,6 @@ public final class Constants {
   // Where we put user information
   public static final String USRS = "users";
 
+  // Where we put attendees going to event
+  public static final String ATND = "attendees";
 }

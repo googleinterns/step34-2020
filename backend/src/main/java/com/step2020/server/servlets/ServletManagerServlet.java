@@ -44,10 +44,14 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.Query;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.appengine.api.utils.*;
 
 @WebServlet(name = "servletmanager", value = "")
 public class ServletManagerServlet extends HttpServlet {
-  
+
+  // Checks if the environment is deployed or not
+  public static boolean isOnDeployedServer = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
+
   // The database reference to access the database
   private DatabaseReference idRef;
 
@@ -57,14 +61,21 @@ public class ServletManagerServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) { 
     FirebaseOptions options = null;
-
     // Build new Firebase instance for this servlet instance
     try {
-      options = new FirebaseOptions.Builder()
-	.setCredentials(GoogleCredentials.getApplicationDefault())
-	.setDatabaseUrl("https://step-34-2020.firebaseio.com")
-	.build();
-      FirebaseApp.initializeApp(options);
+      if (isOnDeployedServer) {
+	options = new FirebaseOptions.Builder()
+	  .setCredentials(GoogleCredentials.getApplicationDefault())
+	  .setDatabaseUrl("https://step-34-2020.firebaseio.com")
+	  .build();
+	FirebaseApp.initializeApp(options);
+      } else {
+	options = new FirebaseOptions.Builder()
+	  .setCredentials(GoogleCredentials.getApplicationDefault())
+	  .setDatabaseUrl("https://step-34-2020-test.firebaseio.com")
+	  .build();
+	FirebaseApp.initializeApp(options);
+      }
     } catch (Exception e) {
       System.err.println(e.toString());
     }
@@ -138,7 +149,7 @@ public class ServletManagerServlet extends HttpServlet {
 
   // Sets the given key's id with the Id so the client knows the servlet is ready
   private void addIdToPushedKey(String id, String key) {
-    this.idRef.child(INBX).child(key).child("id").setValueAsync(sessionId);
+    this.idRef.child(INBX).child(key).child("id").setValueAsync(id);
   }
 
   // Returns a new generated unique session id for this servlet instance
