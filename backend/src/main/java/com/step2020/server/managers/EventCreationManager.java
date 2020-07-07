@@ -64,12 +64,15 @@ public class EventCreationManager {
     
   }
 
+  // Creates a new event from the given event info and all attendants along with the request id
   public void createEvent(String requestId, Map<String, String> eventInfo, List<String> attendees) {
+    // Check for minimum requirements for event info
     if (!checkMinimumInfoInput(eventInfo)) {
       System.err.println("Failed to meet all input requirements");
       return;
     }
 
+    // Extract all event information
     String eventId = generateUniqueId();
     String name = eventInfo.get("name");
     String description = eventInfo.get("description");
@@ -78,6 +81,7 @@ public class EventCreationManager {
     String organization = eventInfo.get("organization");
     String ownerId = eventInfo.get("owner");
 
+    // Build a new event
     Event event = new Event.Builder()
       .withEventId(eventId)
       .withName(name)
@@ -88,6 +92,7 @@ public class EventCreationManager {
       .withImagePath(imagePath)
       .build();
 
+    // Submit event to the database and add the event id to all attendant's events
     addEventToEventsDatabase(event);
     addEventToUserEventDatabase(eventId, attendees);
     addAttendeesToDatabase(eventId, attendees);
@@ -107,10 +112,6 @@ public class EventCreationManager {
     eventsRef.child(ATND).child(eventId).setValueAsync(attendees);  
   }
 
-  public void deleteEvent(String requestId, String eventId) {
-    
-  }
-
   private boolean checkMinimumInfoInput(Map<String, String> eventInfo) {
     return eventInfo.containsKey("title") && eventInfo.containsKey("description") && eventInfo.containsKey("location");
   }
@@ -118,7 +119,4 @@ public class EventCreationManager {
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
   }
-
 }
-
-
