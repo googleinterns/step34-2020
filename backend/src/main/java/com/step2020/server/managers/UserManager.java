@@ -50,7 +50,7 @@ public class UserManager {
       // Connect database reference
       this.usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com").getReference(USRS);
     } else {
-      // Connect database reference
+      // Connect to test database reference
       this.usersRef = FirebaseDatabase.getInstance("https://step-34-2020-test.firebaseio.com").getReference("user-info").child(USRS);
     }
   }
@@ -99,15 +99,14 @@ public class UserManager {
     try {
       userRecord = FirebaseAuth.getInstance().createUser(request);
     } catch (FirebaseAuthException e) {
-      System.err.println(e.getErrorCode());
-
+      // Failed and handle the error code
+      String errorCode = e.getErrorCode();
+      this.handleErrorCodes(requestId, this.sessionId, errorCode);
       return;
     }
    
     // Get the uid and comfirm the creation was successful
     String uid = userRecord.getUid();
-    
-    //String uid = "asdasdasdawdwadaw1321321";
     System.out.println("Created authentication user");
     
     // Build a new user to put into the database
@@ -131,21 +130,50 @@ public class UserManager {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
         if (error == null) {
 	  System.out.println("User created");
-
-	  // Send a response to the client to let them know the account has been created
-	  Map<String, String> response = new HashMap();
-	  response.put("status", "success");
-	  response.put("message", "");
-	  ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
+    	  // Send a response to the client to let them know the account has been created
+	  sendSuccess(requestId, sessionId);
 	} else {
+	  System.out.println("User creation failed");
 	  // Send a response to the client to let them know the account creation has failed
-	  Map<String, String> response = new HashMap();
-	  response.put("status", "failed");
-	  response.put("message", error.getMessage());
-	  ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  sendFailure(requestId, sessionId, error.getMessage());
 	}	  
       }
     });
+  }
+
+  // Handles error codes give the error code for account creation
+  private void handleErrorCodes(String requestId, String sessionId, String errorCode) {
+    String message = "";
+    switch (errorCode) {
+      case "ERROR_EMAIL_ALREADY_IN_USE":
+	message = "This email is already in use, please try again with another email.";
+	break;	
+      case "ERROR_USER_DISABLED":
+	message = "This account has been diabled, please contact us for more information.";
+	break;	
+      case "ERROR_USER_NOT_FOUND":
+	message = "This account does not exists, please sign up instead.";
+	break;	
+      default:
+	message = "Unknown error occurred.";
+    }
+    this.sendFailure(requestId, sessionId, message);
+  }
+
+  // Sends a success response to the request id
+  private void sendSuccess(String requestId, String sessionId) {
+    String status = "success";
+    String message = "";
+    Map<String, String> response = ActionManager.createResponse(status, message);
+    ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
+  }
+
+  // Sends a failure response to the request id along with a error message
+  private void sendFailure(String requestId, String sessionId, String message) {
+    // Send a response to the client to let them know the account creation has failed
+    String status = "failed";
+    Map<String, String> response = ActionManager.createResponse(status, message);
+    ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
   }
 }
 
