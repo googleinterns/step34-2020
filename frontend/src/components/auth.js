@@ -5,22 +5,15 @@ class Auth extends React.Component {
     super();
 
     this.state = {
-      authenticated: false
+      authenticated: true
     }
   }
 
-  login(props) {
+  login() {
     // connect to the serve
     // If user successfully logged in then
     this.authenticated = true;
-    console.log(props);
     // return that they failed
-  }
-
-  signup(props) {
-    //handle signup
-    console.log(props);
-    this.authenticated = true;
   }
 
   logout() {

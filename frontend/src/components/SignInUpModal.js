@@ -3,6 +3,8 @@ import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
 import Auth from './auth';
+import { fb } from '../App';
+import firebase from 'firebase';
 
 
 export default class LogInUp extends Component {
@@ -10,8 +12,8 @@ export default class LogInUp extends Component {
     super(props);
 
     this.state = {
-      showModal: true,
       loggedIn: false,
+      showModal: true,
       loading: false,
       error: null,
       initialTab: 'login',
@@ -23,17 +25,26 @@ export default class LogInUp extends Component {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
-    if (!email || !password) {
-      this.setState({
-        error: true
-      })
-    } else {
-      Auth.login({email: email, password: password});
-      if (Auth.isAuthenticated()) {
-        this.onLoginSuccess('form');
+    var errorStatus = false;
+    //sign in the user
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch(function(error) {
+      // Handle Errors here.
+      errorStatus = true;
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      if (errorCode === 'auth/wrong-password') {
+        alert('Wrong password.');
       } else {
-        this.onLoginFail('form', 'Incorrect password')
+        alert(errorMessage);
       }
+      console.log(error);
+    });
+
+    // In case there's no error, proceed to successful login
+    if (!errorStatus) {
+      console.log("worked");
+      this.onLoginSuccess();
     }
   }
 
@@ -44,26 +55,8 @@ export default class LogInUp extends Component {
     const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    if (!nickname || !email || !password) {
-      this.setState({
-        error: true
-      })
-    } else {
-      Auth.signup({
-        nickname: nickname,
-        email: email,
-        university: university,
-        password:password,
-        confirmpassword: confirmpassword
-      })
-      
-      if (Auth.isAuthenticated()) {
-        this.onLoginSuccess('form');
-      } else {
-        this.onLoginFail('form', 'Incorrect password')
-      }
-      
-    }
+    //Create user account and sign them in
+    fb.requestUserSignUpAndListenForResponse(email, password, nickname,  fb.sessionId + "/" + fb.generateRequestId() , this.onLoginSuccess());
   }
 
   onRecoverPassword() {
@@ -95,15 +88,16 @@ export default class LogInUp extends Component {
     });
   }
 
-  onLoginSuccess(method, response) {
+  onLoginSuccess() {
     this.closeModal();
     this.setState({
-      loggedIn: method,
-      loading: false
+      loading: false,
     })
+
+    Auth.login();
   }
 
-  onLoginFail(method, response) {
+  onLoginFail(response) {
     this.setState({
       loading: false,
       error: response
@@ -118,7 +112,8 @@ export default class LogInUp extends Component {
 
   finishLoading() {
     this.setState({
-      loading: false
+      loading: false,
+      showModal: true
     })
   }
 
