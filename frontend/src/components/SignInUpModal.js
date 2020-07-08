@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
-import Auth from './auth';
-import { fb } from '../App';
-import firebase from 'firebase';
+import { fb, authStatus } from '../App';
+import firebase, { auth } from 'firebase';
 
 
 export default class LogInUp extends Component {
@@ -25,12 +24,11 @@ export default class LogInUp extends Component {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
-    var errorStatus = false;
     //sign in the user
     firebase.auth().signInWithEmailAndPassword(email, password)
+        .then ( response => this.onLoginSuccess())
         .catch(function(error) {
       // Handle Errors here.
-      errorStatus = true;
       var errorCode = error.code;
       var errorMessage = error.message;
       if (errorCode === 'auth/wrong-password') {
@@ -40,12 +38,6 @@ export default class LogInUp extends Component {
       }
       console.log(error);
     });
-
-    // In case there's no error, proceed to successful login
-    if (!errorStatus) {
-      console.log("worked");
-      this.onLoginSuccess();
-    }
   }
 
   onRegister() {
@@ -92,9 +84,9 @@ export default class LogInUp extends Component {
     this.closeModal();
     this.setState({
       loading: false,
+      loggedIn: true,
     })
-
-    Auth.login();
+    authStatus.login();
   }
 
   onLoginFail(response) {
@@ -132,7 +124,7 @@ export default class LogInUp extends Component {
   }
 
   render() {
-    if (Auth.isAuthenticated()) {
+    if (this.state.loggedIn) {
       ReactDOM.render(
         <div>
           <Profile />
@@ -141,11 +133,6 @@ export default class LogInUp extends Component {
     }
         
     const isLoading = this.state.loading;
-
-    // connect to firebase
-    // const userref = firebase.database().ref()
-    // console.log(userref.child)
-
     return (
       <div>
         {/* returns the modal with all necessary components */}

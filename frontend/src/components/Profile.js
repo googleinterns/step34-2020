@@ -3,7 +3,7 @@ import TopNavbar from './Navbar';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { fb } from '../App';
+import { fb, authStatus } from '../App';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -60,6 +60,7 @@ class Profile extends React.Component {
   }
 
   render() {
+    console.log("is authenticated " + authStatus.isAuthenticated())
     console.log(this.state.eventslist)
     return (
       <div>

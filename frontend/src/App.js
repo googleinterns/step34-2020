@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Welcome from './components/Welcome';
 import Firebase from './components/Firebase';
+import Auth from './components/auth';
 
 
 function App() {
@@ -19,4 +20,6 @@ function App() {
 }
 
 export const fb = new Firebase();
+export const authStatus = new Auth();
+
 export default App;

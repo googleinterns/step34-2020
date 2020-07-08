@@ -5,24 +5,26 @@ class Auth extends React.Component {
     super();
 
     this.state = {
-      authenticated: true
+      authenticated: false
     }
   }
 
   login() {
     // connect to the serve
     // If user successfully logged in then
-    this.authenticated = true;
-    // return that they failed
+    //this.state.authenticated = true;
+    this.state = {
+      authenticated: true
+    }
   }
 
   logout() {
-    this.authenticated = false;
+    this.state.authenticated= false;
   }
 
   isAuthenticated() {
-    return this.authenticated;
+    return this.state.authenticated;
   }
 }
 
-export default new Auth();
+export default Auth;
