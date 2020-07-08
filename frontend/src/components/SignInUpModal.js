@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
-import Auth from './auth';
+import { fb, authStatus } from '../App';
+import firebase, { auth } from 'firebase';
 
 
 export default class LogInUp extends Component {
@@ -10,8 +11,8 @@ export default class LogInUp extends Component {
     super(props);
 
     this.state = {
-      showModal: true,
       loggedIn: false,
+      showModal: true,
       loading: false,
       error: null,
       initialTab: 'login',
@@ -23,46 +24,34 @@ export default class LogInUp extends Component {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
-    if (!email || !password) {
-      this.setState({
-        error: true
-      })
-    } else {
-      Auth.login({email: email, password: password});
-      if (Auth.isAuthenticated()) {
-        this.onLoginSuccess('form');
+    //sign in the user
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then ( response => this.onLoginSuccess())
+        .catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      if (errorCode === 'auth/wrong-password') {
+        alert('Wrong password.');
       } else {
-        this.onLoginFail('form', 'Incorrect password')
+        alert(errorMessage);
       }
-    }
+      console.log(error);
+    });
   }
 
-  onRegister() {
+  async onRegister() {
     const nickname = document.querySelector('#nickname').value;
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
     const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    if (!nickname || !email || !password) {
-      this.setState({
-        error: true
-      })
-    } else {
-      Auth.signup({
-        nickname: nickname,
-        email: email,
-        university: university,
-        password:password,
-        confirmpassword: confirmpassword
-      })
-      
-      if (Auth.isAuthenticated()) {
-        this.onLoginSuccess('form');
-      } else {
-        this.onLoginFail('form', 'Incorrect password')
-      }
-      
+    // Create user account and sign them in
+    // isSuccess is a boolean whether or not the sign up was successful
+    let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+    if (isSuccess) {
+      this.onLoginSuccess();
     }
   }
 
@@ -95,15 +84,16 @@ export default class LogInUp extends Component {
     });
   }
 
-  onLoginSuccess(method, response) {
+  onLoginSuccess() {
     this.closeModal();
     this.setState({
-      loggedIn: method,
-      loading: false
+      loading: false,
+      loggedIn: true,
     })
+    authStatus.login();
   }
 
-  onLoginFail(method, response) {
+  onLoginFail(response) {
     this.setState({
       loading: false,
       error: response
@@ -118,7 +108,8 @@ export default class LogInUp extends Component {
 
   finishLoading() {
     this.setState({
-      loading: false
+      loading: false,
+      showModal: true
     })
   }
 
@@ -137,7 +128,7 @@ export default class LogInUp extends Component {
   }
 
   render() {
-    if (Auth.isAuthenticated()) {
+    if (this.state.loggedIn) {
       ReactDOM.render(
         <div>
           <Profile />
@@ -146,7 +137,6 @@ export default class LogInUp extends Component {
     }
         
     const isLoading = this.state.loading;
-
     return (
       <div>
         {/* returns the modal with all necessary components */}

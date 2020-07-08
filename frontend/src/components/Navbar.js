@@ -4,8 +4,8 @@ import { Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
 import Profile from './Profile';
 import style from 'bootstrap/dist/css/bootstrap.css';
-import Auth from './auth';
 import Create from './CreateEvent';
+import { authStatus } from '../App';
 
 class TopNavbar extends React.Component {
   handleLoginButtonClick() {
@@ -14,7 +14,7 @@ class TopNavbar extends React.Component {
 
     // If the user is not signed in
     /* TODO: Add modal prompt */
-    if (!Auth.isAuthenticated()) {
+    if (!authStatus.isAuthenticated()) {
       ReactDOM.render(
         <div>
           <Modal />
@@ -28,7 +28,7 @@ class TopNavbar extends React.Component {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
 
-    if (Auth.isAuthenticated()) {
+    if (authStatus.isAuthenticated()) {
       ReactDOM.render(
         <div>
           <Profile />
@@ -46,7 +46,7 @@ class TopNavbar extends React.Component {
   }
 
   handleCreateButton() {
-    if (Auth.isAuthenticated()) {
+    if (authStatus.isAuthenticated()) {
       ReactDOM.render(
         <div>
           <Create />

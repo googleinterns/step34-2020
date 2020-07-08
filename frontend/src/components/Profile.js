@@ -3,7 +3,7 @@ import TopNavbar from './Navbar';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-
+import { fb, authStatus } from '../App';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -12,6 +12,7 @@ class Profile extends React.Component {
     this.state = {
       profilePicture: "https://images.unsplash.com/photo-1503249023995-51b0f3778ccf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
       username: 'Tim',
+      eventslist: [],
       events:[{
         title: 'Club fair',
         description: 'Learn about student organization on campus',
@@ -35,11 +36,32 @@ class Profile extends React.Component {
     };
   }
 
-  initAttributes(){
+  getData(){
     // call the server to retrieve all necessary information about user
+    const ref = fb.eventsRef.child("events");
+    ref.on('value', snapshot => {
+      const event = snapshot.val();
+      this.state.eventslist.push(event)
+    });
+  }
+
+  writeData(){
+    // Use .set method to save changes.
+    // userdb.ref().set()
+  }
+
+  componentDidMount() {
+    // This will retrieve all info from the server.
+    const ref = fb.eventsRef.child("events");
+    ref.on('value', snapshot => {
+      const event = snapshot.val();
+      this.state.eventslist.push(event)
+    });
   }
 
   render() {
+    console.log("is authenticated " + authStatus.isAuthenticated())
+    console.log(this.state.eventslist)
     return (
       <div>
         <TopNavbar />

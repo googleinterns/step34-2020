@@ -129,14 +129,14 @@ public class UserManager {
     usersRef.child(uid).setValue(user.getMapRepresentation(), new DatabaseReference.CompletionListener() {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
         if (error == null) {
-	  System.out.println("User created");
-    	  // Send a response to the client to let them know the account has been created
-	  sendSuccess(requestId, sessionId);
-	} else {
-	  System.out.println("User creation failed");
-	  // Send a response to the client to let them know the account creation has failed
-	  sendFailure(requestId, sessionId, error.getMessage());
-	}	  
+    System.out.println("User created");
+        // Send a response to the client to let them know the account has been created
+    sendSuccess(requestId, sessionId);
+  } else {
+    System.out.println("User creation failed");
+    // Send a response to the client to let them know the account creation has failed
+    sendFailure(requestId, sessionId, error.getMessage());
+  }	  
       }
     });
   }
@@ -144,18 +144,22 @@ public class UserManager {
   // Handles error codes give the error code for account creation
   private void handleErrorCodes(String requestId, String sessionId, String errorCode) {
     String message = "";
+    System.out.println(errorCode);
     switch (errorCode) {
-      case "ERROR_EMAIL_ALREADY_IN_USE":
-	message = "This email is already in use, please try again with another email.";
-	break;	
-      case "ERROR_USER_DISABLED":
-	message = "This account has been diabled, please contact us for more information.";
-	break;	
-      case "ERROR_USER_NOT_FOUND":
-	message = "This account does not exists, please sign up instead.";
-	break;	
+      case "email-already-exists":
+        message = "This email is already in use, please try again with another email.";
+        break;
+      case "invalid-email":
+        message = "This email address is invalid. Please try again.";
+        break;
+      case "user-not-found":
+        message = "This account does not exists, please sign up instead.";
+        break;
+      case "invalid-password":
+        message = "Invalid password, must have at least six characters.";
+        break;
       default:
-	message = "Unknown error occurred.";
+        message = "Unknown error occurred.";
     }
     this.sendFailure(requestId, sessionId, message);
   }

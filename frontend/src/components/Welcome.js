@@ -30,8 +30,9 @@ class Search extends Component {
       viewport: null,
     };
   }
-
+  
   render() {
+    console.log(this.state.users)
     return ( 
       <div>
         <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 

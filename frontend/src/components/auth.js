@@ -9,27 +9,22 @@ class Auth extends React.Component {
     }
   }
 
-  login(props) {
+  login() {
     // connect to the serve
     // If user successfully logged in then
-    this.authenticated = true;
-    console.log(props);
-    // return that they failed
-  }
-
-  signup(props) {
-    //handle signup
-    console.log(props);
-    this.authenticated = true;
+    //this.state.authenticated = true;
+    this.state = {
+      authenticated: true
+    }
   }
 
   logout() {
-    this.authenticated = false;
+    this.state.authenticated= false;
   }
 
   isAuthenticated() {
-    return this.authenticated;
+    return this.state.authenticated;
   }
 }
 
-export default new Auth();
+export default Auth;
