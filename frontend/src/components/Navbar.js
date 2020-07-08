@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap'
-import style from 'bootstrap/dist/css/bootstrap.css';
 import Modal from './SignInUpModal';
 import Profile from './Profile';
+import style from 'bootstrap/dist/css/bootstrap.css';
 import Auth from './auth';
 import Create from './CreateEvent';
 
