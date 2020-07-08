@@ -55,7 +55,8 @@ export default class LogInUp extends Component {
     const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    //Create user account and sign them in
+    // Create user account and sign them in
+    // isSuccess is a boolean whether or not the sign up was successful
     let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
     if (isSuccess) {
       this.onLoginSuccess();
