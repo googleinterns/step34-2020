@@ -3,7 +3,7 @@ import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
 import { fb, authStatus } from '../App';
-import firebase, { auth } from 'firebase';
+import firebase from 'firebase';
 
 
 export default class LogInUp extends Component {
@@ -47,12 +47,17 @@ export default class LogInUp extends Component {
     const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    // Create user account and sign them in
-    // isSuccess is a boolean whether or not the sign up was successful
-    let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
-    if (isSuccess) {
-      this.onLoginSuccess();
+    if (confirmpassword == password){
+      // Create user account and sign them in
+      // isSuccess is a boolean whether or not the sign up was successful
+      let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+      if (isSuccess) {
+        this.onLoginSuccess();
+      }
+    } else {
+      alert("password don't match. Please try again")
     }
+
   }
 
   async onRecoverPassword() {
@@ -61,33 +66,13 @@ export default class LogInUp extends Component {
 
     const email = document.querySelector('#email').value;
 
-    // if (!email) {
-    //   this.setState({
-    //     error: true,
-    //     recoverPasswordSuccess: false
-    //   })
-    // } else {
-    //   alert("worked")
-    //   this.setState({
-    //     error: null,
-    //     recoverPasswordSuccess: true
-    //   });
-    // }
-
-    // let response = await firebase.auth().sendPasswordResetEmail(email, null);
-
-    // if (response) {
-    //   this.onRecoverPasswordSuccess();
-    // } else {
-    //   alert(response)
-    // }
     firebase.auth().sendPasswordResetEmail(email, null)
       .then(response => {
         //password reset email sent
        this.onRecoverPasswordSuccess();
       })
       .catch(function(error) {
-          alert(error.message + " we are here")
+          alert(error.message)
       });
   }
 
