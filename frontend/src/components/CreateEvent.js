@@ -1,7 +1,7 @@
 import React from 'react';
 import TopNavbar from './Navbar';
 
-const createevents = () => {
+const createEvents = () => {
   return(
     <div>
       <TopNavbar />
@@ -10,4 +10,4 @@ const createevents = () => {
   )
 }
 
-export default createevents;
+export default createEvents;
