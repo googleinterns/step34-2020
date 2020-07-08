@@ -1,21 +1,25 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import { Router, Switch, Route } from 'react-router-dom';
+import MapViewPage from './pages/MapViewPage';
+import { createBrowserHistory } from 'history';
 import Welcome from './components/Welcome';
 import Firebase from './components/Firebase';
 import Auth from './components/auth';
 
 
+const history = createBrowserHistory();
+
 function App() {
   return (
-      <Router>
-        <div>
-          <Switch>
-            <Route exact path="/"  component={Welcome} />
-            {/* <Route exact path="/profile" component={Profile} /> */}
-          </Switch>
-        </div>
-      </Router>
+    <Router history={history}>
+      <div>
+        <Switch>
+          <Route exact path="/"  component={Welcome} />
+          <Route path="/map" component={MapViewPage} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
