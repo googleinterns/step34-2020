@@ -20,7 +20,7 @@ export default class LogInUp extends Component {
     };
   }
 
-  onLogin() {
+  async onLogin() {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
@@ -55,34 +55,51 @@ export default class LogInUp extends Component {
     }
   }
 
-  onRecoverPassword() {
+  async onRecoverPassword() {
     console.log('__onFotgottenPassword__');
     console.log('email: ' + document.querySelector('#email').value);
 
     const email = document.querySelector('#email').value;
 
-    if (!email) {
-      this.setState({
-        error: true,
-        recoverPasswordSuccess: false
+    // if (!email) {
+    //   this.setState({
+    //     error: true,
+    //     recoverPasswordSuccess: false
+    //   })
+    // } else {
+    //   alert("worked")
+    //   this.setState({
+    //     error: null,
+    //     recoverPasswordSuccess: true
+    //   });
+    // }
+
+    // let response = await firebase.auth().sendPasswordResetEmail(email, null);
+
+    // if (response) {
+    //   this.onRecoverPasswordSuccess();
+    // } else {
+    //   alert(response)
+    // }
+    firebase.auth().sendPasswordResetEmail(email, null)
+      .then(response => {
+        //password reset email sent
+       this.onRecoverPasswordSuccess();
       })
-    } else {
-      this.setState({
-        error: null,
-        recoverPasswordSuccess: true
+      .catch(function(error) {
+          alert(error.message + " we are here")
       });
-    }
   }
 
-  openModal(initialTab) {
-    this.setState({
-      initialTab: initialTab
-    }, () => {
-      this.setState({
-        showModal: true,
-      })
-    });
-  }
+  // openModal(initialTab) {
+  //   this.setState({
+  //     initialTab: initialTab
+  //   }, () => {
+  //     this.setState({
+  //       showModal: true,
+  //     })
+  //   });
+  // }
 
   onLoginSuccess() {
     this.closeModal();
@@ -97,6 +114,13 @@ export default class LogInUp extends Component {
     this.setState({
       loading: false,
       error: response
+    })
+  }
+
+  onRecoverPasswordSuccess() {
+    this.setState ({
+      error: null,
+      recoverPasswordSuccess: true
     })
   }
 

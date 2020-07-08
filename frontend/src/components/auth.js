@@ -1,8 +1,8 @@
 import React from 'react';
 
 class Auth extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       authenticated: false
@@ -10,16 +10,15 @@ class Auth extends React.Component {
   }
 
   login() {
-    // connect to the serve
-    // If user successfully logged in then
-    //this.state.authenticated = true;
-    this.state = {
+    this.setState ({
       authenticated: true
-    }
+    })
   }
 
   logout() {
-    this.state.authenticated= false;
+    this.setState ({
+      authenticated: false
+    })
   }
 
   isAuthenticated() {
