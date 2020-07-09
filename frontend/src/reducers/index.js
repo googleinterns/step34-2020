@@ -15,7 +15,6 @@ function rootReducer(state = initialState, action) {
     var updatedState = Object.assign({}, state, {
       articles: currState.concat(action.payload)
     });
-    console.log(updatedState);
     return updatedState;
   }
   return state;

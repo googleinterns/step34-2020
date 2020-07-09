@@ -18,7 +18,6 @@ class Search extends Component {
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
-    this.handleStateUpdate = this.handleStateUpdate.bind(this);
 
     this.types = ['university'];
     this.autocomplete = null;
@@ -59,7 +58,6 @@ class Search extends Component {
 
     this.autocomplete.setFields(['address_components', 'formatted_address', 'geometry', 'adr_address']);
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
-    console.log(this.history);
   }
 
   handlePlaceSelect() {
@@ -68,24 +66,16 @@ class Search extends Component {
     const addressGeometry = addressObject.geometry;
 
     if (address) {
-      this.setState({
-        query: addressObject.formatted_address,
-        location: addressGeometry.location,
-        viewport: addressGeometry.viewport,
-      });
-
       const currentState  = {
         query: addressObject.formatted_address,
         location: addressGeometry.location,
         viewport: addressGeometry.viewport,  
       }
+      console.log(currentState);
       this.props.changeMapState(currentState);
-    }
-  }
 
-  handleStateUpdate() {
-    const { currentState } = this.state;
-    this.props.changeMapState({ currentState });
+      this.setState(currentState);
+    }
   }
 
   handleButtonClick(event) {
@@ -94,6 +84,7 @@ class Search extends Component {
       mutedText.innerHTML = 'Please select your university from the drop-down menu.';
       event.preventDefault();
     } else {
+      event.preventDefault();
       this.props.history.push('/map/');
     }
   }

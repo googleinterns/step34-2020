@@ -3,6 +3,8 @@ import { Map, GoogleApiWrapper } from 'google-maps-react';
 import { connect } from "react-redux";
 
 const mapStateToProps = state => {
+    console.log("help from mapview!");
+    console.log(state);
   return { articles: state.articles };
 };
 
@@ -24,9 +26,14 @@ class MapView extends Component {
         {this.props.articles.map(article => {
           return (
             <Map
+              key={article.toString()}
               google={this.props.google}
               zoom={17}
               style={mapStyles}
+              initialCenter={{
+                lat: article.location.lat(),
+                lng: article.location.lng()
+              }}
               center={{
                 lat: article.location.lat(),
                 lng: article.location.lng()

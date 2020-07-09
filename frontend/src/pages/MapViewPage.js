@@ -5,7 +5,7 @@ import MapView from '../components/MapView';
 import { Form } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+import { GoogleApiWrapper } from 'google-maps-react';
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -15,12 +15,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = state => {
   return { articles: state.articles };
-};
-
-const mapStyles = {
-  width: '100%',
-  height: '100%'
-};
+}
 
 class MapViewPage extends Component {
   constructor(props) {
@@ -75,13 +70,10 @@ class MapViewPage extends Component {
         location: addressGeometry.location,
         viewport: addressGeometry.viewport,
       }
+      console.log(currentState);
       this.props.changeMapState(currentState);
 
-      this.setState({
-        query: addressObject.formatted_address,
-        location: addressGeometry.location,
-        viewport: addressGeometry.viewport,
-      });
+      this.setState(currentState);
     }
   }
 }
@@ -92,5 +84,5 @@ const ConnectedMapViewPage = connect(
 )(MapViewPage);
 
 export default GoogleApiWrapper({
-  apiKey: 'KEY'
+  apiKey: ''
 })(ConnectedMapViewPage);
