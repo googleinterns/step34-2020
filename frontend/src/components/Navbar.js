@@ -46,6 +46,14 @@ class TopNavbar extends React.Component {
   }
 
   handleCreateButton() {
+    /* Use this for testing
+    ReactDOM.render(
+      <div>
+        <Create />
+      </div>,
+      document.getElementById('welcome')
+    );
+    */
     if (authStatus.isAuthenticated()) {
       ReactDOM.render(
         <div>
