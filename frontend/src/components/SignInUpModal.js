@@ -3,7 +3,7 @@ import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
 import { fb, authStatus } from '../App';
-import firebase, { auth } from 'firebase';
+import firebase from 'firebase';
 
 
 export default class LogInUp extends Component {
@@ -20,7 +20,7 @@ export default class LogInUp extends Component {
     };
   }
 
-  onLogin() {
+  async onLogin() {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
@@ -47,42 +47,44 @@ export default class LogInUp extends Component {
     const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    // Create user account and sign them in
-    // isSuccess is a boolean whether or not the sign up was successful
-    let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
-    if (isSuccess) {
-      this.onLoginSuccess();
+    if (confirmpassword == password){
+      // Create user account and sign them in
+      // isSuccess is a boolean whether or not the sign up was successful
+      let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+      if (isSuccess) {
+        this.onLoginSuccess();
+      }
+    } else {
+      alert("password don't match. Please try again")
     }
+
   }
 
-  onRecoverPassword() {
+  async onRecoverPassword() {
     console.log('__onFotgottenPassword__');
     console.log('email: ' + document.querySelector('#email').value);
 
     const email = document.querySelector('#email').value;
 
-    if (!email) {
-      this.setState({
-        error: true,
-        recoverPasswordSuccess: false
+    firebase.auth().sendPasswordResetEmail(email, null)
+      .then(response => {
+        //password reset email sent
+       this.onRecoverPasswordSuccess();
       })
-    } else {
-      this.setState({
-        error: null,
-        recoverPasswordSuccess: true
+      .catch(function(error) {
+          alert(error.message)
       });
-    }
   }
 
-  openModal(initialTab) {
-    this.setState({
-      initialTab: initialTab
-    }, () => {
-      this.setState({
-        showModal: true,
-      })
-    });
-  }
+  // openModal(initialTab) {
+  //   this.setState({
+  //     initialTab: initialTab
+  //   }, () => {
+  //     this.setState({
+  //       showModal: true,
+  //     })
+  //   });
+  // }
 
   onLoginSuccess() {
     this.closeModal();
@@ -97,6 +99,13 @@ export default class LogInUp extends Component {
     this.setState({
       loading: false,
       error: response
+    })
+  }
+
+  onRecoverPasswordSuccess() {
+    this.setState ({
+      error: null,
+      recoverPasswordSuccess: true
     })
   }
 
