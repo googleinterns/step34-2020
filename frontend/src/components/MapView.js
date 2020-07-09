@@ -3,8 +3,6 @@ import { Map, GoogleApiWrapper } from 'google-maps-react';
 import { connect } from "react-redux";
 
 const mapStateToProps = state => {
-    console.log("help from mapview!");
-    console.log(state);
   return { articles: state.articles };
 };
 
