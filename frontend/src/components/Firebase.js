@@ -154,7 +154,7 @@ class Firebase {
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);
     });
-      return deferred.promise;
+    return deferred.promise;
   }
 
   // Generates a unique 16 digit id which is mainly used for requests
