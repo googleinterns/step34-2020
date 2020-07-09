@@ -17,16 +17,22 @@ export default class LogInUp extends Component {
       error: null,
       initialTab: 'login',
       recoverPasswordSuccess: null,
+      credentials: null,
     };
   }
 
-  async onLogin() {
+  onLogin() {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
     //sign in the user
     firebase.auth().signInWithEmailAndPassword(email, password)
-        .then ( response => this.onLoginSuccess())
+        .then ( response => {
+          this.setState({
+            credentials: response.user
+          })
+          this.onLoginSuccess()}
+              )
         .catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
@@ -47,7 +53,7 @@ export default class LogInUp extends Component {
     const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    if (confirmpassword == password){
+    if (confirmpassword === password){
       // Create user account and sign them in
       // isSuccess is a boolean whether or not the sign up was successful
       let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
@@ -61,9 +67,6 @@ export default class LogInUp extends Component {
   }
 
   async onRecoverPassword() {
-    console.log('__onFotgottenPassword__');
-    console.log('email: ' + document.querySelector('#email').value);
-
     const email = document.querySelector('#email').value;
 
     firebase.auth().sendPasswordResetEmail(email, null)
@@ -92,7 +95,6 @@ export default class LogInUp extends Component {
       loading: false,
       loggedIn: true,
     })
-    authStatus.login();
   }
 
   onLoginFail(response) {
@@ -136,11 +138,15 @@ export default class LogInUp extends Component {
     });
   }
 
+  componentDidUpdate () {
+      authStatus.setCredentials(this.state.credentials)
+  }
+
   render() {
     if (this.state.loggedIn) {
       ReactDOM.render(
         <div>
-          <Profile />
+          <Profile credentials={this.state.credentials}/>
         </div>,
         document.getElementById('welcome'))
     }

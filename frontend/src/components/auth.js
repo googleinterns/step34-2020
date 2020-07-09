@@ -5,7 +5,8 @@ class Auth extends React.Component {
     super(props);
 
     this.state = {
-      authenticated: false
+      authenticated: false,
+      credentials: null,
     }
   }
 
@@ -13,6 +14,16 @@ class Auth extends React.Component {
     this.setState ({
       authenticated: true
     })
+  }
+
+  setCredentials(props) {
+    this.setState({
+      credentials: props
+    })
+  }
+
+  getCredentials() {
+    return this.state.credentials;
   }
 
   logout() {

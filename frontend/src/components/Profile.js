@@ -12,7 +12,9 @@ class Profile extends React.Component {
     this.state = {
       profilePicture: "https://images.unsplash.com/photo-1503249023995-51b0f3778ccf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
       username: 'Tim',
+      credentials: props.credentials,
       eventslist: [],
+      userslist: [],
       events:[{
         title: 'Club fair',
         description: 'Learn about student organization on campus',
@@ -51,17 +53,16 @@ class Profile extends React.Component {
   }
 
   componentDidMount() {
-    // This will retrieve all info from the server.
-    const ref = fb.eventsRef.child("events");
-    ref.on('value', snapshot => {
+    // This will retrieve all events info from the server.
+    const myevents = fb.eventsRef.child("events");
+    myevents.on('value', snapshot => {
       const event = snapshot.val();
       this.state.eventslist.push(event)
     });
+    console.log(this.state.credentials)
   }
 
   render() {
-    console.log("is authenticated " + authStatus.isAuthenticated())
-    console.log(this.state.eventslist)
     return (
       <div>
         <TopNavbar />
@@ -78,7 +79,7 @@ class Profile extends React.Component {
             <h4 style={{
               marginLeft:"1.8rem",
               marginTop:".8rem"}}>
-                {this.state.username}
+                {this.state.credentials.displayName}
             </h4>
           </div>
         </div>
