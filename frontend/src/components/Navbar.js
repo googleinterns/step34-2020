@@ -19,7 +19,7 @@ class TopNavbar extends React.Component {
         <div>
           <Modal />
         </div>,
-        document.getElementById('root')
+        document.getElementById('modal')
       );
     }
   }
@@ -40,7 +40,7 @@ class TopNavbar extends React.Component {
         <div>
           <Modal />
         </div>,
-        document.getElementById('root')
+        document.getElementById('modal')
       );
     }
   }
@@ -58,7 +58,7 @@ class TopNavbar extends React.Component {
         <div>
           <Modal />
         </div>,
-        document.getElementById('root')
+        document.getElementById('modal')
       );
     }
   }
