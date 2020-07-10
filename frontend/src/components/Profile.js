@@ -3,7 +3,7 @@ import TopNavbar from './Navbar';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { fb, authStatus } from '../App';
+import { fb } from '../App';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -54,18 +54,17 @@ class Profile extends React.Component {
 
   componentDidMount() {
     // This will retrieve all events info from the server.
-    const myevents = fb.eventsRef.child("events");
+    const myevents = fb.userRef.child("events").child(this.state.credentials.uid);
     myevents.on('value', snapshot => {
       const event = snapshot.val();
       this.state.eventslist.push(event)
     });
-    console.log(this.state.credentials)
   }
 
   render() {
     return (
       <div>
-        <TopNavbar />
+        <TopNavbar loggedIn={true}/>
         {/* get user profile picture and user name */}
         <div className="profilepictureContent" 
           style={{borderBottom:"4px solid grey"}}>
