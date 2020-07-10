@@ -50,9 +50,9 @@ class TopNavbar extends React.Component {
     }
   }
 
-  async handleLogoutButton() {
+  handleLogoutButton() {
     //sign out the user
-    await Firebase.auth().signOut();
+  Firebase.auth().signOut();
 
     // clear local storage
     //localStorage.clear();

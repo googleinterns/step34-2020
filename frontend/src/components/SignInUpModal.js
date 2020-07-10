@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
-import { fb, authStatus } from '../App';
+import { fb } from '../App';
 import firebase from 'firebase';
 
 
@@ -27,20 +27,20 @@ export default class LogInUp extends Component {
 
     //sign in the user
     firebase.auth().signInWithEmailAndPassword(email, password)
-        .then (response => {
-          this.setState({credentials: response.user})
-          this.onLoginSuccess()})
-        .catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          if (errorCode === 'auth/wrong-password') {
-            alert('Wrong password.');
-          } else {
-            alert(errorMessage);
-          }
-          console.log(error);
-        });
+      .then (response => {
+        this.setState({credentials: response.user, loggedIn: true})
+        this.onLoginSuccess()})
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+          alert('Wrong password.');
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+      });
   }
 
   async onRegister() {
@@ -127,9 +127,9 @@ export default class LogInUp extends Component {
     ReactDOM.unmountComponentAtNode(modal);
   }
 
-  componentDidUpdate () {
-      authStatus.setCredentials(this.state.credentials)
-  }
+  // componentDidUpdate () {
+  //     authStatus.setCredentials(this.state.credentials)
+  // }
 
   render() {
     if (this.state.loggedIn) {
