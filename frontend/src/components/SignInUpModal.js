@@ -133,6 +133,8 @@ export default class LogInUp extends Component {
       showModal: false,
       error: null
     });
+    const modal = document.getElementById('modal-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
   }
 
   componentDidUpdate () {
