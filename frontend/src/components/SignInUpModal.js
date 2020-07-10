@@ -53,7 +53,7 @@ export default class LogInUp extends Component {
     if (confirmpassword === password){
       // Create user account and sign them in
       // isSuccess is a boolean whether or not the sign up was successful
-      let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+      let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname, university);
       if (isSuccess) {
         this.onLoginSuccess();
       }
@@ -75,16 +75,6 @@ export default class LogInUp extends Component {
           alert(error.message)
       });
   }
-
-  // openModal(initialTab) {
-  //   this.setState({
-  //     initialTab: initialTab
-  //   }, () => {
-  //     this.setState({
-  //       showModal: true,
-  //     })
-  //   });
-  // }
 
   onLoginSuccess() {
     this.closeModal();
@@ -145,7 +135,7 @@ export default class LogInUp extends Component {
         <div>
           <Profile credentials={this.state.credentials}/>
         </div>,
-        document.getElementById('welcome'))
+        document.getElementById('root'))
     }
         
     const isLoading = this.state.loading;
@@ -264,7 +254,6 @@ export default class LogInUp extends Component {
               },
             ],
           }}/>
-        {/* {loggedIn} */}
       </div>
     )
   }

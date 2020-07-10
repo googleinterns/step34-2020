@@ -115,7 +115,7 @@ class Firebase {
 
   // Requests a new user to the backend given the required parameters, the path of the sessionid + requestid, 
   // and a success callback.
-  async requestUserSignUpAndListenForResponse(email, password, name) {
+  async requestUserSignUpAndListenForResponse(email, password, name, university) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     // Send a request under the sessionid

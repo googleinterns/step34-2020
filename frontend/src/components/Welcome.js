@@ -36,7 +36,7 @@ class Search extends Component {
     return ( 
       <div>
         <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar />
+        <TopNavbar loggedIn={false}/>
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
           <Form>
