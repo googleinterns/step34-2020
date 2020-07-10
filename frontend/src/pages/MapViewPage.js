@@ -37,7 +37,7 @@ class MapViewPage extends Component {
   render() {
     return (
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+        <Script url = "https://maps.googleapis.com/maps/api/js?key=YOUR-API-KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
         <TopNavbar />
         <Form>
           <Form.Group>

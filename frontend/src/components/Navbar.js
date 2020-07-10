@@ -29,6 +29,10 @@ class TopNavbar extends React.Component {
     }
   }
 
+  handleMapViewonClick() {
+    //
+  }
+
   handleProfileButtonClick() {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
@@ -91,6 +95,7 @@ class TopNavbar extends React.Component {
         <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
           <Nav>
+            <MapViewButton onClick={this.handleMapViewonClick} />
             <CreateEventButton onClick={this.handleCreateButton} loggedIn={this.props.loggedIn} />
             <ProfileButtonNav onClick={this.handleProfileButtonClick} />
             <LoginButtonNav onClick={this.handleLoginButtonClick} loggedIn={this.props.loggedIn} />
@@ -100,6 +105,20 @@ class TopNavbar extends React.Component {
       </Navbar>
     )
   }
+}
+
+function MapViewButton(props) {
+  return (
+    <div>
+      <Button 
+        style={{marginRight:".8rem"}}
+        type="button" 
+        variant="primary"
+        onClick={props.onClick}>
+        View events
+      </Button>
+    </div>
+  )
 }
 
 function LogOutButton(props) {

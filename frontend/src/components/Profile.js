@@ -58,12 +58,10 @@ class Profile extends React.Component {
     myevents.on('value', snapshot => {
       const event = snapshot.val();
       this.state.eventslist.push(event)
-      console.log(event)
     });
   }
 
   render() {
-    console.log(this.state.eventslist)
     return (
       <div>
         <TopNavbar loggedIn={true}/>
