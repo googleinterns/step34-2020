@@ -14,12 +14,13 @@ class TopNavbar extends React.Component {
 
     // If the user is not signed in
     /* TODO: Add modal prompt */
+
     if (!authStatus.isAuthenticated()) {
       ReactDOM.render(
-        <div>
+        <div id="modal">
           <Modal />
         </div>,
-        document.getElementById('modal')
+        document.getElementById('modal-wrapper')
       );
     }
   }
@@ -37,10 +38,10 @@ class TopNavbar extends React.Component {
       );
     } else {
       ReactDOM.render(
-        <div>
+        <div id="modal">
           <Modal />
         </div>,
-        document.getElementById('modal')
+        document.getElementById('modal-wrapper')
       );
     }
   }
@@ -55,10 +56,10 @@ class TopNavbar extends React.Component {
       );
     } else {
       ReactDOM.render(
-        <div>
+        <div id="modal">
           <Modal />
         </div>,
-        document.getElementById('modal')
+        document.getElementById('modal-wrapper')
       );
     }
   }
