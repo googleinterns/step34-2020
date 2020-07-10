@@ -24,10 +24,15 @@ class MapView extends Component {
         {this.props.articles.map(article => {
           return (
             <Map
+              key={article.toString()}
               google={this.props.google}
               zoom={17}
               style={mapStyles}
               initialCenter={{
+                lat: article.location.lat(),
+                lng: article.location.lng()
+              }}
+              center={{
                 lat: article.location.lat(),
                 lng: article.location.lng()
               }}
@@ -42,5 +47,5 @@ class MapView extends Component {
 const ConnectMapViewToStore = connect(mapStateToProps);
 
 export default GoogleApiWrapper({
-  apiKey: 'KEY'
+  apiKey: ''
 })(ConnectMapViewToStore(MapView));
