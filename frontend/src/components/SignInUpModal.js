@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
 import Profile from './Profile';
 import ReactDOM from 'react-dom';
-import { fb, authStatus } from '../App';
-import firebase, { auth } from 'firebase';
+import { fb } from '../App';
+import firebase from 'firebase';
 
 
 export default class LogInUp extends Component {
@@ -17,6 +17,7 @@ export default class LogInUp extends Component {
       error: null,
       initialTab: 'login',
       recoverPasswordSuccess: null,
+      credentials: null,
     };
   }
 
@@ -26,18 +27,20 @@ export default class LogInUp extends Component {
 
     //sign in the user
     firebase.auth().signInWithEmailAndPassword(email, password)
-        .then ( response => this.onLoginSuccess())
-        .catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      if (errorCode === 'auth/wrong-password') {
-        alert('Wrong password.');
-      } else {
-        alert(errorMessage);
-      }
-      console.log(error);
-    });
+      .then (response => {
+        this.setState({credentials: response.user, loggedIn: true})
+        this.onLoginSuccess()})
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+          alert('Wrong password.');
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+      });
   }
 
   async onRegister() {
@@ -47,41 +50,30 @@ export default class LogInUp extends Component {
     const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
-    // Create user account and sign them in
-    // isSuccess is a boolean whether or not the sign up was successful
-    let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
-    if (isSuccess) {
-      this.onLoginSuccess();
+    if (confirmpassword === password){
+      // Create user account and sign them in
+      // isSuccess is a boolean whether or not the sign up was successful
+      let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname, university);
+      if (isSuccess) {
+        this.onLoginSuccess();
+      }
+    } else {
+      alert("password don't match. Please try again")
     }
+
   }
 
-  onRecoverPassword() {
-    console.log('__onFotgottenPassword__');
-    console.log('email: ' + document.querySelector('#email').value);
-
+  async onRecoverPassword() {
     const email = document.querySelector('#email').value;
 
-    if (!email) {
-      this.setState({
-        error: true,
-        recoverPasswordSuccess: false
+    firebase.auth().sendPasswordResetEmail(email, null)
+      .then(response => {
+        //password reset email sent
+       this.onRecoverPasswordSuccess();
       })
-    } else {
-      this.setState({
-        error: null,
-        recoverPasswordSuccess: true
+      .catch(function(error) {
+          alert(error.message)
       });
-    }
-  }
-
-  openModal(initialTab) {
-    this.setState({
-      initialTab: initialTab
-    }, () => {
-      this.setState({
-        showModal: true,
-      })
-    });
   }
 
   onLoginSuccess() {
@@ -90,13 +82,19 @@ export default class LogInUp extends Component {
       loading: false,
       loggedIn: true,
     })
-    authStatus.login();
   }
 
   onLoginFail(response) {
     this.setState({
       loading: false,
       error: response
+    })
+  }
+
+  onRecoverPasswordSuccess() {
+    this.setState ({
+      error: null,
+      recoverPasswordSuccess: true
     })
   }
 
@@ -125,15 +123,21 @@ export default class LogInUp extends Component {
       showModal: false,
       error: null
     });
+    const modal = document.getElementById('modal-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
   }
+
+  // componentDidUpdate () {
+  //     authStatus.setCredentials(this.state.credentials)
+  // }
 
   render() {
     if (this.state.loggedIn) {
       ReactDOM.render(
         <div>
-          <Profile />
+          <Profile credentials={this.state.credentials}/>
         </div>,
-        document.getElementById('welcome'))
+        document.getElementById('root'))
     }
         
     const isLoading = this.state.loading;
@@ -252,7 +256,6 @@ export default class LogInUp extends Component {
               },
             ],
           }}/>
-        {/* {loggedIn} */}
       </div>
     )
   }

@@ -30,46 +30,46 @@ class Firebase {
     if (!firebase.apps.length) {
       // Check if we are running on development or production
       if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-	// Development	
-	// Make the default app the config
-	this.defaultApp = firebase.initializeApp(testConfig);
-	
-	// Make the users app with a different database url
-	this.usersApp = firebase.initializeApp({ 
-	  databaseURL: "https://step-34-2020-test.firebaseio.com/"
-	}, 'users-app');
+        // Development	
+        // Make the default app the config
+        this.defaultApp = firebase.initializeApp(testConfig);
+        
+        // Make the users app with a different database url
+        this.usersApp = firebase.initializeApp({ 
+          databaseURL: "https://step-34-2020-test.firebaseio.com/"
+        }, 'users-app');
 
-	// Make the events app with a different database url
-	this.eventsApp = firebase.initializeApp({ 
-	  databaseURL: "https://step-34-2020-test.firebaseio.com/"
-	}, 'events-app');
+        // Make the events app with a different database url
+        this.eventsApp = firebase.initializeApp({ 
+          databaseURL: "https://step-34-2020-test.firebaseio.com/"
+        }, 'events-app');
 
-	// Get references from each app
-	this.sessionsRef = firebase.database();
-	this.userRef = this.usersApp.database().ref('user-info/');
-	this.eventsRef =  this.eventsApp.database().ref('events/'); 
-	this.storageRef = firebase.storage().ref();
-
+        // Get references from each app
+        this.sessionsRef = firebase.database();
+        this.userRef = this.usersApp.database().ref('user-info/');
+        this.eventsRef =  this.eventsApp.database().ref('events/');
+        this.storageRef = firebase.storage().ref();
+        
       } else {
-	// Production
-	// Make the default app the config
-	this.defaultApp = firebase.initializeApp(config);
-	
-	// Make the users app with a different database url
-	this.usersApp = firebase.initializeApp({ 
-	  databaseURL: "https://step-34-2020-user-info.firebaseio.com/"
-	}, 'users-app');
+        // Production
+        // Make the default app the config
+        this.defaultApp = firebase.initializeApp(config);
+        
+        // Make the users app with a different database url
+        this.usersApp = firebase.initializeApp({ 
+          databaseURL: "https://step-34-2020-user-info.firebaseio.com/"
+        }, 'users-app');
 
-	// Make the events app with a different database url
-	this.eventsApp = firebase.initializeApp({ 
-	  databaseURL: "https://step-34-2020-events.firebaseio.com/"
-	}, 'events-app');
+        // Make the events app with a different database url
+        this.eventsApp = firebase.initializeApp({ 
+          databaseURL: "https://step-34-2020-events.firebaseio.com/"
+        }, 'events-app');
 
-	// Get references from each app
-	this.sessionsRef = firebase.database();
-	this.userRef = this.usersApp.database().ref();
-	this.eventsRef =  this.eventsApp.database().ref();
-	this.storageRef = firebase.storage().ref();
+        // Get references from each app
+        this.sessionsRef = firebase.database();
+        this.userRef = this.usersApp.database().ref();
+        this.eventsRef =  this.eventsApp.database().ref();
+        this.storageRef = firebase.storage().ref();
       }
 
       // Start the session
@@ -90,7 +90,6 @@ class Firebase {
 
     // Wait for the session id to be sent from the back end
     this.sessionId = await this.readDataSessionId();
-    console.log("sessionId is " + this.sessionId);
   }
 
   // Reads in the new session id that the server gives
@@ -118,7 +117,7 @@ class Firebase {
 
   // Requests a new user to the backend given the required parameters, the path of the sessionid + requestid, 
   // and a success callback.
-  requestUserSignUpAndListenForResponse(email, password, name) {
+  async requestUserSignUpAndListenForResponse(email, password, name, university) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     // Send a request under the sessionid
@@ -136,21 +135,23 @@ class Firebase {
     var sessionId = this.sessionId;
 
     // Listen for responses under the RESPONSES path
-    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', function(snapshot) {
+    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', async function(snapshot) {
       if (snapshot.key === requestId) {
-  // Get the status and message
-  var status = snapshot.child("status").val();
-  var message = snapshot.child("message").val();
-  console.log(status);
-  // When the status is "success" sign in and make deferred promise true
-  if (status === "success") {
-    firebase.auth().signInWithEmailAndPassword(email, password);
-    deferred.resolve(true);
-  // When the status is "failed" show error message and deferred promise as false
-  } else { 
-    alert(message);
-    deferred.resolve(false);
-  }
+        // Get the status and message
+        var status = snapshot.child("status").val();
+        var message = snapshot.child("message").val();
+        console.log(status);
+        // When the status is "success" sign in and make deferred promise true
+        if (status === "success") {
+          let response = await firebase.auth().signInWithEmailAndPassword(email, password);
+          let userCredential = response.user;
+
+          deferred.resolve(userCredential);
+        // When the status is "failed" show error message and deferred promise as false
+        } else { 
+          alert(message);
+          deferred.resolve(null);
+        }
       }
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);
@@ -193,19 +194,19 @@ class Firebase {
     // Listen for responses under the RESPONSES path
     var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', function(snapshot) {
       if (snapshot.key === requestId) {
-	// Get the status and message
-	var status = snapshot.child("status").val();
-	var message = snapshot.child("message").val();
-	console.log(status);
-	// When the status is "success" make deferred promise true
-	if (status === "success") {
-	  successCallback();
-	  deferred.resolve(true);
-	// When the status is "failed" show error message and deferred promise as false
-	} else { 
-	  failureCallback();
-	  deferred.resolve(false);
-	}
+        // Get the status and message
+        var status = snapshot.child("status").val();
+        var message = snapshot.child("message").val();
+        console.log(status);
+        // When the status is "success" make deferred promise true
+        if (status === "success") {
+          successCallback();
+          deferred.resolve(true);
+        // When the status is "failed" show error message and deferred promise as false
+        } else { 
+          failureCallback();
+          deferred.resolve(false);
+        }
       }
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);
@@ -244,10 +245,10 @@ class Firebase {
       console.log(path);
       // If a url is null then return
       if (path == null) {
-	return;
+	      return;
       // add url to array of urls
       } else {
-	paths[i] = path;
+	      paths[i] = path;
       }
     }
     return paths;
@@ -261,29 +262,29 @@ class Firebase {
       var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       console.log('Upload is ' + progress + '% done');
       switch (snapshot.state) {
-	case firebase.storage.TaskState.PAUSED: // or 'paused'
-	  console.log('Upload is paused');
-	  break;
-	case firebase.storage.TaskState.RUNNING: // or 'running'
-	  console.log('Upload is running');
-	  break;
+	      case firebase.storage.TaskState.PAUSED: // or 'paused'
+	        console.log('Upload is paused');
+	        break;
+	      case firebase.storage.TaskState.RUNNING: // or 'running'
+	        console.log('Upload is running');
+	        break;
       }
     }, function(error) {
       // Handle unsuccessful uploads
       switch (error.code) {
-	case 'storage/unauthorized':
-	  // User doesn't have permission to access the object
-	  alert("Don't have permission to upload images, are you logged in? Cancelling event creation...");
-	  break;
-	case 'storage/canceled':
-	  // User canceled the upload
-	  alert("Cancelled upload. Cancelling event creation...");
-	  break;
-	case 'storage/unknown':
-	  // Unknown error occurred, inspect error.serverResponse
-	  alert("Unknown error. Cancelling event creation...");
-	  console.log(error.serverResponse);
-	  break;
+	      case 'storage/unauthorized':
+	        // User doesn't have permission to access the object
+	        alert("Don't have permission to upload images, are you logged in? Cancelling event creation...");
+	        break;
+	      case 'storage/canceled':
+	        // User canceled the upload
+	        alert("Cancelled upload. Cancelling event creation...");
+	        break;
+	      case 'storage/unknown':
+	        // Unknown error occurred, inspect error.serverResponse
+	        alert("Unknown error. Cancelling event creation...");
+	        console.log(error.serverResponse);
+	        break;
       }
       deferred.resolve(null);
     }, function() {
