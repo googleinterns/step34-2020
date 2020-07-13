@@ -6,12 +6,18 @@ import Profile from './Profile';
 import App from '../App';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import Create from './CreateEvent';
-import { authStatus } from '../App';
 import { Provider } from "react-redux";
 import store from "../store/index";
 import Firebase from 'firebase';
 
-class TopNavbar extends React.Component {
+export default class TopNavbar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state= {
+      loggedIn: props.loggedIn
+    }
+  }
   handleLoginButtonClick() {
     // If the user is signed in
     /* TODO: Route to profile page */
@@ -19,7 +25,7 @@ class TopNavbar extends React.Component {
     // If the user is not signed in
     /* TODO: Add modal prompt */
 
-    if (!authStatus.isAuthenticated()) {
+    if (!this.props.loggedIn) {
       ReactDOM.render(
         <div id="modal">
           <Modal />
@@ -36,8 +42,7 @@ class TopNavbar extends React.Component {
   handleProfileButtonClick() {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
-
-    if (authStatus.isAuthenticated()) {
+    if (this.props.loggedIn) {
       ReactDOM.render(
         <div>
           <Profile />
@@ -56,7 +61,7 @@ class TopNavbar extends React.Component {
 
   handleLogoutButton() {
     //sign out the user
-  Firebase.auth().signOut();
+    Firebase.auth().signOut();
 
     // clear local storage
     //localStorage.clear();
@@ -69,8 +74,8 @@ class TopNavbar extends React.Component {
     );
   }
 
-  handleCreateButton(props) {
-    if (authStatus.isAuthenticated()) {
+  handleCreateButton() {
+    if (this.props.loggedIn) {
       ReactDOM.render(
         <div>
           <Create />
@@ -95,11 +100,11 @@ class TopNavbar extends React.Component {
         <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
           <Nav>
-            <MapViewButton onClick={this.handleMapViewonClick} />
-            <CreateEventButton onClick={this.handleCreateButton} loggedIn={this.props.loggedIn} />
-            <ProfileButtonNav onClick={this.handleProfileButtonClick} />
-            <LoginButtonNav onClick={this.handleLoginButtonClick} loggedIn={this.props.loggedIn} />
-            <LogOutButton onClick={this.handleLogoutButton} loggedIn={this.props.loggedIn} />
+            <MapViewButton onClick={this.handleMapViewonClick.bind(this)} loggedIn={this.props.loggedIn} />
+            <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.props.loggedIn} />
+            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
+            <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
+            <LogOutButton onClick={this.handleLogoutButton.bind(this)} loggedIn={this.props.loggedIn} />
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -184,6 +189,3 @@ function ProfileButtonNav(props) {
     </div>
   );
 }
-
-
-export default TopNavbar;
