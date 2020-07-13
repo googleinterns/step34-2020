@@ -182,7 +182,7 @@ class Firebase {
     return deferred.promise;
   }
 
-  handleResponses(requestId, deferred, successCallback = 0, failureCallback = 0) {
+  handleResponses(requestId, deferred, successCallback = this.defaultSuccessCallback, failureCallback = this.defaultFailureCallback) {
 
     var ref = this.sessionsRef;
     var sessionId = this.sessionId;
@@ -207,6 +207,14 @@ class Firebase {
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);
     });
+  }
+
+  defaultSuccessCallback() {
+    console.log("success");
+  }
+
+  defaultFailureCallback() {
+    console.log("failed");
   }
 
   // Generates a unique 16 digit id which is mainly used for requests
