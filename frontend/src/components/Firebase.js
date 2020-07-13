@@ -246,8 +246,8 @@ class Firebase {
       // If a url is null then return
       if (path == null) {
 	      return;
-      // add url to array of urls
       } else {
+				// add url to array of urls
 	      paths[i] = path;
       }
     }
