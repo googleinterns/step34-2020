@@ -3,7 +3,7 @@ import 'firebase/database';
 import { Deferred } from '@firebase/util';
 
 const config = {
-  apiKey: "",
+  apiKey: "AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020.firebaseio.com",
   projectId: "step-34-2020",
@@ -14,7 +14,7 @@ const config = {
 };
 
 const testConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020-test.firebaseio.com",
   projectId: "step-34-2020",
@@ -160,7 +160,7 @@ class Firebase {
 
  // Request event creation given the parameters. 
  // The first three parameters are required, the rest are optional.
- requestEventCreation(title, description, location, files, category, organization, invitedAttendees = "") {
+ requestEventCreation(title, date, startTime, endTime, description, location, files, category, organization, invitedAttendees = "") {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     // Send a request under the sessionid
@@ -168,9 +168,12 @@ class Firebase {
       code: 5,
       uid: "",
       title: title,
+      date: date,
+      startTime: startTime,
+      endTime: endTime,
       description: description,
       location: location,
-      imageUrls: files,
+      imagePaths: files,
       category: category,
       organization: organization,
       attendees: invitedAttendees
@@ -223,7 +226,7 @@ class Firebase {
     var i;
     for (i = 0; i < 16; i++){
       var digit = Math.floor(Math.random()*10);
-      id = id.concat(digit);
+      id += digit;
     }
     return id;
   }
@@ -232,22 +235,22 @@ class Firebase {
   // If one image upload fails then all the uploads fail.
   async uploadImagesToPath(images, path) {
     // Setup url array and uploadTask
-    var urls = [];
+    var paths = [];
     var uploadTask = this.storageRef.child(path);
     // Traverse through the array of images
     for (var i = 0; i < images.length; i++) {
       // Upload image and wait to get a url
-      let url = await this.uploadImage(images[i], uploadTask);
-      
+      let path = await this.uploadImage(images[i], uploadTask.child(i + ""));
+      console.log(path);
       // If a url is null then return
-      if (url == null) {
+      if (path == null) {
 	return;
       // add url to array of urls
       } else {
-	urls[i] = url;
+	paths[i] = path;
       }
     }
-    return urls;
+    return paths;
   }
 
   // Uploads a single image given the image and the upload task
@@ -285,10 +288,8 @@ class Firebase {
       deferred.resolve(null);
     }, function() {
       // Handle successful uploads on complete
-      uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-	console.log('Download complete at', downloadURL);
-	deferred.resolve(downloadURL);
-      });
+      var path = uploadTask.fullPath;
+      deferred.resolve(path);
     });
     return deferred.promise;
   }

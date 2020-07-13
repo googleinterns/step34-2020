@@ -20,7 +20,7 @@ class Events extends Component {
       date: null,
       startTime: null,
       endTime: null,
-      
+       
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -35,33 +35,27 @@ class Events extends Component {
     this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
   }
 
+  handleTitleChange(input) {
+    this.setState({
+       title: input.target.value
+    });
+  }
+  
+  handleDateChange(input) {
+    this.setState({
+      date: input.target.value
+    });
+  }
+  
   handleStartTimeChange(input) {
     this.setState({
       startTime: input.target.value
     });
   }
 
-  handleStartTimeChange(input) {
+  handleEndTimeChange(input) {
     this.setState({
       endTime: input.target.value
-    });
-  }
-
-  handleDateChange(input) {
-    this.setState({
-      date: input.target.value
-    });
-  }
-
-  handleTimeChange(input) {
-    this.setState({
-      date: input.target.value
-    });
-  }
-
-  handleTitleChange(input) {
-    this.setState({
-       title: input.target.value
     });
   }
 
@@ -117,11 +111,14 @@ class Events extends Component {
     var location = this.state.location;
     var files = this.state.files;
     var category = categories[this.state.category];
-    var organization = this.state.organization
+    var organization = this.state.organization;
+    var startTime = this.state.startTime;
+    var endTime = this.state.endTime;
+    var date = this.state.date;
+    var imagePaths = this.changeListToString(await this.uploadImages(files));
 
-    // var imageUrls = this.uploadImages(files);
-    var imageUrls = ["url1, url2"];
-    let response = await fb.requestEventCreation(title, description, location, imageUrls, category, organization);
+    //var imageUrls = ["url1, url2"];
+    let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imagePaths, category, organization);
     if (response) {
       // Go to map page
     } 
@@ -129,12 +126,25 @@ class Events extends Component {
 
   async uploadImages(files) {
     var parentPath = "images/events/" + fb.sessionId;
-    let urls = await fb.uploadImagesToPath(files, parentPath);
-    if (urls == null) {
+    let paths = await fb.uploadImagesToPath(files, parentPath);
+    if (paths == null) {
       return;
     } else {
-      return urls;
+      return paths;
     }
+  }
+
+  changeListToString(list) {
+    var string = "";
+    for (var i = 0; i < list.length; i++) {
+      var element = list[i];
+      if (i + 1 == list.length) {
+	string += element;
+      } else {
+        string += element + ",";
+      }
+    }
+    return "[" + string + "]";
   }
 
   render() {
@@ -172,16 +182,16 @@ class Events extends Component {
                 onChange={this.handleStartTimeChange}
                 type="time"/>
               <Form.Text className="text-muted">
-                Tell people when the event start!
+                Tell people when your event starts!
               </Form.Text>
             </Form.Group>
             <Form.Group controlId="formEndTime">
               <Form.Label>End Time</Form.Label>
-              <Form.Control 	
+              <Form.Control 
                 onChange={this.handleEndTimeChange}
                 type="time"/>
               <Form.Text className="text-muted">
-                Tell people when the event ends!
+                Tell people when your event ends!
               </Form.Text>
             </Form.Group>
             <Form.Group controlId="formDescription">

@@ -80,9 +80,12 @@ public class EventCreationManager {
     // Extract all event information
     String eventId = generateUniqueId();
     String title = eventInfo.get("title");
+    String date = eventInfo.get("date");
+    String startTime = eventInfo.get("startTime");
+    String endTime = eventInfo.get("endTime");
     String description = eventInfo.get("description");
     String location = eventInfo.get("location");
-    String imageUrls = eventInfo.get("imageUrls");
+    String imagePaths = eventInfo.get("imagePaths");
     String category = eventInfo.get("category");
     String organization = eventInfo.get("organization");
     String attendees = eventInfo.get("attendees");
@@ -95,11 +98,13 @@ public class EventCreationManager {
     Event event = new Event.Builder()
       .withEventId(eventId)
       .withName(title)
+      .withDate(date)
+      .withStartEndTime(startTime, endTime)
       .withDescription(description)
       .atLocation(location)
       .withOwnerId(ownerId)
       .withOrganization(organization)
-      .withImagePaths(imageUrls)
+      .withImagePaths(imagePaths)
       .build();
 
     // Submit event to the database and add the event id to all attendant's events
