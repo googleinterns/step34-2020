@@ -22,8 +22,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.CancellationException;
 import java.lang.Iterable;
 import java.util.Iterator;
+import java.util.Arrays;
 import java.io.IOException;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -35,14 +40,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.Query;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.api.core.SettableApiFuture;
+import com.google.api.core.ApiFutureCallback;
 import com.google.auth.oauth2.GoogleCredentials;
 
 public class EventCreationManager {
   
   private String sessionId;
-
-  // The user manager to access user information
-  private UserManager userManager;
 
   // The database reference to access the database
   private DatabaseReference eventsRef;
@@ -50,9 +56,8 @@ public class EventCreationManager {
   // The database reference to access the database
   private DatabaseReference usersRef;
 
-  public EventCreationManager(String sessionId, UserManager userManager) {
+  public EventCreationManager(String sessionId) {
     this.sessionId = sessionId;
-    this.userManager = userManager;
     
     if (ServletManagerServlet.isOnDeployedServer) {
       usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com/").getReference(); 
@@ -64,8 +69,8 @@ public class EventCreationManager {
     
   }
 
-  // Creates a new event from the given event info and all attendants along with the request id
-  public void createEvent(String requestId, Map<String, String> eventInfo, List<String> attendees) {
+  // Creates a new event from the given event info along with the request id
+  public void createEvent(String requestId, Map<String, String> eventInfo) {
     // Check for minimum requirements for event info
     if (!checkMinimumInfoInput(eventInfo)) {
       System.err.println("Failed to meet all input requirements");
@@ -74,42 +79,31 @@ public class EventCreationManager {
 
     // Extract all event information
     String eventId = generateUniqueId();
-    String name = eventInfo.get("name");
+    String title = eventInfo.get("title");
     String description = eventInfo.get("description");
     String location = eventInfo.get("location");
-    String imagePath = eventInfo.get("imagePath");
+    String imageUrls = eventInfo.get("imageUrls");
+    String category = eventInfo.get("category");
     String organization = eventInfo.get("organization");
-    String ownerId = eventInfo.get("owner");
-
+    String attendees = eventInfo.get("attendees");
+    String ownerId = eventInfo.get("uid");
+    
+    // Turn strings that need to be arrays into arrays
+    String[] attendeesArray = Utility.stringToArray(attendees);
+    
     // Build a new event
     Event event = new Event.Builder()
       .withEventId(eventId)
-      .withName(name)
+      .withName(title)
       .withDescription(description)
       .atLocation(location)
       .withOwnerId(ownerId)
       .withOrganization(organization)
-      .withImagePath(imagePath)
+      .withImagePaths(imageUrls)
       .build();
 
     // Submit event to the database and add the event id to all attendant's events
-    addEventToEventsDatabase(event);
-    addEventToUserEventDatabase(eventId, attendees);
-    addAttendeesToDatabase(eventId, attendees);
-  }
-
-  private void addEventToEventsDatabase(Event event) { 
-    eventsRef.child(EVNTS).child(event.getEventId()).setValueAsync(event);
-  }
-
-  private void addEventToUserEventDatabase(String eventId, List<String> attendees) {
-    for (String attendee : attendees) {
-      usersRef.child(EVNTS).child(attendee).child(eventId).setValueAsync(eventId);
-    }
-  }
-
-  private void addAttendeesToDatabase(String eventId, List<String> attendees) {
-    eventsRef.child(ATND).child(eventId).setValueAsync(attendees);  
+    addEventToDatabase(requestId, event, attendeesArray); 
   }
 
   private boolean checkMinimumInfoInput(Map<String, String> eventInfo) {
@@ -118,5 +112,38 @@ public class EventCreationManager {
 
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
+  }
+
+  // Adds events to the database and all users who are invited/going to the event
+  private void addEventToDatabase(String requestId, Event event, String[] attendees) { 
+    eventsRef.child(EVNTS).child(event.getEventId()).setValue(event, new DatabaseReference.CompletionListener() {
+      public void onComplete(DatabaseError error, DatabaseReference ref) {
+	if (error == null) {
+	  // Add event under users and add the attendees list
+	  addEventToUserEventDatabase(event.getEventId(), attendees);
+	  addAttendeesToDatabase(event.getEventId(), attendees);
+	  
+	  // Write success response
+	  Map<String, String> response = Utility.createResponse("success", "");
+	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	} else {
+	  // Write failed response
+	  Map<String, String> response = Utility.createResponse("failed", error.getMessage());
+	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	}
+      }	
+    });
+  }
+
+  // Adds attendees to database to get a list representation of the attendees
+  private void addAttendeesToDatabase(String eventId, String[] attendees) {
+    eventsRef.child(ATND).child(eventId).setValueAsync(Arrays.asList(attendees));
+  }
+  
+  // Adds the event id and associates it with the user
+  private void addEventToUserEventDatabase(String eventId, String[] attendees) {
+    for (String attendee : attendees) {
+      usersRef.child(EVNTS).child(attendee).child(eventId).setValueAsync(eventId);
+    }
   }
 }

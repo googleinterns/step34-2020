@@ -22,7 +22,7 @@ public class Event {
   private String location;
   private String ownerId;
   private String organization;
-  private String imagePath;
+  private String imagePaths;
 
   public static class Builder {
 
@@ -32,7 +32,7 @@ public class Event {
     private String location;
     private String ownerId;
     private String organization;
-    private String imagePath;
+    private String imagePaths;
 
     public Builder() {
       this.eventId = "";
@@ -41,7 +41,7 @@ public class Event {
       this.location = "";
       this.ownerId = "";
       this.organization = "";
-      this.imagePath = "";
+      this.imagePaths = "[]";
     }
 
     public Builder withEventId(String id) {
@@ -74,8 +74,8 @@ public class Event {
       return this;
     }
 
-    public Builder withImagePath(String path) {
-      this.imagePath = path;
+    public Builder withImagePaths(String paths) {
+      this.imagePaths = paths;
       return this;
     }
 
@@ -87,7 +87,7 @@ public class Event {
       event.location = this.location;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
-      event.imagePath = this.imagePath;
+      event.imagePaths = this.imagePaths;
 
       return event;
     }
@@ -120,7 +120,7 @@ public class Event {
     return this.organization;
   }
 
-  public String getImagePath() {
-    return this.imagePath;
+  public String getImagePaths() {
+    return this.imagePaths;
   }
 }
