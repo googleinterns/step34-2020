@@ -46,14 +46,6 @@ class TopNavbar extends React.Component {
   }
 
   handleCreateButton() {
-    ReactDOM.render(
-      <div>
-        <Create />
-      </div>,
-      document.getElementById('welcome')
-    );
-    
-    /*
     if (authStatus.isAuthenticated()) {
       ReactDOM.render(
         <div>
@@ -69,7 +61,6 @@ class TopNavbar extends React.Component {
         document.getElementById('root')
       );
     }
-    */
   }
   
   render() {
