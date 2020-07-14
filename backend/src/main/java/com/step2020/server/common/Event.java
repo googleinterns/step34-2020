@@ -50,6 +50,8 @@ public class Event {
       this.location = "";
       this.ownerId = "";
       this.organization = "";
+      // imagePaths will be a string in the form of ["path1","path2",....]. 
+      // This was designed like this because using Lists within an object in Firebase can get wonky.
       this.imagePaths = "[]";
     }
 
@@ -94,6 +96,7 @@ public class Event {
       return this;
     }
 
+    // paths will be a string in the form of "["path1",path2,....]". This makes it easier for firebase to handle this data
     public Builder withImagePaths(String paths) {
       this.imagePaths = paths;
       return this;
