@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Form, Button, Jumbotron, Row, Container } from 'react-bootstrap';
+import ReactDOM from 'react-dom';
+import { Form, Button, Jumbotron, Row, Col, Container, Spinner } from 'react-bootstrap';
 import TopNavbar from './Navbar';
+import style from 'bootstrap/dist/css/bootstrap.css';
 import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 
-const categories = ["None","Social Gathering", "Volunteer Event", "Student Organization Event"];
+const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
 
 class Events extends Component {
   constructor(props) {
@@ -14,13 +16,13 @@ class Events extends Component {
       title: "",
       description: "",
       location: "",
-      files: null,
+      files: [],
       category: 0,
       organization: "",
       date: null,
       startTime: null,
       endTime: null,
-       
+      validated: false,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -105,25 +107,44 @@ class Events extends Component {
   }
 
   async handleSubmit(event) {
+    // Get current target and prevent the default action when submitting
+    const form = event.currentTarget;
     event.preventDefault();
-    var title = this.state.title;
-    var description = this.state.description;
-    var location = this.state.location;
-    var files = this.state.files;
-    var category = categories[this.state.category];
-    var organization = this.state.organization;
-    var startTime = this.state.startTime;
-    var endTime = this.state.endTime;
-    var date = this.state.date;
+    // Style each element was validated
+    event.target.className += " was-validated"; 
     
-    // Uploads images inputted from the form
-    var imageUrls = this.changeListToString(await this.uploadImages(files));
+    // Check validity of each input field and make sure everything has been filled
+    if (!form.checkValidity()) {
+      // If some fields are left out, put a warning message next to the submit button
+      event.stopPropagation();
+      ReactDOM.render("Please fill in all required fields.", document.getElementById("warning"));
+    } else {  
+      // Else, make the warning message empty and add a spinner on the side to show it processing
+      ReactDOM.render("", document.getElementById("warning"));
+      ReactDOM.render(<Spinner animation="border" variant="secondary"/>, document.getElementById("spinner-area"));
+      var title = this.state.title;
+      var description = this.state.description;
+      var location = this.state.location;
+      var files = this.state.files;
+      var category = categories[this.state.category];
+      var organization = this.state.organization;
+      var startTime = this.state.startTime;
+      var endTime = this.state.endTime;
+      var date = this.state.date;
+      
+      // If there were no images inputted then ignore image upload
+      var imageUrls = ""; 
+      if (files.length > 0) {
+        // Uploads images inputted from the form
+        imageUrls = this.changeListToString(await this.uploadImages(files));
+      }
 
-    // The respone acquired from the server
-    let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization);
-    if (response) {
-      // Go to map page
-    } 
+      // The respone acquired from the server
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization);
+      if (response) {
+	// Go to map page
+      } 
+    }
   }
 
   // Uploads images from a FileList and returns the paths of each image.
@@ -157,10 +178,11 @@ class Events extends Component {
         <TopNavbar />
         <Jumbotron >
           <h1>Create Your Event</h1>
-          <Form onSubmit={this.handleSubmit}>
-            <Form.Group controlId="formTitle">
+          <Form noValidate validated={this.validated} onSubmit={this.handleSubmit}>
+            <Form.Group>
               <Form.Label>Event title</Form.Label>
               <Form.Control
+      		required
                 onChange={this.handleTitleChange}
                 type="text" 
                 cols="1" 
@@ -170,37 +192,41 @@ class Events extends Component {
                   Let's add a title to make your event shine!
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId="formDate">
+            <Form.Group>
               <Form.Label>Date</Form.Label>
-              <Form.Control 	
+              <Form.Control
+      		required
                 onChange={this.handleDateChange}
                 type="date"/>
               <Form.Text className="text-muted">
                 Tell people which your event is on!
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId="formStartTime">
+            <Form.Group>
               <Form.Label>Start Time</Form.Label>
               <Form.Control 	
                 onChange={this.handleStartTimeChange}
+      		required
                 type="time"/>
               <Form.Text className="text-muted">
                 Tell people when your event starts!
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId="formEndTime">
+            <Form.Group>
               <Form.Label>End Time</Form.Label>
               <Form.Control 
                 onChange={this.handleEndTimeChange}
+      		required
                 type="time"/>
               <Form.Text className="text-muted">
                 Tell people when your event ends!
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId="formDescription">
+            <Form.Group>
               <Form.Label>Description of your event</Form.Label>
               <Form.Control
                 onChange={this.handleDescriptionChange}
+      		required
                 as="textarea" 
                 rows="3" 
                 placeholder="Your description" />
@@ -208,17 +234,36 @@ class Events extends Component {
                 Add a description to let people know what your event is all about!
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId="formLocation">
+            <Form.Group>
               <Form.Label>Location</Form.Label>
               <Form.Control 	
                 onChange={this.handleLocationChange}
+      		required
                 type="text"
                 placeholder="(12345 Main St)" />
               <Form.Text className="text-muted">
                 Tell people where your event is at!
               </Form.Text>
+            </Form.Group> 
+            <Form.Group>
+              <Form.Label>Categories</Form.Label>
+              <Form.Control	
+                onChange={this.handleCategoryChange}
+                as="select"
+                className="my-1 mr-sm-2"
+                id="categoriesSelect"
+      		required
+                custom="true">
+                <option value="">Choose...</option>
+                <option value="0">Social Gathering</option>
+                <option value="1">Volunteer Event</option>
+                <option value="2">Student Organization Event</option>
+              </Form.Control>
+              <Form.Text className="text-muted">
+                Add some categories so people can find you event easier! 
+              </Form.Text>
             </Form.Group>
-            <Form.Group controlId="formImages">
+      	    <Form.Group>
               <Form.Label>Images</Form.Label>
               <Form.File 
                 id="eventImages" 
@@ -245,25 +290,7 @@ class Events extends Component {
               <Row id="imageRow">
               </Row>
             </Container>
-                  
-            <Form.Group controlId="formCategories">
-              <Form.Label>Categories</Form.Label>
-              <Form.Control	
-                onChange={this.handleCategoryChange}
-                as="select"
-                className="my-1 mr-sm-2"
-                id="categoriesSelect"
-                custom="true">
-                <option value="0">Choose...</option>
-                <option value="1">Social Gathering</option>
-                <option value="2">Volunteer Event</option>
-                <option value="3">Student Organization Event</option>
-              </Form.Control>
-              <Form.Text className="text-muted">
-                Add some categories so people can find you event easier! 
-              </Form.Text>
-            </Form.Group>
-            <Form.Group controlId="formOrganization">
+            <Form.Group>
               <Form.Label>Organization</Form.Label>
               <Form.Control 
                 onChange={this.handleOrganizationChange}
@@ -273,12 +300,19 @@ class Events extends Component {
                 Add an organization that's associated with this event!
               </Form.Text>
             </Form.Group>
-            <Button 
-              id="eventSubmit"
-              variant="primary" 
-              type="submit">
-              Make your event!
-            </Button>
+	    <Row>
+	      <Col md="auto">
+		<Button 
+		  id="eventSubmit"
+		  variant="primary" 
+		  type="submit">
+		  Make your event!
+		</Button>
+	      </Col>
+	      <Col md="auto" id="spinner-area">
+	      </Col>
+	    </Row>
+	    <div id="warning" className="text-danger"></div>
           </Form>
         </Jumbotron>
       </div>

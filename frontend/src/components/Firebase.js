@@ -254,7 +254,7 @@ class Firebase {
   }
 
   // Uploads a single image given the image and the upload task
-  uploadImage(image, uploadTask) {
+  async uploadImage(image, uploadTask) {
     var deferred = new Deferred();
     uploadTask.put(image).on('state_changed', function(snapshot){
       // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -288,8 +288,9 @@ class Firebase {
       deferred.resolve(null);
     }, function() {
       // Handle successful uploads on complete
-      var url = await uploadTask.getDownloadURL();
-      deferred.resolve(url);
+      uploadTask.getDownloadURL().then(function(downloadURL) {
+        deferred.resolve(downloadURL);
+      });
     });
     return deferred.promise;
   }
