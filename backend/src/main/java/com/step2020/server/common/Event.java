@@ -103,6 +103,11 @@ public class Event {
     }
 
     public Event build() {
+      if (this.eventId.isEmpty() || this.eventName.isEmpty() || this.description.isEmpty() || this.ownerId.isEmpty()
+         || this.date.isEmpty() || this.startTime.isEmpty() || this.endTime.isEmpty() || this.location.isEmpty()) {
+        throw new AssertionError("Required inputs are not filled.", null); 
+      }
+      
       Event event = new Event();
       event.eventId = this.eventId;
       event.date = this.date;
