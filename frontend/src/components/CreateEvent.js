@@ -115,25 +115,29 @@ class Events extends Component {
     var startTime = this.state.startTime;
     var endTime = this.state.endTime;
     var date = this.state.date;
-    var imagePaths = this.changeListToString(await this.uploadImages(files));
+    
+    // Uploads images inputted from the form
+    var imageUrls = this.changeListToString(await this.uploadImages(files));
 
-    //var imageUrls = ["url1, url2"];
-    let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imagePaths, category, organization);
+    // The respone acquired from the server
+    let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization);
     if (response) {
       // Go to map page
     } 
   }
 
+  // Uploads images from a FileList and returns the paths of each image.
   async uploadImages(files) {
     var parentPath = "images/events/" + fb.sessionId;
-    let paths = await fb.uploadImagesToPath(files, parentPath);
-    if (paths == null) {
+    let urls = await fb.uploadImagesToPath(files, parentPath);
+    if (urls == null) {
       return;
     } else {
-      return paths;
+      return urls;
     }
   }
 
+  // Changes the list into string form. (Ex. ["item1", "item2"])
   changeListToString(list) {
     var string = "";
     for (var i = 0; i < list.length; i++) {
@@ -147,8 +151,7 @@ class Events extends Component {
     return "[" + string + "]";
   }
 
-  render() {
-    
+  render() { 
     return(
       <div>
         <TopNavbar />

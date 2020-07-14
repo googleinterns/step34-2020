@@ -25,7 +25,7 @@ public class Event {
   private String location;
   private String ownerId;
   private String organization;
-  private String imagePaths;
+  private String imageUrls;
 
   public static class Builder {
 
@@ -38,7 +38,7 @@ public class Event {
     private String location;
     private String ownerId;
     private String organization;
-    private String imagePaths;
+    private String imageUrls;
 
     public Builder() {
       this.eventId = "";
@@ -50,9 +50,9 @@ public class Event {
       this.location = "";
       this.ownerId = "";
       this.organization = "";
-      // imagePaths will be a string in the form of ["path1","path2",....]. 
+      // imageUrls will be a string in the form of [url0,url1,....]. 
       // This was designed like this because using Lists within an object in Firebase can get wonky.
-      this.imagePaths = "[]";
+      this.imageUrls = "[]";
     }
 
     public Builder withEventId(String id) {
@@ -96,9 +96,9 @@ public class Event {
       return this;
     }
 
-    // paths will be a string in the form of "["path1",path2,....]". This makes it easier for firebase to handle this data
-    public Builder withImagePaths(String paths) {
-      this.imagePaths = paths;
+    // paths will be a string in the form of "[url0,url1,....]". This makes it easier for firebase to handle this data
+    public Builder withImageUrls(String urls) {
+      this.imageUrls = urls;
       return this;
     }
 
@@ -118,7 +118,7 @@ public class Event {
       event.location = this.location;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
-      event.imagePaths = this.imagePaths;
+      event.imageUrls = this.imageUrls;
 
       return event;
     }
@@ -159,7 +159,7 @@ public class Event {
     return this.organization;
   }
 
-  public String getImagePaths() {
-    return this.imagePaths;
+  public String getImageUrls() {
+    return this.imageUrls;
   }
 }

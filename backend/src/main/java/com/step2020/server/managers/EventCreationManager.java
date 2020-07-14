@@ -85,7 +85,7 @@ public class EventCreationManager {
     String endTime = eventInfo.get("endTime");
     String description = eventInfo.get("description");
     String location = eventInfo.get("location");
-    String imagePaths = eventInfo.get("imagePaths");
+    String imageUrls = eventInfo.get("imageUrls");
     String category = eventInfo.get("category");
     String organization = eventInfo.get("organization");
     String attendees = eventInfo.get("attendees");
@@ -104,7 +104,7 @@ public class EventCreationManager {
       .atLocation(location)
       .withOwnerId(ownerId)
       .withOrganization(organization)
-      .withImagePaths(imagePaths)
+      .withImageUrls(imageUrls)
       .build();
 
     // Submit event to the database and add the event id to all attendant's events
