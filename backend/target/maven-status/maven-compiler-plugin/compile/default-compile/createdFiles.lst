@@ -1,0 +1,17 @@
+com/step2020/server/servlets/ServletManagerServlet$1.class
+com/step2020/server/managers/ActionManager.class
+com/step2020/server/managers/EventCreationManager$1.class
+com/step2020/server/common/Event.class
+com/step2020/server/common/Utility.class
+com/step2020/server/managers/UserManager.class
+com/step2020/server/common/Utility$1.class
+com/step2020/server/managers/ActionManager$1.class
+com/step2020/server/common/Utility$2.class
+com/step2020/server/common/Event$Builder.class
+com/step2020/server/common/Constants.class
+com/step2020/server/managers/EventCreationManager.class
+com/step2020/server/servlets/ServletManagerServlet$1$1.class
+com/step2020/server/managers/UserManager$1.class
+com/step2020/server/servlets/ServletManagerServlet.class
+com/step2020/server/common/User$Builder.class
+com/step2020/server/common/User.class
