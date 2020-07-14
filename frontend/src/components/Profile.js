@@ -18,45 +18,30 @@ class Profile extends React.Component {
     };
   }
 
-  didUpdate() {
-    return(
-      //iterate through all events of the user
-      this.state.eventslist.map(event => (
-        <div className="events" style={{
-          display:"flex",
-          justifyContent:"space-around",
-          borderBottom:"1px solid grey",
-          marginBottom:".5rem"}}>
-          <div>
-            <label>{event.eventName}</label><br />
-            <label>{event.date}</label><br />
-            <label>{event.location}</label><br />
-            <label>{event.startTime} - {event.endTime}</label><br />
-            {/* list all attendees */}
-            <DropdownButton id="dropdown-basic-button" title="Attendees">
-              {event.attendees.map(attendee => (
-                <Dropdown.Item>{attendee}</Dropdown.Item>))}
-            </DropdownButton><br />
-            <Button style={{
-              backgroundColor:"green",
-              marginRight:".5rem",
-              width:"80px",
-              marginBottom:".8rem"}}>
-              edit 
-            </Button>
-            <Button style={{
-              backgroundColor:"red",
-              width:"80px",
-              marginBottom:".8rem"}}>
-              delete
-            </Button>
-          </div>
-          <div className="Gallery">
-            <img style={{width:"280px"}} src={event.gallery[0]} alt="" />
-            <img style={{width:"280px"}} src={event.gallery[1]} alt="" />
-          </div>
-        </div>))
-      )
+  /*
+  renderButtons() {
+    return (
+      <Button style={{
+	backgroundColor:"green",
+	marginRight:".5rem",
+	width:"80px",
+	marginBottom:".8rem"}}>
+	edit 
+      </Button>
+      <Button style={{
+	backgroundColor:"red",
+	width:"80px",
+	marginBottom:".8rem"}}>
+	delete
+      </Button>
+    )
+  }
+*/
+
+  didUpdate(event) {
+    console.log(event);
+    var content = document.getElementById("events");
+    content.innerHTML += "<div><label>{" + event.eventName + "}</label><br /><label>{" + event.date + "}</label><br /><label>{" + event.location + "}</label><br /><label>{" + event.startTime + "} - {" + event.endTime + "}</label><br /><br /></div>";
   }
 
   getData(eventKeys){
@@ -65,6 +50,7 @@ class Profile extends React.Component {
       const ref = fb.eventsRef.child("events").child(key);
       ref.on('value', snapshot => {
         const event = snapshot.val();
+	this.didUpdate(event);
         this.state.eventslist.push(event)
       });
     });
@@ -110,7 +96,12 @@ class Profile extends React.Component {
         </div>
         <div className="content">
           <br />
-          {this.didUpdate.bind(this)}
+	  <div id="events" className="events" style={{
+	    display:"flex",
+	    justifyContent:"space-around",
+	    borderBottom:"1px solid grey",
+	    marginBottom:".5rem"}}>
+	  </div>
         </div>
       </div>
     )	
