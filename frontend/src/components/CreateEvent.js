@@ -138,7 +138,7 @@ class Events extends Component {
     var string = "";
     for (var i = 0; i < list.length; i++) {
       var element = list[i];
-      if (i + 1 == list.length) {
+      if (i + 1 === list.length) {
 	string += element;
       } else {
         string += element + ",";
@@ -151,7 +151,7 @@ class Events extends Component {
     
     return(
       <div>
-        <TopNavbar />
+        <TopNavbar loggedIn={true} credentials={this.props.credentials} />
         <Jumbotron >
           <h1>Create Your Event</h1>
           <Form onSubmit={this.handleSubmit}>

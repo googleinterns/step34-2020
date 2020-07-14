@@ -191,6 +191,7 @@ class Firebase {
     var ref = this.sessionsRef;
     var sessionId = this.sessionId;
 
+
     // Listen for responses under the RESPONSES path
     var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', function(snapshot) {
       if (snapshot.key === requestId) {

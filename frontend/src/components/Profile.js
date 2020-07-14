@@ -1,7 +1,6 @@
 import React from 'react';
 import TopNavbar from './Navbar';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
+import '../App.css';
 import Button from 'react-bootstrap/Button';
 import { fb } from '../App';
 
@@ -18,30 +17,55 @@ class Profile extends React.Component {
     };
   }
 
-  /*
-  renderButtons() {
+  renderEditButton() {
+    return (
+        <Button style={{
+          backgroundColor:"green",
+          marginRight:".5rem",
+          width:"80px",
+          marginBottom:".8rem"}}>
+          edit 
+        </Button>
+    )
+  }
+
+  renderDeleteButton() {
     return (
       <Button style={{
-	backgroundColor:"green",
-	marginRight:".5rem",
-	width:"80px",
-	marginBottom:".8rem"}}>
-	edit 
-      </Button>
-      <Button style={{
-	backgroundColor:"red",
-	width:"80px",
-	marginBottom:".8rem"}}>
-	delete
+        backgroundColor:"red",
+        width:"80px",
+        marginBottom:".8rem"}}>
+        delete
       </Button>
     )
   }
-*/
+
 
   didUpdate(event) {
-    console.log(event);
-    var content = document.getElementById("events");
-    content.innerHTML += "<div><label>{" + event.eventName + "}</label><br /><label>{" + event.date + "}</label><br /><label>{" + event.location + "}</label><br /><label>{" + event.startTime + "} - {" + event.endTime + "}</label><br /><br /></div>";
+    var attendees = ["user1", "user2", "user3"];
+    var content = document.getElementById("content");
+
+    // Add first part of component before list of attendees
+    content.innerHTML += 
+      "<div class='otherContent'>"+
+        "<label>" + event.eventName + "</label><br />"+
+        "<label>" +  event.date + "</label><br />" +
+        "<label>" +  event.location + "</label><br />" +
+        "<label>" + event.startTime + " - " + event.endTime + "</label><br /></div>";
+
+    // Add list of attendees to a drop down  list
+    var Attendeeslist = "<select>" + 
+          "<option>Attendees</option>";
+    attendees.forEach(element => {
+      Attendeeslist += "<option>" + element + "</option>"
+    });
+
+    // Add the remaining part of the component after list of attendees
+    content.innerHTML += "<div class='eventContent'>" + Attendeeslist +
+        "</select><br /><br />" +
+        "<Button class='deleteButton'>delete</Button> " + 
+        "<Button class='editButton'>edit</Button><br /><br />" + 
+      "</div>";
   }
 
   getData(eventKeys){
@@ -50,7 +74,7 @@ class Profile extends React.Component {
       const ref = fb.eventsRef.child("events").child(key);
       ref.on('value', snapshot => {
         const event = snapshot.val();
-	this.didUpdate(event);
+        this.didUpdate(event);
         this.state.eventslist.push(event)
       });
     });
@@ -72,11 +96,9 @@ class Profile extends React.Component {
   }
 
   render() {
-    console.log(this.state.eventslist)
-    console.log(this.state.eventslist)
     return (
-      <div>
-        <TopNavbar loggedIn={true}/>
+      <div class="body">
+        <TopNavbar loggedIn={true} credentials={this.state.credentials}/>
         {/* get user profile picture and user name */}
         <div className="profilepictureContent" 
           style={{borderBottom:"4px solid grey"}}>
@@ -94,14 +116,12 @@ class Profile extends React.Component {
             </h4>
           </div>
         </div>
-        <div className="content">
+        <div 
+          id="content"
+          style={{
+          marginLeft:"1.8rem",
+          marginTop:".8rem"}}>
           <br />
-	  <div id="events" className="events" style={{
-	    display:"flex",
-	    justifyContent:"space-around",
-	    borderBottom:"1px solid grey",
-	    marginBottom:".5rem"}}>
-	  </div>
         </div>
       </div>
     )	
