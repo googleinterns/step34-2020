@@ -23,35 +23,8 @@
   color: #61dafb;
 }
 
-.otherContent {
-  font-size: calc(8px + 1vmin);
-}
-
-.eventContent {
-  border-Bottom:2px solid grey;
-  margin-Bottom:.5rem;
-  font-size: calc(8px + 1vmin);
-}
-
 .body {
   background-color: #e9ecef;
-}
-.deleteButton {
-  border-radius: 15px;
-  background: #e7321a;
-  padding: 20px;
-  width: 80px;
-  height: 10px;
-  line-height : 0px;
-}
-
-.editButton {
-  border-radius: 15px;
-  background: #73AD21;
-  padding: 20px;
-  width: 80px;
-  height: 10px;
-  line-height : 0px;
 }
 
 @keyframes App-logo-spin {

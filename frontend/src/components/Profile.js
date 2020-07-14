@@ -1,8 +1,13 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
 import Button from 'react-bootstrap/Button';
 import { fb } from '../App';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Card from 'react-bootstrap/Card';
+import CardDeck from 'react-bootstrap/CardDeck';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -13,6 +18,7 @@ class Profile extends React.Component {
       username: props.credentials.displayName,
       credentials: props.credentials,
       eventslist: [],
+      cards:[],
       userslist: [],
     };
   }
@@ -43,29 +49,40 @@ class Profile extends React.Component {
 
   didUpdate(event) {
     var attendees = ["user1", "user2", "user3"];
-    var content = document.getElementById("content");
+    var len = event.imagePaths.length;
+    var imageUrl = "";
+    if(len > 0) {
+      imageUrl = event.imagePaths.slice(1, len - 2);
+      imageUrl = imageUrl.split(",");
+    }
+    
+    this.state.cards.push(<Card style={{ width: '18rem' }}>
+      <Card.Img variant="top" src={imageUrl[0]} />
+        <Card.Body>
+          <Card.Title>{event.eventName}</Card.Title>
+          <Card.Text>
+            {event.description}
+          </Card.Text>
+          <Card.Text>{event.location}</Card.Text>
+          <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
+          <DropdownButton id="dropdown-basic-button" title="Attendees">
+            {attendees.map(attendee => (
+              <Dropdown.Item>{attendee}</Dropdown.Item>))}
+          </DropdownButton><br />
+          <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
+            Edit
+          </Button>
+          <Button variant="danger" style={{ width:"80px" }}>
+            Delete
+          </Button>
+        </Card.Body>
+      </Card>)
 
-    // Add first part of component before list of attendees
-    content.innerHTML += 
-      "<div class='otherContent'>"+
-        "<label>" + event.eventName + "</label><br />"+
-        "<label>" +  event.date + "</label><br />" +
-        "<label>" +  event.location + "</label><br />" +
-        "<label>" + event.startTime + " - " + event.endTime + "</label><br /></div>";
-
-    // Add list of attendees to a drop down  list
-    var Attendeeslist = "<select>" + 
-          "<option>Attendees</option>";
-    attendees.forEach(element => {
-      Attendeeslist += "<option>" + element + "</option>"
-    });
-
-    // Add the remaining part of the component after list of attendees
-    content.innerHTML += "<div class='eventContent'>" + Attendeeslist +
-        "</select><br /><br />" +
-        "<Button class='deleteButton'>delete</Button> " + 
-        "<Button class='editButton'>edit</Button><br /><br />" + 
-      "</div>";
+    ReactDOM.render( 
+      <CardDeck>
+        {this.state.cards.map(element   => element)}
+      </CardDeck>,
+      document.getElementById("content"))
   }
 
   getData(eventKeys){
