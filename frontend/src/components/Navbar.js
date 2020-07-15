@@ -15,8 +15,20 @@ export default class TopNavbar extends React.Component {
     super(props);
 
     this.state= {
-      loggedIn: props.loggedIn
+      loggedIn: props.loggedIn,
+      history: props.history,
     }
+
+    var credentials;
+
+    if (props.credentials) {
+        this.credentials = props.credentials;
+    } else if (props.history.location.state){
+        if (props.history.location.state.credentials) {
+            this.credentials = props.history.location.state.credentials;
+        }
+    }
+
   }
   handleLoginButtonClick() {
     // If the user is signed in
@@ -28,7 +40,7 @@ export default class TopNavbar extends React.Component {
     if (!this.props.loggedIn) {
       ReactDOM.render(
         <div id="modal">
-          <Modal />
+          <Modal history={this.props.history}/>
         </div>,
         document.getElementById('modal-wrapper')
       );
@@ -36,23 +48,33 @@ export default class TopNavbar extends React.Component {
   }
 
   handleMapViewonClick() {
-    //
+    if (!this.props.loggedIn) {
+      ReactDOM.render(
+        <div id="modal">
+          <Modal history={this.props.history}/>
+        </div>,
+        document.getElementById('modal-wrapper')
+      );
+    } else {
+      this.props.history.push({
+        pathname: '/map/',
+        state: {loggedIn: this.props.loggedIn, credentials: this.credentials}
+      });
+    }
   }
 
   handleProfileButtonClick() {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
     if (this.props.loggedIn) {
-      ReactDOM.render(
-        <div>
-          <Profile />
-        </div>,
-        document.getElementById('root')
-      );
+      this.props.history.push({
+        pathname: '/profile/',
+        state: {loggedIn: this.props.loggedIn, credentials: JSON.stringify(this.credentials)}
+      })
     } else {
       ReactDOM.render(
         <div id="modal">
-          <Modal />
+          <Modal history={this.props.history}/>
         </div>,
         document.getElementById('modal-wrapper')
       );
@@ -76,16 +98,14 @@ export default class TopNavbar extends React.Component {
 
   handleCreateButton() {
     if (this.props.loggedIn) {
-      ReactDOM.render(
-        <div>
-          <Create />
-        </div>,
-        document.getElementById('root')
-      );
+      this.props.history.push({
+        pathname: '/create/',
+        state: {loggedIn: this.props.loggedIn, credentials: this.credentials}
+      })
     } else {
       ReactDOM.render(
         <div id="modal">
-          <Modal />
+          <Modal history={this.props.history}/>
         </div>,
         document.getElementById('modal-wrapper')
       );
