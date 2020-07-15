@@ -18,30 +18,41 @@ public class Event {
   
   private String eventId;
   private String eventName;
+  private String date;
+  private String startTime;
+  private String endTime;
   private String description;
   private String location;
   private String ownerId;
   private String organization;
-  private String imagePath;
+  private String imageUrls;
 
   public static class Builder {
 
     private String eventId;
     private String eventName;
+    private String date;
+    private String startTime;
+    private String endTime;
     private String description;
     private String location;
     private String ownerId;
     private String organization;
-    private String imagePath;
+    private String imageUrls;
 
     public Builder() {
       this.eventId = "";
       this.eventName = "";
+      this.date = "";
+      this.startTime = "";
+      this.endTime = "";
       this.description = "";
       this.location = "";
       this.ownerId = "";
       this.organization = "";
-      this.imagePath = "";
+      // imageUrls will be a string in the form of [url0,url1,....]. 
+      // This was designed like this because using Lists within an object in Firebase can get wonky.
+      this.imageUrls = "[]";
     }
 
     public Builder withEventId(String id) {
@@ -51,6 +62,17 @@ public class Event {
 
     public Builder withName(String name) {
       this.eventName = name;
+      return this;
+    }
+
+    public Builder withDate(String date) {
+      this.date = date;
+      return this;
+    }
+
+    public Builder withStartEndTime(String start, String end) {
+      this.startTime = start;
+      this.endTime = end;
       return this;
     }
 
@@ -74,24 +96,27 @@ public class Event {
       return this;
     }
 
-    public Builder withImagePath(String path) {
-      this.imagePath = path;
+    // paths will be a string in the form of "[url0,url1,....]". This makes it easier for firebase to handle this data
+    public Builder withImageUrls(String urls) {
+      this.imageUrls = urls;
       return this;
     }
 
     public Event build() {
       Event event = new Event();
       event.eventId = this.eventId;
+      event.date = this.date;
+      event.startTime = this.startTime;
+      event.endTime = this.endTime;
       event.eventName = this.eventName;
       event.description = this.description;
       event.location = this.location;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
-      event.imagePath = this.imagePath;
+      event.imageUrls = this.imageUrls;
 
       return event;
     }
-
   }
   
   public Event() {}
@@ -103,11 +128,23 @@ public class Event {
   public String getEventName() {
     return this.eventName;
   }
+  
+  public String getDate() {
+    return this.date;
+  }
+  
+  public String getStartTime() {
+    return this.startTime;
+  }
+  
+  public String getEndTime() {
+    return this.endTime;
+  }
 
   public String getDescription() {
     return this.description;
   }
-
+  
   public String getLocation() {
     return this.location;
   }
@@ -120,7 +157,7 @@ public class Event {
     return this.organization;
   }
 
-  public String getImagePath() {
-    return this.imagePath;
+  public String getImageUrls() {
+    return this.imageUrls;
   }
 }
