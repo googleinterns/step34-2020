@@ -3,7 +3,7 @@ import 'firebase/database';
 import { Deferred } from '@firebase/util';
 
 const config = {
-  apiKey: "API_KEY_HERE",
+  apiKey: "AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020.firebaseio.com",
   projectId: "step-34-2020",
@@ -14,7 +14,7 @@ const config = {
 };
 
 const testConfig = {
-  apiKey: "API_KEY_HERE",
+  apiKey: "AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020-test.firebaseio.com",
   projectId: "step-34-2020",
@@ -160,7 +160,7 @@ class Firebase {
 
  // Request event creation given the parameters. 
  // The first three parameters are required, the rest are optional.
- requestEventCreation(title, date, startTime, endTime, description, location, files, category, organization, invitedAttendees = "") {
+ requestEventCreation(title, date, startTime, endTime, description, plusCode, location, files = "", category, organization = "", invitedAttendees = "") {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     // Send a request under the sessionid
@@ -172,6 +172,7 @@ class Firebase {
       startTime: startTime,
       endTime: endTime,
       description: description,
+      plusCode: plusCode,
       location: location,
       imagePaths: files,
       category: category,

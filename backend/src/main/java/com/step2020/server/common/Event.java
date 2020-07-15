@@ -22,6 +22,7 @@ public class Event {
   private String startTime;
   private String endTime;
   private String description;
+  private String plusCode;
   private String location;
   private String ownerId;
   private String organization;
@@ -35,6 +36,7 @@ public class Event {
     private String startTime;
     private String endTime;
     private String description;
+    private String plusCode;
     private String location;
     private String ownerId;
     private String organization;
@@ -47,6 +49,7 @@ public class Event {
       this.startTime = "";
       this.endTime = "";
       this.description = "";
+      this.plusCode = "";
       this.location = "";
       this.ownerId = "";
       this.organization = "";
@@ -81,6 +84,11 @@ public class Event {
       return this;
     }
 
+    public Builder withPlusCode(String plusCode) {
+      this.plusCode = plusCode;
+      return this;
+    }
+
     public Builder atLocation(String location) {
       this.location = location;
       return this;
@@ -110,6 +118,7 @@ public class Event {
       event.endTime = this.endTime;
       event.eventName = this.eventName;
       event.description = this.description;
+      event.plusCode = this.plusCode;
       event.location = this.location;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
@@ -144,7 +153,11 @@ public class Event {
   public String getDescription() {
     return this.description;
   }
-  
+
+  public String getPlusCode() {
+    return this.plusCode;
+  }
+
   public String getLocation() {
     return this.location;
   }

@@ -28,6 +28,15 @@ public final class Constants {
   // Where we put events associated with user
   public static final String EVNTS = "events";
   
+  // Where we put event ids associate to their univeristy
+  public static final String UNI = "university";
+
+  // Where we put event ids under a category
+  public static final String CTGRY = "category";
+
+  // Where we put event ids under a category
+  public static final String ALL = "All";
+  
   // Where we put user information
   public static final String USRS = "users";
 
