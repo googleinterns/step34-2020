@@ -25,7 +25,7 @@ public class Event {
   private String location;
   private String ownerId;
   private String organization;
-  private String imagePaths;
+  private String imageUrls;
 
   public static class Builder {
 
@@ -38,7 +38,7 @@ public class Event {
     private String location;
     private String ownerId;
     private String organization;
-    private String imagePaths;
+    private String imageUrls;
 
     public Builder() {
       this.eventId = "";
@@ -50,7 +50,9 @@ public class Event {
       this.location = "";
       this.ownerId = "";
       this.organization = "";
-      this.imagePaths = "[]";
+      // imageUrls will be a string in the form of [url0,url1,....]. 
+      // This was designed like this because using Lists within an object in Firebase can get wonky.
+      this.imageUrls = "[]";
     }
 
     public Builder withEventId(String id) {
@@ -94,12 +96,18 @@ public class Event {
       return this;
     }
 
-    public Builder withImagePaths(String paths) {
-      this.imagePaths = paths;
+    // paths will be a string in the form of "[url0,url1,....]". This makes it easier for firebase to handle this data
+    public Builder withImageUrls(String urls) {
+      this.imageUrls = urls;
       return this;
     }
 
     public Event build() {
+      if (this.eventId.isEmpty() || this.eventName.isEmpty() || this.description.isEmpty() || this.ownerId.isEmpty()
+         || this.date.isEmpty() || this.startTime.isEmpty() || this.endTime.isEmpty() || this.location.isEmpty()) {
+        throw new AssertionError("Required inputs are not filled.", null); 
+      }
+      
       Event event = new Event();
       event.eventId = this.eventId;
       event.date = this.date;
@@ -110,7 +118,7 @@ public class Event {
       event.location = this.location;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
-      event.imagePaths = this.imagePaths;
+      event.imageUrls = this.imageUrls;
 
       return event;
     }
@@ -151,7 +159,7 @@ public class Event {
     return this.organization;
   }
 
-  public String getImagePaths() {
-    return this.imagePaths;
+  public String getImageUrls() {
+    return this.imageUrls;
   }
 }
