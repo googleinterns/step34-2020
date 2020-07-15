@@ -17,6 +17,7 @@ package com.step2020.server.managers;
 import com.step2020.server.common.*;
 import static com.step2020.server.common.Constants.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Iterable;
@@ -41,6 +42,9 @@ public class ActionManager {
   // The user manager to access user information
   private UserManager userManager;
 
+  // The event creation manager to access events
+  private EventCreationManager eventManager;
+
   // The database reference to access the database
   private DatabaseReference idRef;
 
@@ -48,7 +52,7 @@ public class ActionManager {
     this.sessionId =  sessionId;
     // Connect database reference
     idRef = FirebaseDatabase.getInstance().getReference();
-    setupUserManager();
+    setupManagers();
     setupRequestListenerAndManageRequests();
   }
 
@@ -91,61 +95,26 @@ public class ActionManager {
   }
 
   // Manages requests based on the code in the value map
-  private void manageRequests(String key, Map<String, String> value) {
+  private void manageRequests(String requestId, Map<String, String> value) {
     // Given the command code, execute the command
     int code = Integer.parseInt(value.get("code"));
-
     switch (code) {
       // Code 1 is creating a user with the email, password, and name
       case 1:
 	String email = value.get("email");
 	String password = value.get("password");
 	String name = value.get("name");
-	userManager.createUserAndAddToDatabase(key, email, password, name);
+	userManager.createUserAndAddToDatabase(requestId, email, password, name);
 	break;
-    }
-    
+      case 5:
+	eventManager.createEvent(requestId, value);
+	break;	
+    } 
   }
 
-  private void setupUserManager() {
+  private void setupManagers() {
     this.userManager = new UserManager(this.sessionId);
-  }
-
-  // Creates a response based off of the status and message given
-  public static Map<String, String> createResponse(String status, String message) {
-    Map<String, String> response = new HashMap();
-    response.put("status", status);
-    response.put("message", message);
-    return response;
-  }
-
-  // Sends a response under the session id and request id and removes the request from the session.
-  public static void sendResponseAndRemoveRequest(String sessionId, String requestId, Map<String, String> response) {
-    DatabaseReference responseRef = FirebaseDatabase.getInstance().getReference();
-    responseRef.child(RSPNSE).child(sessionId).child(requestId).setValue(response, new DatabaseReference.CompletionListener() {
-     public void onComplete(DatabaseError error, DatabaseReference ref) {
-       if (error == null) {
-	 System.out.println("Session ID: " + sessionId);
-	 System.out.println("Request ID: " + requestId);
-	 System.out.println("Successfully sent response");
-	 removeRequest(sessionId, requestId);
-       }
-     } 
-    });
-  }
-
-  // Removes the request through request id from the session id.
-  private static void removeRequest(String sessionId, String requestId) {
-    DatabaseReference responseRef = FirebaseDatabase.getInstance().getReference();
-    responseRef.child(RQSTS).child(sessionId).child(requestId).removeValue(new DatabaseReference.CompletionListener() { 
-     public void onComplete(DatabaseError error, DatabaseReference ref) {
-       if (error == null) {
-	 System.out.println("Session ID: " + sessionId);
-	 System.out.println("Request ID: " + requestId);
-	 System.out.println("Successfully removed request");
-       }
-     } 
-    });
+    this.eventManager = new EventCreationManager(this.sessionId);
   }
 }
 

@@ -168,16 +168,16 @@ public class UserManager {
   private void sendSuccess(String requestId, String sessionId) {
     String status = "success";
     String message = "";
-    Map<String, String> response = ActionManager.createResponse(status, message);
-    ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
+    Map<String, String> response = Utility.createResponse(status, message);
+    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
   }
 
   // Sends a failure response to the request id along with a error message
   private void sendFailure(String requestId, String sessionId, String message) {
     // Send a response to the client to let them know the account creation has failed
     String status = "failed";
-    Map<String, String> response = ActionManager.createResponse(status, message);
-    ActionManager.sendResponseAndRemoveRequest(sessionId, requestId, response);
+    Map<String, String> response = Utility.createResponse(status, message);
+    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
   }
 }
 
