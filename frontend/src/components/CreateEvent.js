@@ -140,7 +140,7 @@ class Events extends Component {
       }
 
       // The respone acquired from the server
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization);
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization, "", this.props.credentials.uid);
       if (response) {
 	// Go to map page
       } 

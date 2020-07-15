@@ -7,7 +7,7 @@ import { fb } from '../App';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
-import CardDeck from 'react-bootstrap/CardDeck';
+import CardColumns from 'react-bootstrap/CardColumns'
 
 class Profile extends React.Component {
   constructor(props) {
@@ -23,29 +23,6 @@ class Profile extends React.Component {
     };
   }
 
-  renderEditButton() {
-    return (
-        <Button style={{
-          backgroundColor:"green",
-          marginRight:".5rem",
-          width:"80px",
-          marginBottom:".8rem"}}>
-          edit 
-        </Button>
-    )
-  }
-
-  renderDeleteButton() {
-    return (
-      <Button style={{
-        backgroundColor:"red",
-        width:"80px",
-        marginBottom:".8rem"}}>
-        delete
-      </Button>
-    )
-  }
-
 
   didUpdate(event) {
     var attendees = ["user1", "user2", "user3"];
@@ -54,10 +31,15 @@ class Profile extends React.Component {
     if(len > 0) {
       imageUrl = event.imagePaths.slice(1, len - 2);
       imageUrl = imageUrl.split(",");
+
+      // create a card that contain images fro the event
+      var card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
     }
-    
-    this.state.cards.push(<Card style={{ width: '18rem' }}>
-      <Card.Img variant="top" src={imageUrl[0]} />
+
+    this.state.cards.push(
+      <Card>
+        {card}
+        {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
         <Card.Body>
           <Card.Title>{event.eventName}</Card.Title>
           <Card.Text>
@@ -79,9 +61,9 @@ class Profile extends React.Component {
       </Card>)
 
     ReactDOM.render( 
-      <CardDeck>
+      <CardColumns>
         {this.state.cards.map(element   => element)}
-      </CardDeck>,
+      </CardColumns>,
       document.getElementById("content"))
   }
 
