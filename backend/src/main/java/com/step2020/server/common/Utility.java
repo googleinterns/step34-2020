@@ -76,7 +76,7 @@ public class Utility {
     }
 
     // Remove ending brackets
-    String substringArray = stringArray.substring(1, stringArray.length());
+    String substringArray = stringArray.substring(1, stringArray.length()-1);
     
     return substringArray.split(",");
   }

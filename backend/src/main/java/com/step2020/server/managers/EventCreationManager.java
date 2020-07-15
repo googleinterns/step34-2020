@@ -20,6 +20,7 @@ import static com.step2020.server.common.Constants.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -73,7 +74,12 @@ public class EventCreationManager {
   public void createEvent(String requestId, Map<String, String> eventInfo) {
     // Check for minimum requirements for event info
     if (!checkMinimumInfoInput(eventInfo)) {
-      System.err.println("Failed to meet all input requirements");
+      String errorMessage = "Failed to meet all input requirements.";
+      System.err.println(errorMessage);
+      
+      // Write failed response
+      Map<String, String> response = Utility.createResponse("failed", errorMessage);
+      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
       return;
     }
 
@@ -96,23 +102,34 @@ public class EventCreationManager {
     
     // Build a new event
     Event event = new Event.Builder()
-      .withEventId(eventId)
-      .withName(title)
-      .withDate(date)
-      .withStartEndTime(startTime, endTime)
-      .withDescription(description)
-      .atLocation(location)
-      .withOwnerId(ownerId)
-      .withOrganization(organization)
-      .withImageUrls(imageUrls)
-      .build();
+	.withEventId(eventId)
+	.withName(title)
+	.withDate(date)
+	.withStartEndTime(startTime, endTime)
+	.withDescription(description)
+	.atLocation(location)
+	.withOwnerId(ownerId)
+	.withOrganization(organization)
+	.withImageUrls(imageUrls)
+	.build();
 
     // Submit event to the database and add the event id to all attendant's events
     addEventToDatabase(requestId, event, attendeesArray); 
   }
 
+  // Checks to make sure all required elements are inputted
   private boolean checkMinimumInfoInput(Map<String, String> eventInfo) {
-    return eventInfo.containsKey("title") && eventInfo.containsKey("description") && eventInfo.containsKey("location");
+    Set<Map.Entry<String, String>> entries = eventInfo.entrySet();
+    Iterator<Map.Entry<String,String>> it = entries.iterator();
+    while(it.hasNext()) {
+      Map.Entry<String, String> entry = it.next();
+      if (!entry.getKey().equals("imagePaths") || !entry.getKey().equals("organization")) {
+	if (entry.getValue() == null || entry.getValue().isEmpty()) {
+	  return false;
+	} 
+      }
+    } 
+    return true;
   }
 
   private String generateUniqueId() {
@@ -120,7 +137,7 @@ public class EventCreationManager {
   }
 
   // Adds events to the database and all users who are invited/going to the event
-  private void addEventToDatabase(String requestId, Event event, String[] attendees) { 
+  private void addEventToDatabase(String requestId, Event event, String[] attendees) {
     eventsRef.child(EVNTS).child(event.getEventId()).setValue(event, new DatabaseReference.CompletionListener() {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
 	if (error == null) {
