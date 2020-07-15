@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper } from 'google-maps-react';
+import { fb } from '../App';
 import { connect } from "react-redux";
 
 const mapStateToProps = state => {
@@ -14,8 +15,41 @@ const mapStyles = {
 class MapView extends Component {
   constructor() {
     super();
+    this.state = {
+      allEvents: new Map(),
+    };
+  }
 
-    this.state = {};
+  // Queries all events with a given university plus code
+  queryEventsAndStoreInMemory() {
+    const eventsRef = fb.eventsRef;
+    eventsRef.child("university").child("PUT_PLUS_CODE_HERE").child("All").on("value", function(dataSnapshot) {
+      this.updateEventIdsAndLoadEvent(dataSnapshot.getVal());
+    });
+  }
+
+  // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
+  updateEventIdsAndLoadEvent(eventId) {
+    // Events reference
+    const eventsRef = fb.eventsRef;
+    // Query and then listen for any changes of that event
+    eventsRef.child("events").child(eventId).on("value", function(dataSnapshot) {
+      // The event object
+      const event = dataSnapshot.val();
+      // If the state has the event then update the change
+      if (this.state.allEvents.has(eventId)) {
+	this.updateEvent(eventId, event);
+      } else {
+	// If the state doesnt have the event, add the event to the map
+	this.state.allEvents.set(eventId, event);
+      }
+    });
+  }
+
+  // Updates the event info box and updates the map in memory
+  updateEvent(eventId, event) {
+    // TODO: Update event info box
+    this.state.allEvents.set(eventId, event);
   }
 
   render() {
