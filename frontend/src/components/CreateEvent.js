@@ -175,7 +175,7 @@ class Events extends Component {
   render() { 
     return(
       <div>
-        <TopNavbar />
+        <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn}/>
         <Jumbotron >
           <h1>Create Your Event</h1>
           <Form noValidate validated={this.validated} onSubmit={this.handleSubmit}>

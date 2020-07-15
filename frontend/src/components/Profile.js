@@ -9,10 +9,15 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
 
+    const JSONString = props.history.location.state.credentials;
+    const JSONObject = JSON.parse(JSONString);
+
+    console.log(JSONObject);
+
     this.state = {
       profilePicture: "https://images.unsplash.com/photo-1503249023995-51b0f3778ccf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
       username: 'Tim',
-      credentials: props.credentials,
+      credentials: JSONObject,
       eventslist: [],
       userslist: [],
       events:[{
@@ -64,7 +69,7 @@ class Profile extends React.Component {
   render() {
     return (
       <div>
-        <TopNavbar loggedIn={true}/>
+        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials}/>
         {/* get user profile picture and user name */}
         <div className="profilepictureContent" 
           style={{borderBottom:"4px solid grey"}}>
