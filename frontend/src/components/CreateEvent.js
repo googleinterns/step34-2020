@@ -245,7 +245,8 @@ class Events extends Component {
 	    <Form.Row>
 	      <Form.Group as={Col}>
 		<Form.Label>University</Form.Label>
-		<Form.Control 
+		<Form.Control
+      		  required
 		  onChange={this.handlePlusCodeChange}
       		  type="text" 
       		  placeholder="Stanford University" />
