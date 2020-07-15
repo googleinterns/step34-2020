@@ -28,12 +28,13 @@ class Profile extends React.Component {
     var attendees = ["user1", "user2", "user3"];
     var len = event.imagePaths.length;
     var imageUrl = "";
+    var card = "";
     if(len > 0) {
       imageUrl = event.imagePaths.slice(1, len - 2);
       imageUrl = imageUrl.split(",");
 
-      // create a card that contain images fro the event
-      var card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
+      // dynamically create a card that contain images for the event
+      card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
     }
 
     this.state.cards.push(
@@ -123,7 +124,7 @@ class Profile extends React.Component {
           <br />
         </div>
       </div>
-    )	
+    )
   }
 }
 
