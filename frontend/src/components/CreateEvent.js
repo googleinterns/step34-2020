@@ -15,6 +15,7 @@ class Events extends Component {
     this.state = {
       title: "",
       description: "",
+      plusCode: "",
       location: "",
       files: [],
       category: 0,
@@ -64,6 +65,12 @@ class Events extends Component {
   handleDescriptionChange(input) {
     this.setState({
        description: input.target.value
+    });
+  }
+
+  handlePlusCodeChange(input) {
+    this.setState({
+      plusCode: input.target.value
     });
   }
 
@@ -124,6 +131,7 @@ class Events extends Component {
       ReactDOM.render(<Spinner animation="border" variant="secondary"/>, document.getElementById("spinner-area"));
       var title = this.state.title;
       var description = this.state.description;
+      var plusCode = this.state.plusCode;
       var location = this.state.location;
       var files = this.state.files;
       var category = categories[this.state.category];
@@ -234,17 +242,29 @@ class Events extends Component {
                 Add a description to let people know what your event is all about!
               </Form.Text>
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Location</Form.Label>
-              <Form.Control 	
-                onChange={this.handleLocationChange}
-      		required
-                type="text"
-                placeholder="(12345 Main St)" />
-              <Form.Text className="text-muted">
-                Tell people where your event is at!
-              </Form.Text>
-            </Form.Group> 
+	    <Form.Row>
+	      <Form.Group as={Col}>
+		<Form.Label>University</Form.Label>
+		<Form.Control 
+		  onChange={this.handlePlusCodeChange}
+      		  type="text" 
+      		  placeholder="Stanford University" />
+		<Form.Text className="text-muted">
+		  Tell people what university your event is at!
+		</Form.Text>
+	      </Form.Group>
+	      <Form.Group as={Col}>
+		<Form.Label>Location</Form.Label>
+		<Form.Control 	
+		  onChange={this.handleLocationChange}
+		  required
+		  type="text"
+		  placeholder="(12345 Main St)" />
+		<Form.Text className="text-muted">
+		  Tell people where your event is at!
+		</Form.Text>
+	      </Form.Group> 
+	    </Form.Row>
             <Form.Group>
               <Form.Label>Categories</Form.Label>
               <Form.Control	
