@@ -6,7 +6,7 @@ import { createBrowserHistory } from 'history';
 import Welcome from './components/Welcome';
 import Profile from './components/Profile';
 import Firebase from './components/Firebase';
-import Create from './components/CreateEvent';
+import Events from './components/CreateEvent';
 
 const history = createBrowserHistory();
 
@@ -18,7 +18,7 @@ function App() {
           <Route exact path="/"  component={Welcome} />
           <Route path="/map" component={MapViewPage} />
           <Route path="/profile" component={Profile} />
-          <Route path="/create" component={Create} />
+          <Route path="/create" component={Events} />
         </Switch>
       </div>
     </Router>
