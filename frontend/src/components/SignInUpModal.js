@@ -129,11 +129,17 @@ export default class LogInUp extends Component {
 
   render() {
     if (this.state.loggedIn) {
-      ReactDOM.render(
-        <div>
-          <Profile credentials={this.state.credentials}/>
-        </div>,
-        document.getElementById('root'))
+      if (this.state.credentials) {
+        this.props.history.push({
+          pathname: '/profile',
+          state: {credentials: JSON.stringify(this.state.credentials)}
+        })
+      } else if (this.props.credentials) {
+        this.props.history.push({
+          pathname: '/profile',
+          state: {credentials: JSON.stringify(this.props.credentials)}
+        })
+      }
     }
         
     const isLoading = this.state.loading;

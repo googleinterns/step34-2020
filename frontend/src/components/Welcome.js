@@ -27,14 +27,15 @@ class Search extends Component {
       query: null,
       location: null,
       viewport: null,
+      loggedIn: false
     };
   }
   
   render() {
     return ( 
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=YOUE-API-KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar loggedIn={false}/>
+        <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+        <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
           <Form>
@@ -85,7 +86,11 @@ class Search extends Component {
       event.preventDefault();
     } else {
       event.preventDefault();
-      this.props.history.push('/map/');
+    //   this.props.history.push('/map/');
+      this.props.history.push({
+        pathname: '/map',
+        state: {loggedIn: this.state.loggedIn}
+      });
     }
   }
 }

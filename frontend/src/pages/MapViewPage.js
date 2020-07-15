@@ -31,14 +31,18 @@ class MapViewPage extends Component {
       query: null,
       location: null,
       viewport: null,
+      history: props.history,
+      loggedIn: props.location.state.loggedIn
     };
+
+    console.log(props);
   }
 
   render() {
     return (
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=YOUR-API-KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar />
+        <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn}/>
         <Form>
           <Form.Group>
           <Form.Label> Enter your university </Form.Label>
