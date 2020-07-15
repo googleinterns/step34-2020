@@ -1,9 +1,13 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
+import '../App.css';
 import Button from 'react-bootstrap/Button';
 import { fb } from '../App';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Card from 'react-bootstrap/Card';
+import CardColumns from 'react-bootstrap/CardColumns'
 
 class Profile extends React.Component {
   constructor(props) {
@@ -19,36 +23,65 @@ class Profile extends React.Component {
       username: 'Tim',
       credentials: JSONObject,
       eventslist: [],
+      cards:[],
       userslist: [],
-      events:[{
-        title: 'Club fair',
-        description: 'Learn about student organization on campus',
-        starttime: '5pm',
-        endtime: '7pm',
-        location: '500 College Ave',
-        attendees: ["John","Maya","Dan"],
-        gallery: ["https://images.unsplash.com/photo-1579148428700-8f11fbb6b477?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-        "https://www.usnews.com/dims4/USNEWS/f405c9a/17177859217/resize/800x540%3E/quality/85/?url=https%3A%2F%2Fmedia.beam.usnews.com%2F60%2F6e00b7a3707b65cf2a7fcf38ead436%2Fcollege-photo_8428.jpg"],
-      },
-      {
-        title: 'iOS STEP intern pod sync',
-        description: 'discuss the milestone of this week',
-        starttime: '1pm',
-        endtime: '1:30pm',
-        location: 'GVC',
-        attendees: ["John","Maya","Dan","Mico"],
-        gallery: ["https://media.glassdoor.com/l/0c/38/d5/ea/google-inc.jpg",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRX4k1e4FQQFM8FzvMD9lXFmdMj9E6TVM8jjQ&usqp=CAU"],
-      }]
     };
   }
 
-  getData(){
+
+  didUpdate(event) {
+    var attendees = ["user1", "user2", "user3"];
+    var len = event.imagePaths.length;
+    var imageUrl = "";
+    var card = "";
+    if(len > 0) {
+      imageUrl = event.imagePaths.slice(1, len - 2);
+      imageUrl = imageUrl.split(",");
+
+      // dynamically create a card that contain images for the event
+      card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
+    }
+
+    this.state.cards.push(
+      <Card>
+        {card}
+        {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
+        <Card.Body>
+          <Card.Title>{event.eventName}</Card.Title>
+          <Card.Text>
+            {event.description}
+          </Card.Text>
+          <Card.Text>{event.location}</Card.Text>
+          <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
+          <DropdownButton id="dropdown-basic-button" title="Attendees">
+            {attendees.map(attendee => (
+              <Dropdown.Item>{attendee}</Dropdown.Item>))}
+          </DropdownButton><br />
+          <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
+            Edit
+          </Button>
+          <Button variant="danger" style={{ width:"80px" }}>
+            Delete
+          </Button>
+        </Card.Body>
+      </Card>)
+
+    ReactDOM.render( 
+      <CardColumns>
+        {this.state.cards.map(element   => element)}
+      </CardColumns>,
+      document.getElementById("content"))
+  }
+
+  getData(eventKeys){
     // call the server to retrieve all necessary information about user
-    const ref = fb.eventsRef.child("events");
-    ref.on('value', snapshot => {
-      const event = snapshot.val();
-      this.state.eventslist.push(event)
+    eventKeys.map(key => {
+      const ref = fb.eventsRef.child("events").child(key);
+      ref.on('value', snapshot => {
+        const event = snapshot.val();
+        this.didUpdate(event);
+        this.state.eventslist.push(event)
+      });
     });
   }
 
@@ -57,12 +90,13 @@ class Profile extends React.Component {
     // userdb.ref().set()
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     // This will retrieve all events info from the server.
-    const myevents = fb.userRef.child("events").child(this.state.credentials.uid);
-    myevents.on('value', snapshot => {
-      const event = snapshot.val();
-      this.state.eventslist.push(event)
+    const myEventsRef = fb.userRef.child("events").child(this.state.credentials.uid);
+    myEventsRef.on('value', snapshot => {
+      // snapshot.val().map (key => this.state.eventslist.push(key))
+      const mykeys = Object.keys(snapshot.val())
+      this.getData(mykeys)
     });
   }
 
@@ -83,51 +117,19 @@ class Profile extends React.Component {
             <h4 style={{
               marginLeft:"1.8rem",
               marginTop:".8rem"}}>
-                {this.state.credentials.displayName}
+                {this.state.username}
             </h4>
           </div>
         </div>
-        <div className="content">
-        <br />
-        {/* iterate through all events of the user*/}
-        {this.state.events.map(event => (
-          <div className="events" style={{
-            display:"flex",
-            justifyContent:"space-around",
-            borderBottom:"1px solid grey",
-            marginBottom:".5rem"}}>
-            <div>
-              <label>{event.title}</label><br />
-              <label>{event.description}</label><br />
-              <label>{event.location}</label><br />
-              <label>{event.starttime} - {event.endtime}</label><br />
-              {/* list all attendees */}
-              <DropdownButton id="dropdown-basic-button" title="Attendees">
-                {event.attendees.map(attendee => (
-                  <Dropdown.Item>{attendee}</Dropdown.Item>))}
-              </DropdownButton><br />
-              <Button style={{
-                backgroundColor:"green",
-                marginRight:".5rem",
-                width:"80px",
-                marginBottom:".8rem"}}>
-                edit 
-              </Button>
-              <Button style={{
-                backgroundColor:"red",
-                width:"80px",
-                marginBottom:".8rem"}}>
-                delete
-              </Button>
-            </div>
-            <div className="Gallery">
-              <img style={{width:"280px"}} src={event.gallery[0]} alt="" />
-              <img style={{width:"280px"}} src={event.gallery[1]} alt="" />
-            </div>
-          </div>))}
+        <div 
+          id="content"
+          style={{
+          marginLeft:"1.8rem",
+          marginTop:".8rem"}}>
+          <br />
         </div>
       </div>
-    )	
+    )
   }
 }
 

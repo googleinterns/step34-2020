@@ -31,9 +31,6 @@ export default class TopNavbar extends React.Component {
 
   }
   handleLoginButtonClick() {
-    // If the user is signed in
-    /* TODO: Route to profile page */
-
     // If the user is not signed in
     /* TODO: Add modal prompt */
 
@@ -85,9 +82,6 @@ export default class TopNavbar extends React.Component {
     //sign out the user
     Firebase.auth().signOut();
 
-    // clear local storage
-    //localStorage.clear();
-
     ReactDOM.render(
       <Provider store={store}>
         <App />
@@ -122,7 +116,7 @@ export default class TopNavbar extends React.Component {
           <Nav>
             <MapViewButton onClick={this.handleMapViewonClick.bind(this)} loggedIn={this.props.loggedIn} />
             <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.props.loggedIn} />
-            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
+            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.props.loggedIn} credentials={this.props.credentials} />
             <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
             <LogOutButton onClick={this.handleLogoutButton.bind(this)} loggedIn={this.props.loggedIn} />
           </Nav>

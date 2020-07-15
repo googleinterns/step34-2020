@@ -127,10 +127,6 @@ export default class LogInUp extends Component {
     ReactDOM.unmountComponentAtNode(modal);
   }
 
-  // componentDidUpdate () {
-  //     authStatus.setCredentials(this.state.credentials)
-  // }
-
   render() {
     if (this.state.loggedIn) {
       if (this.state.credentials) {
