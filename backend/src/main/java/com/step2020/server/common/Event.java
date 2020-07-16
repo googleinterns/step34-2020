@@ -25,6 +25,7 @@ public class Event {
   private String plusCode;
   private String location;
   private String ownerId;
+  private String category;
   private String organization;
   private String imageUrls;
 
@@ -39,6 +40,7 @@ public class Event {
     private String plusCode;
     private String location;
     private String ownerId;
+    private String category;
     private String organization;
     private String imageUrls;
 
@@ -94,6 +96,11 @@ public class Event {
       return this;
     }
 
+    public Builder withCategory(String category) {
+      this.category = category;
+      return this;
+    }
+
     public Builder withOwnerId(String id) {
       this.ownerId = id;
       return this;
@@ -120,6 +127,7 @@ public class Event {
       event.description = this.description;
       event.plusCode = this.plusCode;
       event.location = this.location;
+      event.category = this.category;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
       event.imageUrls = this.imageUrls;
@@ -160,6 +168,10 @@ public class Event {
 
   public String getLocation() {
     return this.location;
+  }
+
+  public String getCategory() {
+    return this.category;
   }
 
   public String getOwnerId() {

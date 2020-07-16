@@ -111,6 +111,7 @@ public class EventCreationManager {
 	.withPlusCode(plusCode)
 	.atLocation(location)
 	.withOwnerId(ownerId)
+	.withCategory(category)
 	.withOrganization(organization)
 	.withImageUrls(imageUrls)
 	.build();
@@ -125,7 +126,8 @@ public class EventCreationManager {
     Iterator<Map.Entry<String,String>> it = entries.iterator();
     while(it.hasNext()) {
       Map.Entry<String, String> entry = it.next();
-      if (!entry.getKey().equals("imagePaths") || !entry.getKey().equals("organization")) {
+      if (!entry.getKey().equals("imagePaths") && !entry.getKey().equals("organization") && !entry.getKey().equals("attendees")) {
+	System.out.println(entry.getKey());
 	if (entry.getValue() == null || entry.getValue().isEmpty()) {
 	  return false;
 	} 
@@ -165,7 +167,7 @@ public class EventCreationManager {
   // The purpose of this design is so that the client can easily query and filter categories.
   private void addEventUnderPlusCodeAndCategory(String eventId, String plusCode, String category) {
     eventsRef.child(UNI).child(plusCode).child(ALL).push().setValueAsync(eventId);
-    eventsRef.child(UNI).child(plusCode).child(CTGRY).child(category).push().setValueAsync(eventId);
+    eventsRef.child(UNI).child(plusCode).child(category).push().setValueAsync(eventId);
   }
  
   // Adds attendees to database to get a list representation of the attendees

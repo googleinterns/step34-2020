@@ -5,6 +5,8 @@ import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import TopNavbar from './Navbar'
 
+const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+
 function mapDispatchToProps(dispatch) {
   return {
     changeMapState: mapState => dispatch(changeMapState(mapState))
@@ -34,7 +36,7 @@ class Search extends Component {
   render() {
     return ( 
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=API-KEY-HERE&libraries=places" onLoad = {this.handleScriptLoad}/> 
+        <Script url = {url} onLoad = {this.handleScriptLoad}/> 
         <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 

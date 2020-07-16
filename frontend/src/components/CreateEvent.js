@@ -7,7 +7,7 @@ import { fb } from '../App';
 import Script from 'react-load-script';
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
-
+const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places"; 
 class Events extends Component {
   constructor(props) {
     super(props);
@@ -171,11 +171,7 @@ class Events extends Component {
       }
 
       // The respone acquired from the server
-<<<<<<< HEAD
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, imageUrls, category, organization);
-=======
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization, "", this.props.history.location.state.credentials.uid);
->>>>>>> origin/dev
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, imageUrls, category, organization, "", this.props.history.location.state.credentials.uid);
       if (response) {
         // Go to map page
       } 
@@ -210,7 +206,7 @@ class Events extends Component {
   render() { 
     return(
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E&libraries=places" onLoad = {this.handleScriptLoad}/>
+        <Script url={url} onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn}/>
         <Jumbotron >
           <h1>Create Your Event</h1>
@@ -270,7 +266,6 @@ class Events extends Component {
                 Add a description to let people know what your event is all about!
               </Form.Text>
             </Form.Group>
-<<<<<<< HEAD
 	    <Form.Row>
 	      <Form.Group as={Col}>
 		<Form.Label>University</Form.Label>
@@ -295,19 +290,6 @@ class Events extends Component {
 		</Form.Text>
 	      </Form.Group> 
 	    </Form.Row>
-=======
-            <Form.Group>
-              <Form.Label>Location</Form.Label>
-              <Form.Control 	
-                onChange={this.handleLocationChange}
-                required
-                type="text"
-                placeholder="(12345 Main St)" />
-              <Form.Text className="text-muted">
-                Tell people where your event is at!
-              </Form.Text>
-            </Form.Group> 
->>>>>>> origin/dev
             <Form.Group>
               <Form.Label>Categories</Form.Label>
               <Form.Control	
