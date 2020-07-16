@@ -89,7 +89,7 @@ class Events extends Component {
 
   handlePlusCodeChange() {
     const universityAddressObject = this.universityAutocomplete.getPlace();
-    const universityPlusCode = universityAddressObject.plus_code;
+    const universityPlusCode = universityAddressObject.plus_code.global_code;
     this.setState({
       plusCode: universityPlusCode
     });
@@ -100,9 +100,9 @@ class Events extends Component {
     const locationAddressObject = this.locationAutocomplete.getPlace();
     const locationObject = locationAddressObject.geometry.location;
     this.setState({
-       location: locationObject
+       location: locationObject.toString()
     });
-    console.log(locationObject);
+    console.log(locationObject.toString());
   }
 
   // When the image is inputted, display the image
@@ -173,7 +173,7 @@ class Events extends Component {
       }
 
       // The respone acquired from the server
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization);
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, imageUrls, category, organization);
       if (response) {
 	// Go to map page
       } 
@@ -208,7 +208,7 @@ class Events extends Component {
   render() { 
     return(
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/>
+        <Script url = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E&libraries=places" onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn}/>
         <Jumbotron >
           <h1>Create Your Event</h1>

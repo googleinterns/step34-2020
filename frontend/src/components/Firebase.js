@@ -3,7 +3,7 @@ import 'firebase/database';
 import { Deferred } from '@firebase/util';
 
 const config = {
-  apiKey: "KEY",
+  apiKey: "AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020.firebaseio.com",
   projectId: "step-34-2020",
@@ -14,7 +14,7 @@ const config = {
 };
 
 const testConfig = {
-  apiKey: "KEY",
+  apiKey: "AIzaSyAW6O_Ijs3yQMP13rC6IDnH9oTJAU0gH8E",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020-test.firebaseio.com",
   projectId: "step-34-2020",
@@ -166,7 +166,7 @@ class Firebase {
     // Send a request under the sessionid
     this.sessionsRef.ref('REQUESTS').child(path).set({
       code: 5,
-      uid: "",
+      uid: ,
       title: title,
       date: date,
       startTime: startTime,
