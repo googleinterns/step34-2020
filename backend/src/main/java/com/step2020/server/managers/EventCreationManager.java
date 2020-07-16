@@ -48,26 +48,26 @@ import com.google.api.core.ApiFutureCallback;
 import com.google.auth.oauth2.GoogleCredentials;
 
 public class EventCreationManager {
-  
+
   private String sessionId;
 
   // The database reference to access the database
   private DatabaseReference eventsRef;
-  
+
   // The database reference to access the database
   private DatabaseReference usersRef;
 
   public EventCreationManager(String sessionId) {
     this.sessionId = sessionId;
-    
+
     if (ServletManagerServlet.isOnDeployedServer) {
-      usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com/").getReference(); 
+      usersRef = FirebaseDatabase.getInstance("https://step-34-2020-user-info.firebaseio.com/").getReference();
       eventsRef = FirebaseDatabase.getInstance("https://step-34-2020-events.firebaseio.com/").getReference();
     } else {
-      usersRef = FirebaseDatabase.getInstance("https://step-34-2020-test.firebaseio.com/").getReference("user-info"); 
+      usersRef = FirebaseDatabase.getInstance("https://step-34-2020-test.firebaseio.com/").getReference("user-info");
       eventsRef = FirebaseDatabase.getInstance("https://step-34-2020-test.firebaseio.com/").getReference("events");
     }
-    
+
   }
 
   // Creates a new event from the given event info along with the request id
@@ -76,7 +76,7 @@ public class EventCreationManager {
     if (!checkMinimumInfoInput(eventInfo)) {
       String errorMessage = "Failed to meet all input requirements.";
       System.err.println(errorMessage);
-      
+
       // Write failed response
       Map<String, String> response = Utility.createResponse("failed", errorMessage);
       Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
@@ -96,26 +96,26 @@ public class EventCreationManager {
     String organization = eventInfo.get("organization");
     String attendees = eventInfo.get("attendees");
     String ownerId = eventInfo.get("uid");
-    
+
     // Turn strings that need to be arrays into arrays
     String[] attendeesArray = Utility.stringToArray(attendees);
 
     // Build a new event
     Event event = new Event.Builder()
-	.withEventId(eventId)
-	.withName(title)
-	.withDate(date)
-	.withStartEndTime(startTime, endTime)
-	.withDescription(description)
-	.atLocation(location)
-	.withOwnerId(ownerId)
-	.withOrganization(organization)
-  .withImageUrls(imageUrls)
-  .withAttendees(attendees)
-	.build();
+    .withEventId(eventId)
+    .withName(title)
+    .withDate(date)
+    .withStartEndTime(startTime, endTime)
+    .withDescription(description)
+    .atLocation(location)
+    .withOwnerId(ownerId)
+    .withOrganization(organization)
+    .withImageUrls(imageUrls)
+    .withAttendees(attendees)
+    .build();
 
     // Submit event to the database and add the event id to all attendant's events
-    addEventToDatabase(requestId, event, attendeesArray); 
+    addEventToDatabase(requestId, event, attendeesArray);
   }
 
   // Checks to make sure all required elements are inputted
@@ -125,11 +125,11 @@ public class EventCreationManager {
     while(it.hasNext()) {
       Map.Entry<String, String> entry = it.next();
       if (!entry.getKey().equals("imagePaths") || !entry.getKey().equals("organization")) {
-	if (entry.getValue() == null || entry.getValue().isEmpty()) {
-	  return false;
-	} 
+        if (entry.getValue() == null || entry.getValue().isEmpty()) {
+          return false;
+        }
       }
-    } 
+    }
     return true;
   }
 
@@ -141,20 +141,20 @@ public class EventCreationManager {
   private void addEventToDatabase(String requestId, Event event, String[] attendees) {
     eventsRef.child(EVNTS).child(event.getEventId()).setValue(event, new DatabaseReference.CompletionListener() {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
-	if (error == null) {
-	  // Add event under users and add the attendees list
-	  addEventToUserEventDatabase(event.getEventId(), attendees);
-	  addAttendeesToDatabase(event.getEventId(), attendees);
-	  
-	  // Write success response
-	  Map<String, String> response = Utility.createResponse("success", "");
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	} else {
-	  // Write failed response
-	  Map<String, String> response = Utility.createResponse("failed", error.getMessage());
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	}
-      }	
+        if (error == null) {
+          // Add event under users and add the attendees list
+          addEventToUserEventDatabase(event.getEventId(), attendees);
+          addAttendeesToDatabase(event.getEventId(), attendees);
+
+          // Write success response
+          Map<String, String> response = Utility.createResponse("success", "");
+          Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+        } else {
+          // Write failed response
+          Map<String, String> response = Utility.createResponse("failed", error.getMessage());
+          Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+        }
+      }
     });
   }
 
@@ -162,7 +162,7 @@ public class EventCreationManager {
   private void addAttendeesToDatabase(String eventId, String[] attendees) {
     eventsRef.child(ATND).child(eventId).setValueAsync(Arrays.asList(attendees));
   }
-  
+
   // Adds the event id and associates it with the user
   private void addEventToUserEventDatabase(String eventId, String[] attendees) {
     for (String attendee : attendees) {
