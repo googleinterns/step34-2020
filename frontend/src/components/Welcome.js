@@ -59,7 +59,7 @@ class Search extends Component {
     /*global google*/
     this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
 
-    this.autocomplete.setFields(['address_components', 'formatted_address', 'geometry', 'adr_address']);
+    this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
@@ -70,9 +70,9 @@ class Search extends Component {
 
     if (address) {
       const currentState  = {
-        query: addressObject.formatted_address,
+        query: addressObject.name,
         location: addressGeometry.location,
-        viewport: addressGeometry.viewport,  
+        locationObject: addressObject,  
       }
       console.log(currentState);
       this.props.changeMapState(currentState);

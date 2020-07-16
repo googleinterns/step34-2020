@@ -17,15 +17,21 @@ class MapView extends Component {
     super();
     this.state = {
       allEvents: [],
+      location: undefined
     };
+
+    this.plusCodeGlobalCode = undefined;
+    this.loadArticle = this.loadArticle.bind(this);
   }
 
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
-    const eventsRef = fb.eventsRef;
-    eventsRef.child("university").child("PUT_PLUS_CODE_HERE").child("All").on("value", function(dataSnapshot) {
-      this.updateEventIdsAndLoadEvent(dataSnapshot.getVal());
-    });
+    if (this.plusCode) {
+      const eventsRef = fb.eventsRef;
+      eventsRef.child("university").child(this.plusCodeGlobalCode).child("All").on("value", function(dataSnapshot) {
+        this.updateEventIdsAndLoadEvent(dataSnapshot.getVal());
+      });
+    }
   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
@@ -58,11 +64,19 @@ class MapView extends Component {
     });
   }
 
+  loadArticle(article) {
+      console.log(article);
+      console.log("loadArticle:");
+      this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
+      console.log(article.locationObject.plus_code);
+  }
+
   render() {
     return (
       <div>
         {this.props.articles.map(article => {
           return (
+            <div key={"mapKey"} onLoad={this.loadArticle(article)}>
             <Map
               key={article.toString()}
               google={this.props.google}
@@ -79,6 +93,7 @@ class MapView extends Component {
               gestureHandling={'none'}
               zoomControl={false}
             />
+            </div>
           )
         })}
       </div>
