@@ -2,12 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
-import Profile from './Profile';
-import App from '../App';
 import style from 'bootstrap/dist/css/bootstrap.css';
-import Create from './CreateEvent';
-import { Provider } from "react-redux";
-import store from "../store/index";
 import Firebase from 'firebase';
 
 export default class TopNavbar extends React.Component {
@@ -22,26 +17,21 @@ export default class TopNavbar extends React.Component {
     var credentials;
 
     if (props.credentials) {
-        this.credentials = props.credentials;
+      this.credentials = props.credentials;
     } else if (props.history.location.state){
-        if (props.history.location.state.credentials) {
-            this.credentials = props.history.location.state.credentials;
-        }
+      if (props.history.location.state.credentials) {
+        this.credentials = props.history.location.state.credentials;
+      }
     }
-
   }
-  handleLoginButtonClick() {
-    // If the user is not signed in
-    /* TODO: Add modal prompt */
 
-    if (!this.props.loggedIn) {
-      ReactDOM.render(
-        <div id="modal">
-          <Modal history={this.props.history}/>
-        </div>,
-        document.getElementById('modal-wrapper')
-      );
-    }
+  handleLoginButtonClick() {
+    ReactDOM.render(
+      <div id="modal">
+        <Modal history={this.props.history}/>
+      </div>,
+      document.getElementById('modal-wrapper')
+    );
   }
 
   handleMapViewonClick() {
@@ -82,12 +72,9 @@ export default class TopNavbar extends React.Component {
     //sign out the user
     Firebase.auth().signOut();
 
-    ReactDOM.render(
-      <Provider store={store}>
-        <App />
-      </Provider>, 
-      document.getElementById('root')
-    );
+    this.props.history.push({
+      pathname:'/',
+    })
   }
 
   handleCreateButton() {
