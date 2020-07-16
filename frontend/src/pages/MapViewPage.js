@@ -88,5 +88,5 @@ const ConnectedMapViewPage = connect(
 )(MapViewPage);
 
 export default GoogleApiWrapper({
-  apiKey: ''
+  apiKey: 'KEY'
 })(ConnectedMapViewPage);

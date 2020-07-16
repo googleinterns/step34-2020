@@ -5,6 +5,7 @@ import TopNavbar from './Navbar';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
+import Script from 'react-load-script';
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
 
@@ -26,6 +27,9 @@ class Events extends Component {
       validated: false,
     };
 
+    this.unviersityAutocomplete = null;
+    this.locationAutocomplete = null;
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
@@ -36,6 +40,21 @@ class Events extends Component {
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleStartTimeChange = this.handleStartTimeChange.bind(this);
     this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
+    this.handleScriptLoad = this.handleScriptLoad.bind(this);
+    this.handlePlusCodeChange = this.handlePlusCodeChange.bind(this);
+    this.handleLocationChange = this.handleLocationChange.bind(this);
+  }
+
+  handleScriptLoad() {
+    /*global google*/
+    const fields = ['address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
+    this.universityAutocomplete = new google.maps.places.Autocomplete(document.getElementById('university-autocomplete'));
+    this.universityAutocomplete.setFields(fields);
+    this.universityAutocomplete.addListener('place_changed', this.handlePlusCodeChange);
+
+    this.locationAutocomplete = new google.maps.places.Autocomplete(document.getElementById('location-autocomplete'));
+    this.locationAutocomplete.setFields(fields);
+    this.locationAutocomplete.addListener('place_changed', this.handleLocationChange);
   }
 
   handleTitleChange(input) {
@@ -68,16 +87,22 @@ class Events extends Component {
     });
   }
 
-  handlePlusCodeChange(input) {
+  handlePlusCodeChange() {
+    const universityAddressObject = this.universityAutocomplete.getPlace();
+    const universityPlusCode = universityAddressObject.plus_code;
     this.setState({
-      plusCode: input.target.value
+      plusCode: universityPlusCode
     });
+    console.log(universityPlusCode);
   }
 
-  handleLocationChange(input) {
+  handleLocationChange() {
+    const locationAddressObject = this.locationAutocomplete.getPlace();
+    const locationObject = locationAddressObject.geometry.location;
     this.setState({
-       location: input.target.value
+       location: locationObject
     });
+    console.log(locationObject);
   }
 
   // When the image is inputted, display the image
@@ -183,6 +208,7 @@ class Events extends Component {
   render() { 
     return(
       <div>
+        <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn}/>
         <Jumbotron >
           <h1>Create Your Event</h1>
@@ -246,8 +272,8 @@ class Events extends Component {
 	      <Form.Group as={Col}>
 		<Form.Label>University</Form.Label>
 		<Form.Control
+              id="university-autocomplete"
       		  required
-		  onChange={this.handlePlusCodeChange}
       		  type="text" 
       		  placeholder="Stanford University" />
 		<Form.Text className="text-muted">
@@ -256,11 +282,11 @@ class Events extends Component {
 	      </Form.Group>
 	      <Form.Group as={Col}>
 		<Form.Label>Location</Form.Label>
-		<Form.Control 	
-		  onChange={this.handleLocationChange}
+		<Form.Control 
+          id="location-autocomplete"	
 		  required
 		  type="text"
-		  placeholder="(12345 Main St)" />
+		  placeholder="12345 Main St" />
 		<Form.Text className="text-muted">
 		  Tell people where your event is at!
 		</Form.Text>
@@ -281,7 +307,7 @@ class Events extends Component {
                 <option value="2">Student Organization Event</option>
               </Form.Control>
               <Form.Text className="text-muted">
-                Add some categories so people can find you event easier! 
+                Add some categories so people can find your event easier! 
               </Form.Text>
             </Form.Group>
       	    <Form.Group>
