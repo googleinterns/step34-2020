@@ -76,6 +76,8 @@ class MapView extends Component {
                 lat: article.location.lat(),
                 lng: article.location.lng()
               }}
+              gestureHandling={'none'}
+              zoomControl={false}
             />
           )
         })}
