@@ -88,10 +88,14 @@ class Profile extends React.Component {
     // Create a reference all events the current user own
     eventKeys.map(key => {
       const ref = fb.eventsRef.child("events").child(key);
-      ref.on('value', snapshot => {
-        const event = snapshot.val();
-        this.didUpdate(event);
-      });
+
+      // Evaluate whether the ref isn't null
+      if (ref != null) {
+        ref.on('value', snapshot => {
+          const event = snapshot.val();
+          this.didUpdate(event);
+        });
+      }
       return null;
     });
   }
@@ -99,13 +103,20 @@ class Profile extends React.Component {
   componentDidMount() {
     // Create a referene to the current user
     const myEventsRef = fb.userRef.child("events").child(this.state.credentials.uid);
-    myEventsRef.on('value', snapshot => {
-      // snapshot.val().map (key => this.state.eventslist.push(key))
-      const mykeys = Object.keys(snapshot.val())
 
-      //retrieve data from database using this reference
-      this.getData(mykeys)
-    });
+    // Shouldn't be null. if it is, do nothing
+    if (myEventsRef != null) {
+      myEventsRef.on('value', snapshot => {
+        
+        // Do nothing when it's null
+        if (snapshot.val() != null) {
+          const mykeys = Object.keys(snapshot.val())
+          //retrieve data from database using this reference
+          this.getData(mykeys)
+        }
+      });
+    }
+
   }
 
   render() {
