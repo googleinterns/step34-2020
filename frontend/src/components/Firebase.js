@@ -90,7 +90,6 @@ class Firebase {
 
     // Wait for the session id to be sent from the back end
     this.sessionId = await this.readDataSessionId();
-    console.log("sessionId is " + this.sessionId);
   }
 
   // Reads in the new session id that the server gives
@@ -197,7 +196,7 @@ class Firebase {
       if (snapshot.key === requestId) {
         // Get the status and message
         var status = snapshot.child("status").val();
-        var message = snapshot.child("message").val();
+        //var message = snapshot.child("message").val();
         console.log(status);
         // When the status is "success" make deferred promise true
         if (status === "success") {
@@ -269,6 +268,8 @@ class Firebase {
         case firebase.storage.TaskState.RUNNING: // or 'running'
           console.log('Upload is running');
           break;
+        default:
+          break;
       }
     }, function(error) {
       // Handle unsuccessful uploads
@@ -286,6 +287,8 @@ class Firebase {
           alert("Unknown error. Cancelling event creation...");
           console.log(error.serverResponse);
           break;
+        default:
+            break;
       }
       deferred.resolve(null);
     }, function() {

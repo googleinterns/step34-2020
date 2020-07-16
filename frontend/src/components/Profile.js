@@ -22,18 +22,22 @@ class Profile extends React.Component {
       profilePicture: "https://images.unsplash.com/photo-1503249023995-51b0f3778ccf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
       username: 'Tim',
       credentials: JSONObject,
-      eventslist: [],
       cards:[],
-      userslist: [],
     };
   }
 
 
   didUpdate(event) {
     var attendees = ["user1", "user2", "user3"];
-    var len = event.imagePaths.length;
+    var len = 0;
     var imageUrl = "";
     var card = "";
+
+    // Since images are option field, evaluate whether the field isn't null
+    if (event.imagePaths != null) {
+      len = event.imagePaths.length;
+    }
+    // Retrieve image urls only if they were provided. Otherwise set url to default value
     if(len > 0) {
       imageUrl = event.imagePaths.slice(1, len - 2);
       imageUrl = imageUrl.split(",");
@@ -42,6 +46,7 @@ class Profile extends React.Component {
       card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
     }
 
+    // Add this card to the list of all cards to be displayed on the profile
     this.state.cards.push(
       <Card>
         {card}
@@ -74,28 +79,31 @@ class Profile extends React.Component {
   }
 
   getData(eventKeys){
-    // call the server to retrieve all necessary information about user
+
+    // Update the state of cards before retrieving changes from database
+    this.setState({
+      cards: []
+    })
+
+    // Create a reference all events the current user own
     eventKeys.map(key => {
       const ref = fb.eventsRef.child("events").child(key);
       ref.on('value', snapshot => {
         const event = snapshot.val();
         this.didUpdate(event);
-        this.state.eventslist.push(event)
       });
+      return null;
     });
   }
 
-  writeData(){
-    // Use .set method to save changes.
-    // userdb.ref().set()
-  }
-
-  componentDidUpdate() {
-    // This will retrieve all events info from the server.
+  componentDidMount() {
+    // Create a referene to the current user
     const myEventsRef = fb.userRef.child("events").child(this.state.credentials.uid);
     myEventsRef.on('value', snapshot => {
       // snapshot.val().map (key => this.state.eventslist.push(key))
       const mykeys = Object.keys(snapshot.val())
+
+      //retrieve data from database using this reference
       this.getData(mykeys)
     });
   }

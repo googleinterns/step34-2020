@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Form, Button, Jumbotron, Row, Col, Container, Spinner } from 'react-bootstrap';
 import TopNavbar from './Navbar';
-import style from 'bootstrap/dist/css/bootstrap.css';
 import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 
@@ -75,7 +74,6 @@ class Events extends Component {
 
   // When the image is inputted, display the image
   handleImageInput(event) {
-    var imageArray = [];
     var innerCols = "";
 
     // Get the images inputted
@@ -140,7 +138,7 @@ class Events extends Component {
       }
 
       // The respone acquired from the server
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization, "", this.props.credentials.uid);
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization, "", this.props.history.location.state.credentials.uid);
       if (response) {
         // Go to map page
       } 

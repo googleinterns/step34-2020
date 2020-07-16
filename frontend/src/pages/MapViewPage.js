@@ -41,7 +41,7 @@ class MapViewPage extends Component {
   render() {
     return (
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+        <Script url = "https://maps.googleapis.com/maps/api/js?key=API-KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn}/>
         <Form>
           <Form.Group>
@@ -88,5 +88,5 @@ const ConnectedMapViewPage = connect(
 )(MapViewPage);
 
 export default GoogleApiWrapper({
-  apiKey: ''
+  apiKey: 'API-KEY'
 })(ConnectedMapViewPage);
