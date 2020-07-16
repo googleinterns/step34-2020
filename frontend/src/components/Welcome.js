@@ -12,7 +12,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 class Search extends Component {
-  // Define Constructor
+  // Define Constructor.
   constructor(props) {
     super(props);
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
