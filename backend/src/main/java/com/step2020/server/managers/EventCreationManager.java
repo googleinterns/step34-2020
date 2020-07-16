@@ -90,6 +90,7 @@ public class EventCreationManager {
     String startTime = eventInfo.get("startTime");
     String endTime = eventInfo.get("endTime");
     String description = eventInfo.get("description");
+    String plusCode = eventInfo.get("plusCode");
     String location = eventInfo.get("location");
     String imageUrls = eventInfo.get("imageUrls");
     String category = eventInfo.get("category");
@@ -107,6 +108,7 @@ public class EventCreationManager {
 	.withDate(date)
 	.withStartEndTime(startTime, endTime)
 	.withDescription(description)
+	.withPlusCode(plusCode)
 	.atLocation(location)
 	.withOwnerId(ownerId)
 	.withOrganization(organization)
@@ -141,6 +143,8 @@ public class EventCreationManager {
     eventsRef.child(EVNTS).child(event.getEventId()).setValue(event, new DatabaseReference.CompletionListener() {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
 	if (error == null) {
+	  // Add event under plus code and associated category
+	  addEventUnderPlusCodeAndCategory(event.getEventId(), event.getPlusCode(), event.getCategory());
 	  // Add event under users and add the attendees list
 	  addEventToUserEventDatabase(event.getEventId(), attendees);
 	  addAttendeesToDatabase(event.getEventId(), attendees);
@@ -157,15 +161,24 @@ public class EventCreationManager {
     });
   }
 
+  // Add event under the university plus code under the category specified AND the "All" category.
+  // The purpose of this design is so that the client can easily query and filter categories.
+  private void addEventUnderPlusCodeAndCategory(String eventId, String plusCode, String category) {
+    eventsRef.child(UNI).child(plusCode).child(ALL).push().setValueAsync(eventId);
+    eventsRef.child(UNI).child(plusCode).child(CTGRY).child(category).push().setValueAsync(eventId);
+  }
+ 
   // Adds attendees to database to get a list representation of the attendees
   private void addAttendeesToDatabase(String eventId, String[] attendees) {
-    eventsRef.child(ATND).child(eventId).setValueAsync(Arrays.asList(attendees));
+    for (String attendee : attendees) {
+      eventsRef.child(ATND).child(eventId).push().setValueAsync(attendee);
+    }
   }
   
   // Adds the event id and associates it with the user
   private void addEventToUserEventDatabase(String eventId, String[] attendees) {
     for (String attendee : attendees) {
-      usersRef.child(EVNTS).child(attendee).child(eventId).setValueAsync(eventId);
+      usersRef.child(EVNTS).child(attendee).push().setValueAsync(eventId);
     }
   }
 }
