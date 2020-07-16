@@ -3,7 +3,8 @@ import Script from 'react-load-script';
 import { Form, Button, Jumbotron } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
-import TopNavbar from './Navbar'
+import TopNavbar from './Navbar';
+import '../App.css';
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -33,7 +34,7 @@ class Search extends Component {
   
   render() {
     return ( 
-      <div>
+      <div class="welcomeContent">
         <Script url = "https://maps.googleapis.com/maps/api/js?key=API-KEY-HERE&libraries=places" onLoad = {this.handleScriptLoad}/> 
         <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
         <Jumbotron >

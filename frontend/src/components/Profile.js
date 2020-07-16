@@ -19,8 +19,7 @@ class Profile extends React.Component {
     console.log(JSONObject);
 
     this.state = {
-      profilePicture: "https://images.unsplash.com/photo-1503249023995-51b0f3778ccf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-      username: 'Tim',
+      profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
       credentials: JSONObject,
       cards:[],
     };
@@ -48,7 +47,12 @@ class Profile extends React.Component {
 
     // Add this card to the list of all cards to be displayed on the profile
     this.state.cards.push(
-      <Card>
+      <Card 
+        bg={'light'}
+        border="secondary"
+        text={'light' ? 'dark' : 'white'}
+        style={{ width: '18rem' }}
+        className="mb-2">
         {card}
         {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
         <Card.Body>
@@ -124,7 +128,7 @@ class Profile extends React.Component {
       <div>
         <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials}/>
         {/* get user profile picture and user name */}
-        <div className="profilepictureContent" 
+        <div class="profile" 
           style={{borderBottom:"4px solid grey"}}>
           <div className="profilephoto">
             <img style={{
@@ -136,7 +140,7 @@ class Profile extends React.Component {
             <h4 style={{
               marginLeft:"1.8rem",
               marginTop:".8rem"}}>
-                {this.state.username}
+                {this.state.credentials.displayName}
             </h4>
           </div>
         </div>
