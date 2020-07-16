@@ -201,21 +201,12 @@ export default class LogInAndSignUp extends Component {
             registerInputs: [
               {
                 containerClass: 'RML-form-group',
-                label: 'Nickname',
+                label: 'Name',
                 type: 'text',
                 inputClass: 'RML-form-control',
                 id: 'nickname',
                 name: 'nickname',
-                placeholder: 'Nickname',
-              },
-              {
-                containerClass: 'RML-form-group',
-                label: 'University name',
-                type: 'text',
-                inputClass: 'RML-form-control',
-                id: 'university',
-                name: 'university',
-                placeholder: 'University/college',
+                placeholder: 'name',
               },
               {
                 containerClass: 'RML-form-group',

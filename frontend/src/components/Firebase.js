@@ -3,7 +3,7 @@ import 'firebase/database';
 import { Deferred } from '@firebase/util';
 
 const config = {
-  apiKey: "API-KEY-HERE",
+  apiKey: "API-KEY",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020.firebaseio.com",
   projectId: "step-34-2020",
@@ -14,7 +14,7 @@ const config = {
 };
 
 const testConfig = {
-  apiKey: "API-KEY-HERE",
+  apiKey: "API-KEY",
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020-test.firebaseio.com",
   projectId: "step-34-2020",

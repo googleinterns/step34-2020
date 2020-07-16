@@ -7,21 +7,25 @@ import Welcome from './components/Welcome';
 import Profile from './components/Profile';
 import Firebase from './components/Firebase';
 import Events from './components/CreateEvent';
+import Footer  from './components/Footer';
 
 const history = createBrowserHistory();
 
 function App() {
   return (
-    <Router history={history}>
-      <div>
-        <Switch>
-          <Route exact path="/"  component={Welcome} />
-          <Route path="/map" component={MapViewPage} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/create" component={Events} />
-        </Switch>
-      </div>
-    </Router>
+    <div className="page-container">
+      <Router history={history}>
+        <div>
+          <Switch>
+            <Route exact path="/"  component={Welcome} />
+            <Route path="/map" component={MapViewPage} />
+            <Route path="/profile" component={Profile} />
+            <Route path="/create" component={Events} />
+          </Switch>
+        </div>
+      </Router>
+      <Footer />
+    </div>
   );
 }
 
