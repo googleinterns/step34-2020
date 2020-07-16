@@ -99,7 +99,7 @@ public class EventCreationManager {
     
     // Turn strings that need to be arrays into arrays
     String[] attendeesArray = Utility.stringToArray(attendees);
-    
+
     // Build a new event
     Event event = new Event.Builder()
 	.withEventId(eventId)
@@ -110,7 +110,8 @@ public class EventCreationManager {
 	.atLocation(location)
 	.withOwnerId(ownerId)
 	.withOrganization(organization)
-	.withImageUrls(imageUrls)
+  .withImageUrls(imageUrls)
+  .withAttendees(attendees)
 	.build();
 
     // Submit event to the database and add the event id to all attendant's events
