@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+import ReactDOM from 'react-dom';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
 
@@ -13,17 +14,25 @@ const mapStyles = {
 };
 
 class MapView extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
+      infoBoxes: [],
       allEvents: [],
     };
+
+    this.mapElement = document.getElementById("map");
+
+    this.state.infoBoxes.push = function() {
+      this.mapElement.appendChild(arguments[0]);
+      return Array.prototype.push.apply(this, arguments);
+    }
   }
 
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
     const eventsRef = fb.eventsRef;
-    eventsRef.child("university").child("PUT_PLUS_CODE_HERE").child("All").on("value", function(dataSnapshot) {
+    eventsRef.child("university").child("86GR2X49+PQ").child("All").on("value", function(dataSnapshot) {
       this.updateEventIdsAndLoadEvent(dataSnapshot.getVal());
     });
   }
@@ -45,6 +54,7 @@ class MapView extends Component {
 	  key: eventId,
 	  value: event
 	});
+	this.addInfoBoxEvent(event);
       }
     });
   }
@@ -58,12 +68,50 @@ class MapView extends Component {
     });
   }
 
+  addInfoBoxEvent(event) {
+    var location = this.getCoords(event.location);
+    var lat = location[0];
+    var lng = location[1];
+    this.state.infoBoxes.push(
+      <Marker
+	title={event.eventName}
+	id={event.eventId}
+	position={{lat: lat, lng:lng}}
+	draggable={false}
+	>
+	<InfoWindow
+	  visible={true}
+	  >
+      	  <div>
+      	    <h2>{event.eventName}</h2>
+      	  </div>
+	</InfoWindow>
+      </Marker>
+    );
+  }
+
+  // Gets coordinate from string of location. Element 0 is latitude and 1 is longitude
+  getCoords(location) {
+    var coords = "";
+    var length = 0;
+    if (location != null) {
+     length = location.length;
+    }
+
+    if (length > 0) {
+      coords = location.slice(1, length-2);
+      coords = location.split(",");
+    }
+    return coords;
+  }
+
   render() {
     return (
       <div>
         {this.props.articles.map(article => {
           return (
             <Map
+	      id="map"
               key={article.toString()}
               google={this.props.google}
               zoom={17}
