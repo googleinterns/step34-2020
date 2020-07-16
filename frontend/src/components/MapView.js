@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+import ReactDOM from 'react-dom';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
 
@@ -13,9 +14,11 @@ const mapStyles = {
 };
 
 class MapView extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
+      renderBoxes: [],
+      infoBoxes: [],
       allEvents: [],
       location: undefined
     };
@@ -24,12 +27,16 @@ class MapView extends Component {
     this.loadArticle = this.loadArticle.bind(this);
   }
 
+  componentDidMount() {
+    this.queryEventsAndStoreInMemory();
+  }
+
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
     if (this.plusCode) {
       const eventsRef = fb.eventsRef;
-      eventsRef.child("university").child(this.plusCodeGlobalCode).child("All").on("value", function(dataSnapshot) {
-        this.updateEventIdsAndLoadEvent(dataSnapshot.getVal());
+      eventsRef.child("university").child(this.plusCodeGlobalCode).child("All").orderByKey().on("value", (dataSnapshot) => {
+        this.updateEventIdsAndLoadEvent(Object.values(dataSnapshot.val())[0]);
       });
     }
   }
@@ -39,7 +46,7 @@ class MapView extends Component {
     // Events reference
     const eventsRef = fb.eventsRef;
     // Query and then listen for any changes of that event
-    eventsRef.child("events").child(eventId).on("value", function(dataSnapshot) {
+    eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
       // The event object
       const event = dataSnapshot.val();
       // If the state has the event then update the change
@@ -51,6 +58,7 @@ class MapView extends Component {
 	  key: eventId,
 	  value: event
 	});
+	this.addInfoBoxEvent(event);
       }
     });
   }
@@ -65,10 +73,50 @@ class MapView extends Component {
   }
 
   loadArticle(article) {
-      console.log(article);
-      console.log("loadArticle:");
-      this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
-      console.log(article.locationObject.plus_code);
+    console.log(article);
+    console.log("loadArticle:");
+    this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
+    console.log(article.locationObject.plus_code);
+  }
+
+  addInfoBoxEvent(event) {
+    var location = this.getCoords(event.location);
+    var lat = location[0];
+    var lng = location[1];
+    this.state.infoBoxes.push(
+      <Marker
+	   title={event.eventName}
+	   id={event.eventId}
+	   position={{lat: lat, lng:lng}}
+	   draggable={false}
+	  >
+	    <InfoWindow
+	    visible={true}
+	    >
+      	  <div>
+      	    <h2>{event.eventName}</h2>
+      	  </div>
+	    </InfoWindow>
+      </Marker>
+    );
+    this.setState({
+      renderBoxes: this.state.infoBoxes
+    });
+  }
+
+  // Gets coordinate from string of location. Element 0 is latitude and 1 is longitude
+  getCoords(location) {
+    var coords = "";
+    var length = 0;
+    if (location != null) {
+     length = location.length;
+    }
+
+    if (length > 0) {
+      coords = location.slice(1, length-2);
+      coords = location.split(",");
+    }
+    return coords;
   }
 
   render() {
@@ -78,6 +126,7 @@ class MapView extends Component {
           return (
             <div key={"mapKey"} onLoad={this.loadArticle(article)}>
             <Map
+	          id="map"
               key={article.toString()}
               google={this.props.google}
               zoom={17}
@@ -90,9 +139,11 @@ class MapView extends Component {
                 lat: article.location.lat(),
                 lng: article.location.lng()
               }}
-              gestureHandling={'none'}
-              zoomControl={false}
-            />
+              gestureHandling={'cooperative'}
+              zoomControl={true}
+              >
+	          {this.state.infoBoxes.map(element => element)}
+	        </Map>
             </div>
           )
         })}
