@@ -7,7 +7,7 @@ import { fb } from '../App';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
-import CardColumns from 'react-bootstrap/CardColumns'
+import CardColumns from 'react-bootstrap/CardColumns';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -126,31 +126,31 @@ class Profile extends React.Component {
   render() {
     return (
       <div>
-        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials}/>
-        {/* get user profile picture and user name */}
-        <div class="profile" 
-          style={{borderBottom:"4px solid grey"}}>
-          <div className="profilephoto">
-            <img style={{
-              width:"180px",
-              height:"180px",
-              borderRadius:"80px"}}
-              src={this.state.profilePicture}
-              alt="" /> 
-            <h4 style={{
-              marginLeft:"1.8rem",
-              marginTop:".8rem"}}>
-                {this.state.credentials.displayName}
-            </h4>
+          <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials}/>
+          {/* get user profile picture and user name */}
+          <div class="profile" 
+            style={{borderBottom:"4px solid grey"}}>
+            <div className="profilephoto">
+              <img style={{
+                width:"180px",
+                height:"180px",
+                borderRadius:"80px"}}
+                src={this.state.profilePicture}
+                alt="" /> 
+              <h4 style={{
+                marginLeft:"1.8rem",
+                marginTop:".8rem"}}>
+                  {this.state.credentials.displayName}
+              </h4>
+            </div>
           </div>
-        </div>
-        <div 
-          id="content"
-          style={{
-          marginLeft:"1.8rem",
-          marginTop:".8rem"}}>
-          <br />
-        </div>
+          <div 
+            id="content"
+            style={{
+            marginLeft:"1.8rem",
+            marginTop:".8rem"}}>
+            <br />
+          </div>
       </div>
     )
   }
