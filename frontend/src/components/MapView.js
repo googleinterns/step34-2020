@@ -89,5 +89,5 @@ class MapView extends Component {
 const ConnectMapViewToStore = connect(mapStateToProps);
 
 export default GoogleApiWrapper({
-  apiKey: 'API-KEY-HERE'
+  apiKey: process.env.REACT_APP_API_KEY
 })(ConnectMapViewToStore(MapView));

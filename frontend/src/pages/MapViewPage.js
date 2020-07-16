@@ -26,6 +26,8 @@ class MapViewPage extends Component {
     this.types = ['university'];
     this.autocomplete = null;
 
+    this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+
     // Declare state
     this.state = {
       query: null,
@@ -41,7 +43,7 @@ class MapViewPage extends Component {
   render() {
     return (
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=API-KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+        <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn}/>
         <Form>
           <Form.Group>
@@ -88,5 +90,5 @@ const ConnectedMapViewPage = connect(
 )(MapViewPage);
 
 export default GoogleApiWrapper({
-  apiKey: 'API-KEY'
+  apiKey: process.env.REACT_APP_API_KEY
 })(ConnectedMapViewPage);
