@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Form, Button, Jumbotron, Row, Col, Container, Spinner } from 'react-bootstrap';
 import TopNavbar from './Navbar';
-import style from 'bootstrap/dist/css/bootstrap.css';
 import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 import Script from 'react-load-script';
@@ -107,7 +106,6 @@ class Events extends Component {
 
   // When the image is inputted, display the image
   handleImageInput(event) {
-    var imageArray = [];
     var innerCols = "";
 
     // Get the images inputted
@@ -173,9 +171,13 @@ class Events extends Component {
       }
 
       // The respone acquired from the server
+<<<<<<< HEAD
       let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, imageUrls, category, organization);
+=======
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, location, imageUrls, category, organization, "", this.props.history.location.state.credentials.uid);
+>>>>>>> origin/dev
       if (response) {
-	// Go to map page
+        // Go to map page
       } 
     }
   }
@@ -196,8 +198,8 @@ class Events extends Component {
     var string = "";
     for (var i = 0; i < list.length; i++) {
       var element = list[i];
-      if (i + 1 == list.length) {
-	string += element;
+      if (i + 1 === list.length) {
+        string += element;
       } else {
         string += element + ",";
       }
@@ -216,7 +218,7 @@ class Events extends Component {
             <Form.Group>
               <Form.Label>Event title</Form.Label>
               <Form.Control
-      		required
+                required
                 onChange={this.handleTitleChange}
                 type="text" 
                 cols="1" 
@@ -229,7 +231,7 @@ class Events extends Component {
             <Form.Group>
               <Form.Label>Date</Form.Label>
               <Form.Control
-      		required
+                required
                 onChange={this.handleDateChange}
                 type="date"/>
               <Form.Text className="text-muted">
@@ -240,7 +242,7 @@ class Events extends Component {
               <Form.Label>Start Time</Form.Label>
               <Form.Control 	
                 onChange={this.handleStartTimeChange}
-      		required
+                required
                 type="time"/>
               <Form.Text className="text-muted">
                 Tell people when your event starts!
@@ -250,7 +252,7 @@ class Events extends Component {
               <Form.Label>End Time</Form.Label>
               <Form.Control 
                 onChange={this.handleEndTimeChange}
-      		required
+                required
                 type="time"/>
               <Form.Text className="text-muted">
                 Tell people when your event ends!
@@ -260,7 +262,7 @@ class Events extends Component {
               <Form.Label>Description of your event</Form.Label>
               <Form.Control
                 onChange={this.handleDescriptionChange}
-      		required
+                required
                 as="textarea" 
                 rows="3" 
                 placeholder="Your description" />
@@ -268,6 +270,7 @@ class Events extends Component {
                 Add a description to let people know what your event is all about!
               </Form.Text>
             </Form.Group>
+<<<<<<< HEAD
 	    <Form.Row>
 	      <Form.Group as={Col}>
 		<Form.Label>University</Form.Label>
@@ -292,6 +295,19 @@ class Events extends Component {
 		</Form.Text>
 	      </Form.Group> 
 	    </Form.Row>
+=======
+            <Form.Group>
+              <Form.Label>Location</Form.Label>
+              <Form.Control 	
+                onChange={this.handleLocationChange}
+                required
+                type="text"
+                placeholder="(12345 Main St)" />
+              <Form.Text className="text-muted">
+                Tell people where your event is at!
+              </Form.Text>
+            </Form.Group> 
+>>>>>>> origin/dev
             <Form.Group>
               <Form.Label>Categories</Form.Label>
               <Form.Control	
@@ -299,7 +315,7 @@ class Events extends Component {
                 as="select"
                 className="my-1 mr-sm-2"
                 id="categoriesSelect"
-      		required
+                required
                 custom="true">
                 <option value="">Choose...</option>
                 <option value="0">Social Gathering</option>
@@ -310,7 +326,7 @@ class Events extends Component {
                 Add some categories so people can find your event easier! 
               </Form.Text>
             </Form.Group>
-      	    <Form.Group>
+            <Form.Group>
               <Form.Label>Images</Form.Label>
               <Form.File 
                 id="eventImages" 
@@ -347,19 +363,19 @@ class Events extends Component {
                 Add an organization that's associated with this event!
               </Form.Text>
             </Form.Group>
-	    <Row>
-	      <Col md="auto">
-		<Button 
-		  id="eventSubmit"
-		  variant="primary" 
-		  type="submit">
-		  Make your event!
-		</Button>
-	      </Col>
-	      <Col md="auto" id="spinner-area">
-	      </Col>
-	    </Row>
-	    <div id="warning" className="text-danger"></div>
+            <Row>
+              <Col md="auto">
+              <Button 
+                id="eventSubmit"
+                variant="primary" 
+                type="submit">
+                Make your event!
+              </Button>
+              </Col>
+              <Col md="auto" id="spinner-area">
+              </Col>
+            </Row>
+            <div id="warning" className="text-danger"></div>
           </Form>
         </Jumbotron>
       </div>

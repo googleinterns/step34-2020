@@ -103,18 +103,17 @@ public class ServletManagerServlet extends HttpServlet {
 	String key = snapshot.getKey();	
     	String sessionId = generateUniqueSessionId();
 	// Run a transaction with that child so that only this child will be linked with this servlet instance
-        idRef.child(RQSTS + "/" + sessionId).runTransaction(new Transaction.Handler() { 
+        idRef.child(INBX + "/" + key).child("id").runTransaction(new Transaction.Handler() { 
 	  public Transaction.Result doTransaction(MutableData currentData) {
 
-	    // When the data is null (which should always be the case), set the session id
-            if (currentData.getValue() == null) {
+	    // When the data is empty (which should always be the case), set the session id
+            if (currentData.getValue(String.class).isEmpty()) {
 	      // Create a new action manager for the session and add to active sessions
 	      ActionManager actionManager = new ActionManager(sessionId);
 	      activeSessions.put(sessionId, actionManager);
 
 	      // Set session ids to firebase
               currentData.setValue(sessionId);
-	      addIdToPushedKey(sessionId, key);
             } else {
 	      // Abort transaction
 	      return Transaction.abort();

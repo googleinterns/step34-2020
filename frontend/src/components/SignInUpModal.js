@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import ReactModalLogin from 'react-modal-login';
-import Profile from './Profile';
 import ReactDOM from 'react-dom';
 import { fb } from '../App';
 import firebase from 'firebase';
 
 
-export default class LogInUp extends Component {
+export default class LogInAndSignUp extends Component {
   constructor(props) {
     super(props);
 
@@ -126,10 +125,6 @@ export default class LogInUp extends Component {
     const modal = document.getElementById('modal-wrapper');
     ReactDOM.unmountComponentAtNode(modal);
   }
-
-  // componentDidUpdate () {
-  //     authStatus.setCredentials(this.state.credentials)
-  // }
 
   render() {
     if (this.state.loggedIn) {
