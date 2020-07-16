@@ -46,15 +46,14 @@ export default class LogInAndSignUp extends Component {
     const nickname = document.querySelector('#nickname').value;
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
-    const university = document.querySelector('#university').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
 
     if (confirmpassword === password){
-      // Create user account and sign them in
-      // isSuccess is a boolean whether or not the sign up was successful
-      let isSuccess = await fb.requestUserSignUpAndListenForResponse(email, password, nickname, university);
-      if (isSuccess) {
-        this.onLoginSuccess();
+      // Create user account, sign them in, then retrieve credentials
+      let response = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+      if (response != null) {
+        this.setState({credentials: response.user, loggedIn: true})
+        this.onLoginSuccess()
       }
     } else {
       alert("password don't match. Please try again")
