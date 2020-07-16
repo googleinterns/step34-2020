@@ -17,23 +17,21 @@ class MapView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      renderBoxes: [],
       infoBoxes: [],
       allEvents: [],
     };
+  }
 
-    this.mapElement = document.getElementById("map");
-
-    this.state.infoBoxes.push = function() {
-      this.mapElement.appendChild(arguments[0]);
-      return Array.prototype.push.apply(this, arguments);
-    }
+  componentDidMount() {
+    this.queryEventsAndStoreInMemory();
   }
 
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
     const eventsRef = fb.eventsRef;
-    eventsRef.child("university").child("86GR2X49+PQ").child("All").on("value", function(dataSnapshot) {
-      this.updateEventIdsAndLoadEvent(dataSnapshot.getVal());
+    eventsRef.child("university").child("86GR2X49+PQ").child("All").orderByKey().on("value", (dataSnapshot) => {
+      this.updateEventIdsAndLoadEvent(Object.values(dataSnapshot.val())[0]);
     });
   }
 
@@ -42,7 +40,7 @@ class MapView extends Component {
     // Events reference
     const eventsRef = fb.eventsRef;
     // Query and then listen for any changes of that event
-    eventsRef.child("events").child(eventId).on("value", function(dataSnapshot) {
+    eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
       // The event object
       const event = dataSnapshot.val();
       // If the state has the event then update the change
@@ -88,6 +86,9 @@ class MapView extends Component {
 	</InfoWindow>
       </Marker>
     );
+    this.setState({
+      renderBoxes: this.state.infoBoxes
+    });
   }
 
   // Gets coordinate from string of location. Element 0 is latitude and 1 is longitude
@@ -120,13 +121,11 @@ class MapView extends Component {
                 lat: article.location.lat(),
                 lng: article.location.lng()
               }}
-              center={{
-                lat: article.location.lat(),
-                lng: article.location.lng()
-              }}
-              gestureHandling={'none'}
-              zoomControl={false}
-            />
+              gestureHandling={'cooperative'}
+              zoomControl={true}
+              >
+	      {this.state.infoBoxes.map(element => element)}
+	    </Map>
           )
         })}
       </div>
