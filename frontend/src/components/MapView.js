@@ -16,7 +16,7 @@ class MapView extends Component {
   constructor() {
     super();
     this.state = {
-      allEvents: new Map(),
+      allEvents: [],
     };
   }
 
@@ -37,11 +37,14 @@ class MapView extends Component {
       // The event object
       const event = dataSnapshot.val();
       // If the state has the event then update the change
-      if (this.state.allEvents.has(eventId)) {
+      if (this.state.allEvents[eventId] !== undefined) {
 	this.updateEvent(eventId, event);
       } else {
 	// If the state doesnt have the event, add the event to the map
-	this.state.allEvents.set(eventId, event);
+	this.state.allEvents.push({
+	  key: eventId,
+	  value: event
+	});
       }
     });
   }
@@ -49,7 +52,10 @@ class MapView extends Component {
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
     // TODO: Update event info box
-    this.state.allEvents.set(eventId, event);
+    this.state.allEvents.push({
+      key: eventId,
+      value: event
+    });
   }
 
   render() {
