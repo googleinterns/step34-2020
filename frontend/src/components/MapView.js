@@ -19,7 +19,6 @@ class MapView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      infoBoxes: [],
       allEvents: [],
       showInfoWindows: true
     };
@@ -29,6 +28,7 @@ class MapView extends Component {
 
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
+    this.setState({allEvents: []});
     const eventsRef = fb.eventsRef;
     eventsRef.child("university").child("86GR2X49+PQ").child("All").orderByKey().on("value", (dataSnapshot) => {
       var events = Object.values(dataSnapshot.val());
@@ -52,12 +52,10 @@ class MapView extends Component {
 	this.updateEvent(eventId, event);
       } else {
 	// If the state doesnt have the event, add the event to the map
-	this.state.allEvents.push({
-	  key: eventId,
-	  value: event
-	});
-	this.setState({
-	  allEvents: this.state.allEvents,
+	this.setState(prevState => ({
+  	  allEvents: [...prevState.allEvents, event]
+	}), () => {
+	  this.forceUpdate();
 	});
       }
     });
@@ -86,15 +84,15 @@ class MapView extends Component {
 
     var length = 0;
     var imageUrl = "";
-    if (event.imagePath != null) {
-      length = event.imagePath.length;
+    if (event.imagePaths != null) {
+      length = event.imagePaths.length;
     }
 
     if (length > 0) {
       imageUrl = event.imagePaths.slice(1, length - 2);
       imageUrl = imageUrl.split(",")[0];
     }
-
+    console.log(imageUrl);
     return(
       <InfoWindow
 	visible={this.state.showInfoWindows}
@@ -143,15 +141,18 @@ class MapView extends Component {
 	      onReady={this.onReady}
               style={mapStyles}
               initialCenter={{
+                lat: 39.9522188,
+                lng: -75.1954024
+              }}
+              center={{
                 lat: article.location.lat(),
                 lng: article.location.lng()
               }}
-              gestureHandling={'cooperative'}
               zoomControl={true}
              >
 	      {this.state.allEvents.map(element => {
 		console.log(element);
-		return (this.getInfoBox(element.value));
+		return (this.getInfoBox(element));
 	      })}
 	    </Map>
           )
