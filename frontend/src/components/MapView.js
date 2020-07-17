@@ -75,8 +75,9 @@ class MapView extends Component {
   loadArticle(article) {
     console.log(article);
     console.log("loadArticle:");
-    this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
-    console.log(article.locationObject.plus_code);
+    if (article.locationObject) {
+      this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
+    }
   }
 
   addInfoBoxEvent(event) {

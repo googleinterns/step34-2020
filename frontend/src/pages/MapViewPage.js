@@ -37,7 +37,41 @@ class MapViewPage extends Component {
       loggedIn: props.location.state.loggedIn
     };
 
-    console.log(props);
+    /*if (this.props.articles.length == 0) {
+      // 1 = Penn, 2 = Tufts, 3 = The Ohio State University
+      const uni = Math.floor(Math.random() * 10);
+
+      var universityName = "";
+      var locationLat = 0;
+      var locationLng = 0;
+      if (uni == 1) {
+        universityName = "University of Pennsylvania";
+        locationLat = 39.9522188;
+        locationLng = -75.1954024;
+      } else if (uni == 2) {
+        universityName = "Tufts University";
+        locationLat = 42.4085371;
+        locationLng = -71.1204616;
+      } else {
+        universityName = "The Ohio State University";
+        locationLat = 40.0068363;
+        locationLng = -83.0328109;
+      }
+
+      const hardCodedLocation = {
+        lat: function() {
+          return locationLat;
+        },
+        lng: function() {
+          return locationLng;
+        }
+      }
+      const defaultState = {
+        query: universityName,
+        location: hardCodedLocation,
+      }
+      this.props.changeMapState(defaultState);
+    }*/
   }
 
   render() {
@@ -75,6 +109,7 @@ class MapViewPage extends Component {
         query: addressObject.name,
         location: addressGeometry.location,
         locationObject: addressObject,
+        viewport: addressGeometry.viewport,
       }
       console.log(currentState);
       this.props.changeMapState(currentState);

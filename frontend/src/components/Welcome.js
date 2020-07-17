@@ -72,7 +72,8 @@ class Search extends Component {
       const currentState  = {
         query: addressObject.name,
         location: addressGeometry.location,
-        locationObject: addressObject,  
+        locationObject: addressObject,
+        viewport: addressGeometry.viewport,  
       }
       console.log(currentState);
       this.props.changeMapState(currentState);
