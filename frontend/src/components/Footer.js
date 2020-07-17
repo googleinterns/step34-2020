@@ -6,13 +6,25 @@ const Footer = () => {
     <div className="footer-content">
       <div className="container">
         <div className="row">
+          {/* Owner's column */}
+          <div className="col-md-3 col-sm-6">
+            <h4>Owner</h4>
+            <ul className="list-unstyled">
+              <li>Google LLC</li>
+            </ul>
+            <h4>Sponsors</h4>
+            <ul className="list-unstyled">
+              <li>Daniel Teh</li>
+              <li>Dan Ho</li>
+            </ul>
+          </div>
           {/* contributor's colum */}
           <div className="col-md-3 col-sm-6">
             <h4>Founders</h4>
             <ul className="list-unstyled">
-              <li>Maya</li>
-              <li>John</li>
-              <li>Mico</li>
+              <li>Maya Patel</li>
+              <li>John Kim</li>
+              <li>Mico Theogene Micomyiza</li>
             </ul>
           </div>
           {/* mission's colum */}
@@ -24,7 +36,7 @@ const Footer = () => {
               We are here to help you explore campus events beyond your social circle.<br/>
             </p>
           </div>
-          {/* mission's colum */}
+          {/* source code's colum */}
           <div className="col-md-3 col-sm-6">
             <h4>Source code</h4>
             <a color='white' href="https://github.com/googleinterns/step34-2020">GitHub</a>
