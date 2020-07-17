@@ -22,21 +22,23 @@ class MapViewPage extends Component {
     super(props);
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    this.inputRef = React.createRef();
 
     this.types = ['university'];
     this.autocomplete = null;
 
     this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
-
+    console.log(props.location.state);
     // Declare state
     this.state = {
       query: null,
       location: null,
       viewport: null,
       history: props.history,
+      plusCode: props.location.state.plus_code,
       loggedIn: props.location.state.loggedIn
     };
-    console.log(this.props.location.state.plus_code)
+     console.log(this.state.plusCode);
 
     /*if (this.props.articles.length == 0) {
       // 1 = Penn, 2 = Tufts, 3 = The Ohio State University
@@ -87,11 +89,10 @@ class MapViewPage extends Component {
           <Form.Control id = "autocomplete" placeholder = "Enter university"/>
           </Form.Group>
         </Form>
-        <MapView plus_code={this.props.location.state.plus_code}/>
+        <MapView plusCode={this.state.plusCode}/>
       </div>
     );
   }
-
   handleScriptLoad() {
     /*global google*/
     this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
@@ -115,6 +116,7 @@ class MapViewPage extends Component {
       console.log(currentState);
       this.props.changeMapState(currentState);
 
+      this.setState({plusCode: addressObject.plus_code.global_code});
       this.setState(currentState);
     }
   }

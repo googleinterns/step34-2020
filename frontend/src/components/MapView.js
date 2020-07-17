@@ -21,39 +21,33 @@ class MapView extends Component {
     this.state = {
       allEvents: [],
       location: undefined,
+      plusCode: props.plusCode,
       showInfoWindows: true
     };
-
-    this.plusCodeGlobalCode = this.props.plus_code;
-    this.loadArticle = this.loadArticle.bind(this);
-    console.log(this.props);
-    this.queryEventsAndStoreInMemory();
-
+    var plusCode = this.state.plusCode;
+    console.log(this.state.plusCode);
+    this.queryEventsAndStoreInMemory(plusCode);
   }
-
-  componentDidMount() {
-    console.log("Constructing");
-    this.queryEventsAndStoreInMemory();
+ 
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    console.log(nextProps)
+    this.setState({ plusCode: nextProps.plusCode }, () => {
+      this.queryEventsAndStoreInMemory(nextProps.plusCode);
+    });
   }
-
+  
   // Queries all events with a given university plus code
-  queryEventsAndStoreInMemory() {
-    // this.setState({allEvents: []});
-    this.setState(prevState => ({
-  	  allEvents: []
-	}), () => {
-	  const eventsRef = fb.eventsRef;
-      console.log(this.props.plus_code)
-      eventsRef.child("university").child(this.props.plus_code).child("All").orderByKey().on("value", (dataSnapshot) => {
+  queryEventsAndStoreInMemory(plusCode) {
+    this.setState({allEvents: []});
+    const eventsRef = fb.eventsRef;
+    eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", (dataSnapshot) => {
       if (dataSnapshot.numChildren() !== 0) {
-        var events = Object.values(dataSnapshot.val());
-        for (var i = 0; i < events.length; i++) {
-	      console.log(events[i]);
-          this.updateEventIdsAndLoadEvent(events[i]);
-        }
+	var events = Object.values(dataSnapshot.val());
+	for (var i = 0; i < events.length; i++) {
+	  this.updateEventIdsAndLoadEvent(events[i]);
+	}
       }
-      });
-	});
+    });
   }
 //     });
 
@@ -98,7 +92,7 @@ class MapView extends Component {
     console.log("loadArticle:");
     if (article.locationObject) {
       this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
-      console.log('here');
+      this.setState({allEvents: []});
     }
   }
 
@@ -161,7 +155,6 @@ render() {
       <div>
         {this.props.articles.map(article => {
           return (
-            <div onLoad={this.loadArticle(article)}>
             <Map
 	      id="map"
               key={article.toString()}
@@ -183,7 +176,6 @@ render() {
 		return (this.getInfoBox(element));
 	      })}
 	    </Map>
-        </div>
           )
         })}
       </div>
