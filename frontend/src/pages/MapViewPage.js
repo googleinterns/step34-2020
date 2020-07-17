@@ -28,60 +28,24 @@ class MapViewPage extends Component {
     this.autocomplete = null;
 
     this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
-    console.log(props.location.state);
     // Declare state
     this.state = {
       query: null,
       location: null,
       viewport: null,
       history: props.history,
-      plusCode: props.location.state.plus_code,
+      plusCode: props.history.location.state.plus_code,
       loggedIn: props.location.state.loggedIn
     };
      console.log(this.state.plusCode);
 
-    /*if (this.props.articles.length == 0) {
-      // 1 = Penn, 2 = Tufts, 3 = The Ohio State University
-      const uni = Math.floor(Math.random() * 10);
-
-      var universityName = "";
-      var locationLat = 0;
-      var locationLng = 0;
-      if (uni == 1) {
-        universityName = "University of Pennsylvania";
-        locationLat = 39.9522188;
-        locationLng = -75.1954024;
-      } else if (uni == 2) {
-        universityName = "Tufts University";
-        locationLat = 42.4085371;
-        locationLng = -71.1204616;
-      } else {
-        universityName = "The Ohio State University";
-        locationLat = 40.0068363;
-        locationLng = -83.0328109;
-      }
-
-      const hardCodedLocation = {
-        lat: function() {
-          return locationLat;
-        },
-        lng: function() {
-          return locationLng;
-        }
-      }
-      const defaultState = {
-        query: universityName,
-        location: hardCodedLocation,
-      }
-      this.props.changeMapState(defaultState);
-    }*/
   }
 
   render() {
     return (
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn}/>
+        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.props.location.state.plus_code}/>
         <Form>
           <Form.Group>
           <Form.Label> Enter your university </Form.Label>
@@ -89,10 +53,11 @@ class MapViewPage extends Component {
           <Form.Control id = "autocomplete" placeholder = "Enter university"/>
           </Form.Group>
         </Form>
-        <MapView plusCode={this.state.plusCode}/>
+        <MapView key={Math.random() * 10000} plusCode={this.state.plusCode}/>
       </div>
     );
   }
+
   handleScriptLoad() {
     /*global google*/
     this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);

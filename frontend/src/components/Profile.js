@@ -15,6 +15,7 @@ class Profile extends React.Component {
 
     const JSONString = props.history.location.state.credentials;
     const JSONObject = JSON.parse(JSONString);
+    console.log(props)
 
     console.log(JSONObject);
 
@@ -111,7 +112,7 @@ class Profile extends React.Component {
   render() {
     return (
       <div>
-        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials}/>
+        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials} plus_code={this.props.history.location.state.plus_code}/>
         {/* get user profile picture and user name */}
         <div className="profilepictureContent" 
           style={{borderBottom:"4px solid grey"}}>

@@ -28,7 +28,7 @@ export default class TopNavbar extends React.Component {
   handleLoginButtonClick() {
     ReactDOM.render(
       <div id="modal">
-        <Modal history={this.props.history}/>
+        <Modal history={this.props.history} plus_code={this.props.plus_code}/>
       </div>,
       document.getElementById('modal-wrapper')
     );
@@ -38,14 +38,14 @@ export default class TopNavbar extends React.Component {
     if (!this.props.loggedIn) {
       ReactDOM.render(
         <div id="modal">
-          <Modal history={this.props.history}/>
+          <Modal history={this.props.history} pkus_code={this.props.plus_code}/>
         </div>,
         document.getElementById('modal-wrapper')
       );
     } else {
       this.props.history.push({
         pathname: '/map/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials}
+        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       });
     }
   }
@@ -54,14 +54,15 @@ export default class TopNavbar extends React.Component {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
     if (this.props.loggedIn) {
+        console.log(this.props.plus_code)
       this.props.history.push({
         pathname: '/profile/',
-        state: {loggedIn: this.props.loggedIn, credentials: JSON.stringify(this.credentials)}
+        state: {loggedIn: this.props.loggedIn, credentials: JSON.stringify(this.credentials), plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
         <div id="modal">
-          <Modal history={this.props.history}/>
+          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
         </div>,
         document.getElementById('modal-wrapper')
       );
@@ -81,12 +82,12 @@ export default class TopNavbar extends React.Component {
     if (this.props.loggedIn) {
       this.props.history.push({
         pathname: '/create/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials}
+        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
         <div id="modal">
-          <Modal history={this.props.history}/>
+          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
         </div>,
         document.getElementById('modal-wrapper')
       );
