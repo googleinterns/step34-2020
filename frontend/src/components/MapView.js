@@ -26,12 +26,15 @@ class MapView extends Component {
     };
     var plusCode = this.state.plusCode;
     console.log(this.state.plusCode);
+    console.log("constr");
     this.queryEventsAndStoreInMemory(plusCode);
   }
- 
+
   UNSAFE_componentWillReceiveProps(nextProps) {
+    console.log("componentWillRec");
     console.log(nextProps)
-    this.setState({ showInfoWindows: false, plusCode: nextProps.plusCode }, () => {
+    this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, () => {
+      console.log(this.state.showInfoWinddows);
       this.queryEventsAndStoreInMemory(nextProps.plusCode);
       this.setState({showInfoWindows: true});
     });
@@ -39,21 +42,36 @@ class MapView extends Component {
   
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory(plusCode) {
-    this.setState({allEvents: []});
-    const eventsRef = fb.eventsRef;
-    eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", (dataSnapshot) => {
-
-    if (dataSnapshot.numChildren() !== 0) {
-	var events = Object.values(dataSnapshot.val());
-	for (var i = 0; i < events.length; i++) {
-	  this.updateEventIdsAndLoadEvent(events[i]);
+    console.log("queryEvents");
+    if (plusCode !== undefined) {
+      const eventsRef = fb.eventsRef;
+      eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", (dataSnapshot) => {
+      if (dataSnapshot.numChildren() !== 0) {
+	  var events = Object.values(dataSnapshot.val());
+	  for (var i = 0; i < events.length; i++) {
+	    console.log(events[i]);
+	    this.updateEventIdsAndLoadEvent(events[i]);
+	  }
 	}
-      }
-    });
+      });
+    } else {
+      const eventsRef = fb.eventsRef;
+      eventsRef.child("university").child("8QC7XP32+PC").child("All").orderByKey().on("value", (dataSnapshot) => {
+      if (dataSnapshot.numChildren() !== 0) {
+	  var events = Object.values(dataSnapshot.val());
+	  for (var i = 0; i < events.length; i++) {
+	    console.log(events[i]);
+	    this.updateEventIdsAndLoadEvent(events[i]);
+	  }
+	}
+      });
+    }
   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
   updateEventIdsAndLoadEvent(eventId) {
+    console.log("update events");
+    console.log("event id " + eventId);
     // Events reference
     const eventsRef = fb.eventsRef;
     // Query and then listen for any changes of that event
@@ -67,15 +85,15 @@ class MapView extends Component {
 	// If the state doesnt have the event, add the event to the map
 	this.setState(prevState => ({
   	  allEvents: [...prevState.allEvents, event]
-	}), () => {
-	  this.forceUpdate();
-	});
+	}));
+	this.forceUpdate();
       }
     });
   }
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
+    console.log("updatesEvent")
     // TODO: Update event info box
     this.state.allEvents.push({
       key: eventId,
@@ -100,6 +118,7 @@ class MapView extends Component {
   }
 
   getInfoBox(event) {
+    console.log("infobox");
     var location = this.getCoords(event.location);
     var lat = parseFloat(location[0]);
     var lng = parseFloat(location[1]);
@@ -114,6 +133,7 @@ class MapView extends Component {
       imageUrl = event.imagePaths.slice(1, length - 2);
       imageUrl = imageUrl.split(",")[0];
     }
+
     return(
       <InfoWindow
 	    visible={this.state.showInfoWindows}
@@ -172,6 +192,7 @@ render() {
               zoomControl={true}
              >
 	      {this.state.allEvents.map(element => {
+		console.log(element);
 		return (this.getInfoBox(element));
 	      })}
 	    </Map>

@@ -38,7 +38,7 @@ export default class TopNavbar extends React.Component {
     if (!this.props.loggedIn) {
       ReactDOM.render(
         <div id="modal">
-          <Modal history={this.props.history} pkus_code={this.props.plus_code}/>
+          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
         </div>,
         document.getElementById('modal-wrapper')
       );

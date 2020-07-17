@@ -42,10 +42,13 @@ class MapViewPage extends Component {
   }
 
   render() {
+    console.log(this.props.history.location.state.plus_code);
+    console.log(this.props.location.state.plus_code);
+    console.log(this.state.plus_code);
     return (
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.props.location.state.plus_code}/>
+        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
         <Form>
           <Form.Group>
           <Form.Label> Enter your university </Form.Label>
@@ -53,7 +56,7 @@ class MapViewPage extends Component {
           <Form.Control id = "autocomplete" placeholder = "Enter university"/>
           </Form.Group>
         </Form>
-        <MapView key={Math.random() * 10000} plusCode={this.state.plusCode}/>
+        <MapView plusCode={this.state.plusCode}/>
       </div>
     );
   }
