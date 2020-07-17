@@ -104,21 +104,6 @@ public class EventCreationManager {
 
     // Build a new event
     Event event = new Event.Builder()
-<<<<<<< HEAD
-	.withEventId(eventId)
-	.withName(title)
-	.withDate(date)
-	.withStartEndTime(startTime, endTime)
-	.withDescription(description)
-	.withPlusCode(plusCode)
-	.atLocation(location)
-	.withLocationName(locationName)
-	.withOwnerId(ownerId)
-	.withCategory(category)
-	.withOrganization(organization)
-	.withImageUrls(imageUrls)
-	.build();
-=======
     .withEventId(eventId)
     .withName(title)
     .withDate(date)
@@ -130,7 +115,6 @@ public class EventCreationManager {
     .withImageUrls(imageUrls)
     .withAttendees(attendees)
     .build();
->>>>>>> a2eb08398a82d5934234cef10e4d1c856b59e956
 
     // Submit event to the database and add the event id to all attendant's events
     addEventToDatabase(requestId, event, attendeesArray);
@@ -142,18 +126,10 @@ public class EventCreationManager {
     Iterator<Map.Entry<String,String>> it = entries.iterator();
     while(it.hasNext()) {
       Map.Entry<String, String> entry = it.next();
-<<<<<<< HEAD
-      if (!entry.getKey().equals("imagePaths") && !entry.getKey().equals("organization") && !entry.getKey().equals("attendees")) {
-	System.out.println(entry.getKey());
-	if (entry.getValue() == null || entry.getValue().isEmpty()) {
-	  return false;
-	} 
-=======
       if (!entry.getKey().equals("imagePaths") || !entry.getKey().equals("organization")) {
         if (entry.getValue() == null || entry.getValue().isEmpty()) {
           return false;
         }
->>>>>>> a2eb08398a82d5934234cef10e4d1c856b59e956
       }
     }
     return true;
@@ -167,24 +143,6 @@ public class EventCreationManager {
   private void addEventToDatabase(String requestId, Event event, String[] attendees) {
     eventsRef.child(EVNTS).child(event.getEventId()).setValue(event, new DatabaseReference.CompletionListener() {
       public void onComplete(DatabaseError error, DatabaseReference ref) {
-<<<<<<< HEAD
-	if (error == null) {
-	  // Add event under plus code and associated category
-	  addEventUnderPlusCodeAndCategory(event.getEventId(), event.getPlusCode(), event.getCategory());
-	  // Add event under users and add the attendees list
-	  addEventToUserEventDatabase(event.getEventId(), attendees);
-	  addAttendeesToDatabase(event.getEventId(), attendees);
-	  
-	  // Write success response
-	  Map<String, String> response = Utility.createResponse("success", "");
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	} else {
-	  // Write failed response
-	  Map<String, String> response = Utility.createResponse("failed", error.getMessage());
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	}
-      }	
-=======
         if (error == null) {
           // Add event under users and add the attendees list
           addEventToUserEventDatabase(event.getEventId(), attendees);
@@ -199,7 +157,6 @@ public class EventCreationManager {
           Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
         }
       }
->>>>>>> a2eb08398a82d5934234cef10e4d1c856b59e956
     });
   }
 

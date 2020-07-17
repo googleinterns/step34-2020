@@ -28,7 +28,8 @@ class Profile extends React.Component {
 
 
   didUpdate(event) {
-    var attendees = ["user1", "user2", "user3"];
+    if(event !== null) {
+      var attendees = ["user1", "user2", "user3"];
     var len = 0;
     var imageUrl = "";
     var card = "";
@@ -81,6 +82,8 @@ class Profile extends React.Component {
         {this.state.cards.map(element   => element)}
       </CardColumns>,
       document.getElementById("content"))
+    }
+    
   }
 
   getData(eventKeys){

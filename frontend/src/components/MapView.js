@@ -171,7 +171,7 @@ class MapView extends Component {
 
 render() {
     return (
-      <div>
+      <div  className="mapView">
         {this.props.articles.map(article => {
           return (
             <Map
