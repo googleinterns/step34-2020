@@ -31,8 +31,9 @@ class MapView extends Component {
  
   UNSAFE_componentWillReceiveProps(nextProps) {
     console.log(nextProps)
-    this.setState({ plusCode: nextProps.plusCode }, () => {
+    this.setState({ showInfoWindows: false, plusCode: nextProps.plusCode }, () => {
       this.queryEventsAndStoreInMemory(nextProps.plusCode);
+      this.setState({showInfoWindows: true});
     });
   }
   
