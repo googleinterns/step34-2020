@@ -159,7 +159,7 @@ class Firebase {
 
  // Request event creation given the parameters. 
  // The first three parameters are required, the rest are optional.
- requestEventCreation(title, date, startTime, endTime, description, plusCode, location, files = "", category, organization = "", invitedAttendees = "", uid) {
+ requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, files = "", category, organization = "", invitedAttendees = "", uid) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     
@@ -174,6 +174,7 @@ class Firebase {
       description: description,
       plusCode: plusCode,
       location: location,
+      locationName: locationName,
       imagePaths: files,
       category: category,
       organization: organization,

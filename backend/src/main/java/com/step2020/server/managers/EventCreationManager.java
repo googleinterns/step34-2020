@@ -92,6 +92,7 @@ public class EventCreationManager {
     String description = eventInfo.get("description");
     String plusCode = eventInfo.get("plusCode");
     String location = eventInfo.get("location");
+    String locationName = eventInfo.get("locationName");
     String imageUrls = eventInfo.get("imageUrls");
     String category = eventInfo.get("category");
     String organization = eventInfo.get("organization");
@@ -110,6 +111,7 @@ public class EventCreationManager {
 	.withDescription(description)
 	.withPlusCode(plusCode)
 	.atLocation(location)
+	.withLocationName(locationName)
 	.withOwnerId(ownerId)
 	.withCategory(category)
 	.withOrganization(organization)

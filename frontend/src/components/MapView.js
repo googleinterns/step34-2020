@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { Card } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
+import '../gm-styles.css'
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -17,10 +19,10 @@ class MapView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      renderBoxes: [],
       infoBoxes: [],
       allEvents: [],
-      location: undefined
+      location: undefined,
+      showInfoWindows: true
     };
 
     this.plusCodeGlobalCode = undefined;
@@ -28,17 +30,20 @@ class MapView extends Component {
   }
 
   componentDidMount() {
+    console.log("Constructing");
     this.queryEventsAndStoreInMemory();
   }
 
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
-    if (this.plusCode) {
-      const eventsRef = fb.eventsRef;
-      eventsRef.child("university").child(this.plusCodeGlobalCode).child("All").orderByKey().on("value", (dataSnapshot) => {
-        this.updateEventIdsAndLoadEvent(Object.values(dataSnapshot.val())[0]);
-      });
-    }
+    const eventsRef = fb.eventsRef;
+    eventsRef.child("university").child("86GR2X49+PQ").child("All").orderByKey().on("value", (dataSnapshot) => {
+      var events = Object.values(dataSnapshot.val());
+      for (var i = 0; i < events.length; i++) {
+	console.log(events[i]);
+        this.updateEventIdsAndLoadEvent(events[i]);
+      }
+    });
   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
@@ -58,7 +63,9 @@ class MapView extends Component {
 	  key: eventId,
 	  value: event
 	});
-	this.addInfoBoxEvent(event);
+	this.setState({
+	  allEvents: this.state.allEvents,
+	});
       }
     });
   }
@@ -69,6 +76,9 @@ class MapView extends Component {
     this.state.allEvents.push({
       key: eventId,
       value: event
+    }); 
+    this.setState({
+      allEvents: this.state.allEvents,
     });
   }
 
@@ -81,28 +91,38 @@ class MapView extends Component {
   }
 
   addInfoBoxEvent(event) {
+    return this.getInfoBox(event);
+  }
+
+  getInfoBox(event) {
     var location = this.getCoords(event.location);
-    var lat = location[0];
-    var lng = location[1];
-    this.state.infoBoxes.push(
-      <Marker
-	   title={event.eventName}
-	   id={event.eventId}
-	   position={{lat: lat, lng:lng}}
-	   draggable={false}
-	  >
-	    <InfoWindow
-	    visible={true}
-	    >
-      	  <div>
-      	    <h2>{event.eventName}</h2>
-      	  </div>
-	    </InfoWindow>
-      </Marker>
+    var lat = parseFloat(location[0]);
+    var lng = parseFloat(location[1]);
+
+    var length = 0;
+    var imageUrl = "";
+    if (event.imagePath != null) {
+      length = event.imagePath.length;
+    }
+
+    if (length > 0) {
+      imageUrl = event.imagePaths.slice(1, length - 2);
+      imageUrl = imageUrl.split(",")[0];
+    }
+
+    return(
+      <InfoWindow
+	visible={this.state.showInfoWindows}
+	position={{lat: lat, lng: lng}}>
+	<Card border="light">
+      	  <Card.Img variant="right" src={imageUrl} />
+      	  <Card.Body>
+      	    <Card.Title>{event.eventName}</Card.Title>
+      	    <Card.Text>{event.description}</Card.Text>
+      	  </Card.Body>
+	</Card>
+      </InfoWindow>
     );
-    this.setState({
-      renderBoxes: this.state.infoBoxes
-    });
   }
 
   // Gets coordinate from string of location. Element 0 is latitude and 1 is longitude
@@ -112,12 +132,17 @@ class MapView extends Component {
     if (location != null) {
      length = location.length;
     }
-
     if (length > 0) {
       coords = location.slice(1, length-2);
-      coords = location.split(",");
+      coords = coords.split(",");
     }
     return coords;
+  }
+
+  onReady = () => {
+    this.setState({
+      showInfoWindows: true
+    });
   }
 
   render() {
@@ -131,6 +156,7 @@ class MapView extends Component {
               key={article.toString()}
               google={this.props.google}
               zoom={17}
+	      onReady={this.onReady}
               style={mapStyles}
               initialCenter={{
                 lat: article.location.lat(),
@@ -142,10 +168,12 @@ class MapView extends Component {
               }}
               gestureHandling={'cooperative'}
               zoomControl={true}
-              >
-	          {this.state.infoBoxes.map(element => element)}
-	        </Map>
-            </div>
+             >
+	      {this.state.allEvents.map(element => {
+		console.log(element);
+		return (this.getInfoBox(element.value));
+	      })}
+	    </Map>
           )
         })}
       </div>
