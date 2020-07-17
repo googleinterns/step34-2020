@@ -29,6 +29,7 @@ public class Event {
   private String category;
   private String organization;
   private String imageUrls;
+  private String attendees;
 
   public static class Builder {
 
@@ -45,6 +46,7 @@ public class Event {
     private String category;
     private String organization;
     private String imageUrls;
+    private String attendees;
 
     public Builder() {
       this.eventId = "";
@@ -61,6 +63,7 @@ public class Event {
       // imageUrls will be a string in the form of [url0,url1,....]. 
       // This was designed like this because using Lists within an object in Firebase can get wonky.
       this.imageUrls = "[]";
+      this.attendees = "[]";
     }
 
     public Builder withEventId(String id) {
@@ -125,6 +128,11 @@ public class Event {
       return this;
     }
 
+    public Builder withAttendees(String attendees) {
+      this.attendees = attendees;
+      return this;
+    }
+
     public Event build() {
       Event event = new Event();
       event.eventId = this.eventId;
@@ -140,6 +148,7 @@ public class Event {
       event.ownerId = this.ownerId;
       event.organization = this.organization;
       event.imageUrls = this.imageUrls;
+      event.attendees = this.attendees;
 
       return event;
     }
@@ -197,5 +206,9 @@ public class Event {
 
   public String getImageUrls() {
     return this.imageUrls;
+  }
+
+  public String getAttendees() {
+    return this.attendees;
   }
 }

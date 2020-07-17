@@ -7,7 +7,7 @@ import { fb } from '../App';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
-import CardColumns from 'react-bootstrap/CardColumns'
+import CardColumns from 'react-bootstrap/CardColumns';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -20,8 +20,7 @@ class Profile extends React.Component {
     console.log(JSONObject);
 
     this.state = {
-      profilePicture: "https://images.unsplash.com/photo-1503249023995-51b0f3778ccf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-      username: 'Tim',
+      profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
       credentials: JSONObject,
       cards:[],
     };
@@ -49,7 +48,12 @@ class Profile extends React.Component {
 
     // Add this card to the list of all cards to be displayed on the profile
     this.state.cards.push(
-      <Card>
+      <Card 
+        bg={'light'}
+        border="secondary"
+        text={'light' ? 'dark' : 'white'}
+        style={{ width: '18rem' }}
+        className="mb-2">
         {card}
         {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
         <Card.Body>
@@ -89,10 +93,14 @@ class Profile extends React.Component {
     // Create a reference all events the current user own
     eventKeys.map(key => {
       const ref = fb.eventsRef.child("events").child(key);
-      ref.on('value', snapshot => {
-        const event = snapshot.val();
-        this.didUpdate(event);
-      });
+
+      // Evaluate whether the ref isn't null
+      if (ref != null) {
+        ref.on('value', snapshot => {
+          const event = snapshot.val();
+          this.didUpdate(event);
+        });
+      }
       return null;
     });
   }
@@ -100,13 +108,20 @@ class Profile extends React.Component {
   componentDidMount() {
     // Create a referene to the current user
     const myEventsRef = fb.userRef.child("events").child(this.state.credentials.uid);
-    myEventsRef.on('value', snapshot => {
-      // snapshot.val().map (key => this.state.eventslist.push(key))
-      const mykeys = Object.keys(snapshot.val())
 
-      //retrieve data from database using this reference
-      this.getData(mykeys)
-    });
+    // Shouldn't be null. if it is, do nothing
+    if (myEventsRef != null) {
+      myEventsRef.on('value', snapshot => {
+        
+        // Do nothing when it's null
+        if (snapshot.val() != null) {
+          const mykeys = Object.keys(snapshot.val())
+          //retrieve data from database using this reference
+          this.getData(mykeys)
+        }
+      });
+    }
+
   }
 
   render() {
@@ -128,15 +143,15 @@ class Profile extends React.Component {
               marginTop:".8rem"}}>
                 {this.state.username}
             </h4>
+            </div>
           </div>
-        </div>
-        <div 
-          id="content"
-          style={{
-          marginLeft:"1.8rem",
-          marginTop:".8rem"}}>
-          <br />
-        </div>
+          <div 
+            id="content"
+            style={{
+            marginLeft:"1.8rem",
+            marginTop:".8rem"}}>
+            <br />
+          </div>
       </div>
     )
   }

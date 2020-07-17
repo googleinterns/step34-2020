@@ -135,7 +135,7 @@ class Firebase {
     var sessionId = this.sessionId;
 
     // Listen for responses under the RESPONSES path
-    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', function(snapshot) {
+    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', async function(snapshot) {
       if (snapshot.key === requestId) {
         // Get the status and message
         var status = snapshot.child("status").val();
@@ -143,12 +143,12 @@ class Firebase {
         console.log(status);
         // When the status is "success" sign in and make deferred promise true
         if (status === "success") {
-          firebase.auth().signInWithEmailAndPassword(email, password);
-          deferred.resolve(true);
+          let response = await firebase.auth().signInWithEmailAndPassword(email, password);
+          deferred.resolve(response);
         // When the status is "failed" show error message and deferred promise as false
         } else { 
           alert(message);
-          deferred.resolve(false);
+          deferred.resolve(null);
         }
       }
       // Remove the listener from this path

@@ -3,7 +3,8 @@ import Script from 'react-load-script';
 import { Form, Button, Jumbotron } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
-import TopNavbar from './Navbar'
+import TopNavbar from './Navbar';
+import '../App.css';
 
 const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 
@@ -36,13 +37,17 @@ class Search extends Component {
   
   render() {
     return ( 
-      <div>
+      <div className="welcomeContent">
         <Script url = {url} onLoad = {this.handleScriptLoad}/> 
         <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
           <Form>
             <Form.Group>
+            <Form.Label> <h4>Our Mission</h4> </Form.Label>
+      	    <br/>
+            <Form.Label>The objective of MapIT is to manage and visualize student-created public events, and expose these events to their college community. <br />
+              We are here to help you explore campus events beyond your social circle.</Form.Label> <br/><br/>
             <Form.Label> Enter your university </Form.Label> 
             <br/>
             <Form.Control id = "autocomplete" placeholder = "Enter university"/>
