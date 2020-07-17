@@ -24,6 +24,7 @@ public class Event {
   private String description;
   private String plusCode;
   private String location;
+  private String locationName;
   private String ownerId;
   private String category;
   private String organization;
@@ -39,6 +40,7 @@ public class Event {
     private String description;
     private String plusCode;
     private String location;
+    private String locationName;
     private String ownerId;
     private String category;
     private String organization;
@@ -53,6 +55,7 @@ public class Event {
       this.description = "";
       this.plusCode = "";
       this.location = "";
+      this.locationName = "";
       this.ownerId = "";
       this.organization = "";
       // imageUrls will be a string in the form of [url0,url1,....]. 
@@ -96,6 +99,11 @@ public class Event {
       return this;
     }
 
+    public Builder withLocationName(String locationName) {
+      this.locationName = locationName;
+      return this;
+    }
+
     public Builder withCategory(String category) {
       this.category = category;
       return this;
@@ -127,6 +135,7 @@ public class Event {
       event.description = this.description;
       event.plusCode = this.plusCode;
       event.location = this.location;
+      event.locationName = this.locationName;
       event.category = this.category;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
@@ -166,6 +175,10 @@ public class Event {
     return this.plusCode;
   }
 
+  public String getLocationName() {
+    return this.locationName;
+  }
+  
   public String getLocation() {
     return this.location;
   }
