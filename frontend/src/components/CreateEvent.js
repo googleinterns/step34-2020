@@ -189,7 +189,10 @@ class Events extends Component {
       // The respone acquired from the server
       let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization, "", this.props.history.location.state.credentials.uid);
       if (response) {
-        // Go to map page
+        this.props.history.push({
+          pathname: '/map/',
+          state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
+        })
       } 
     }
   }
@@ -232,7 +235,7 @@ class Events extends Component {
     return (
             <div>
               <Script url={url} onLoad = {this.handleScriptLoad}/>
-              <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn}/>
+              <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn} plus_code={this.props.location.state.plus_code}/>
               <Jumbotron >
                 <h1>Create Your Event</h1>
                 <Form noValidate validated={this.validated} onSubmit={this.handleSubmit}>

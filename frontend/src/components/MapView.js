@@ -42,7 +42,8 @@ class MapView extends Component {
     this.setState({allEvents: []});
     const eventsRef = fb.eventsRef;
     eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", (dataSnapshot) => {
-      if (dataSnapshot.numChildren() !== 0) {
+
+    if (dataSnapshot.numChildren() !== 0) {
 	var events = Object.values(dataSnapshot.val());
 	for (var i = 0; i < events.length; i++) {
 	  this.updateEventIdsAndLoadEvent(events[i]);
@@ -50,9 +51,6 @@ class MapView extends Component {
       }
     });
   }
-//     });
-
-//   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
   updateEventIdsAndLoadEvent(eventId) {
