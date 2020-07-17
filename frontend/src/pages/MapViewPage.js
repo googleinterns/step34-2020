@@ -36,6 +36,7 @@ class MapViewPage extends Component {
       history: props.history,
       loggedIn: props.location.state.loggedIn
     };
+    console.log(this.props.location.state.plus_code)
 
     /*if (this.props.articles.length == 0) {
       // 1 = Penn, 2 = Tufts, 3 = The Ohio State University
@@ -86,7 +87,7 @@ class MapViewPage extends Component {
           <Form.Control id = "autocomplete" placeholder = "Enter university"/>
           </Form.Group>
         </Form>
-        <MapView />
+        <MapView plus_code={this.props.location.state.plus_code}/>
       </div>
     );
   }

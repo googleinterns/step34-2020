@@ -25,8 +25,11 @@ class MapView extends Component {
       showInfoWindows: true
     };
 
-    this.plusCodeGlobalCode = undefined;
+    this.plusCodeGlobalCode = this.props.plus_code;
     this.loadArticle = this.loadArticle.bind(this);
+    console.log(this.props);
+    this.queryEventsAndStoreInMemory();
+
   }
 
   componentDidMount() {
@@ -37,12 +40,15 @@ class MapView extends Component {
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
     const eventsRef = fb.eventsRef;
-    eventsRef.child("university").child("86GR2X49+PQ").child("All").orderByKey().on("value", (dataSnapshot) => {
+    eventsRef.child("university").child(this.props.plus_code).child("All").orderByKey().on("value", (dataSnapshot) => {
+      if (dataSnapshot.numChildren() !== 0) {
       var events = Object.values(dataSnapshot.val());
       for (var i = 0; i < events.length; i++) {
-	console.log(events[i]);
+	    console.log(events[i]);
         this.updateEventIdsAndLoadEvent(events[i]);
       }
+      }
+
     });
   }
 
@@ -87,6 +93,7 @@ class MapView extends Component {
     console.log("loadArticle:");
     if (article.locationObject) {
       this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
+      console.log('here');
     }
   }
 
@@ -112,15 +119,15 @@ class MapView extends Component {
 
     return(
       <InfoWindow
-	visible={this.state.showInfoWindows}
-	position={{lat: lat, lng: lng}}>
-	<Card border="light">
-      	  <Card.Img variant="right" src={imageUrl} />
+	    visible={this.state.showInfoWindows}
+	    position={{lat: lat, lng: lng}}>
+	  <Card border="light">
+      	<Card.Img variant="right" src={imageUrl} />
       	  <Card.Body>
       	    <Card.Title>{event.eventName}</Card.Title>
       	    <Card.Text>{event.description}</Card.Text>
       	  </Card.Body>
-	</Card>
+	  </Card>
       </InfoWindow>
     );
   }
@@ -145,18 +152,18 @@ class MapView extends Component {
     });
   }
 
-  render() {
+render() {
     return (
       <div>
         {this.props.articles.map(article => {
           return (
-            <div key={"mapKey"} onLoad={this.loadArticle(article)}>
+            <div onLoad={this.loadArticle(article)}>
             <Map
-	          id="map"
+	      id="map"
               key={article.toString()}
               google={this.props.google}
               zoom={17}
-	      onReady={this.onReady}
+	          onReady={this.onReady}
               style={mapStyles}
               initialCenter={{
                 lat: article.location.lat(),
@@ -166,7 +173,6 @@ class MapView extends Component {
                 lat: article.location.lat(),
                 lng: article.location.lng()
               }}
-              gestureHandling={'cooperative'}
               zoomControl={true}
              >
 	      {this.state.allEvents.map(element => {
@@ -174,11 +180,13 @@ class MapView extends Component {
 		return (this.getInfoBox(element.value));
 	      })}
 	    </Map>
+        </div>
           )
         })}
       </div>
     )
   }
+
 }
 
 const ConnectMapViewToStore = connect(mapStateToProps);
