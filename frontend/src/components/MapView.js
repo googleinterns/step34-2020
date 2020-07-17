@@ -38,19 +38,26 @@ class MapView extends Component {
 
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory() {
-    this.setState({allEvents: []});
-    const eventsRef = fb.eventsRef;
-    eventsRef.child("university").child(this.props.plus_code).child("All").orderByKey().on("value", (dataSnapshot) => {
+    // this.setState({allEvents: []});
+    this.setState(prevState => ({
+  	  allEvents: []
+	}), () => {
+	  const eventsRef = fb.eventsRef;
+      console.log(this.props.plus_code)
+      eventsRef.child("university").child(this.props.plus_code).child("All").orderByKey().on("value", (dataSnapshot) => {
       if (dataSnapshot.numChildren() !== 0) {
-      var events = Object.values(dataSnapshot.val());
-      for (var i = 0; i < events.length; i++) {
-	    console.log(events[i]);
-        this.updateEventIdsAndLoadEvent(events[i]);
+        var events = Object.values(dataSnapshot.val());
+        for (var i = 0; i < events.length; i++) {
+	      console.log(events[i]);
+          this.updateEventIdsAndLoadEvent(events[i]);
+        }
       }
-      }
-
-    });
+      });
+	});
   }
+//     });
+
+//   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
   updateEventIdsAndLoadEvent(eventId) {
@@ -114,7 +121,6 @@ class MapView extends Component {
       imageUrl = event.imagePaths.slice(1, length - 2);
       imageUrl = imageUrl.split(",")[0];
     }
-    console.log(imageUrl);
     return(
       <InfoWindow
 	    visible={this.state.showInfoWindows}
@@ -174,7 +180,6 @@ render() {
               zoomControl={true}
              >
 	      {this.state.allEvents.map(element => {
-		console.log(element);
 		return (this.getInfoBox(element));
 	      })}
 	    </Map>
