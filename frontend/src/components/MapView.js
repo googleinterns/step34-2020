@@ -182,8 +182,8 @@ render() {
 	          onReady={this.onReady}
               style={mapStyles}
               initialCenter={{
-                lat: 39.9522188,
-                lng: -75.1954024
+                lat: article.location.lat(),
+                lng: article.location.lng()
               }}
               center={{
                 lat: article.location.lat(),

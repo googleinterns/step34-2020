@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import TopNavbar from './Navbar';
 import '../App.css';
 
-const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 
 function mapDispatchToProps(dispatch) {
   return {
