@@ -24,14 +24,14 @@ class Search extends Component {
 
     this.types = ['university'];
     this.autocomplete = null;
-    this.plus_code = "";
 
     // Declare State
     this.state = {
       query: null,
       location: null,
       viewport: null,
-      loggedIn: false
+      loggedIn: false,
+      plusCode: null
     };
   }
   
@@ -80,12 +80,10 @@ class Search extends Component {
         location: addressGeometry.location,
         locationObject: addressObject,
         viewport: addressGeometry.viewport,  
+        plusCode: addressObject.plus_code.global_code,
+        loggedIn: this.state.loggedIn
       }
-      console.log(currentState);
       this.props.changeMapState(currentState);
-      this.plus_code = addressObject.plus_code.global_code;
-      console.log(addressObject.plus_code.global_code);
-
       this.setState(currentState);
     }
   }
@@ -97,8 +95,7 @@ class Search extends Component {
       event.preventDefault();
     } else {
       event.preventDefault();
-    //   this.props.history.push('/map/');
-      console.log(this.plus_code);
+      // send login status and plus code status to the redux state
       this.props.history.push({
         pathname: '/map',
         state: {loggedIn: this.state.loggedIn, plus_code: this.plus_code}

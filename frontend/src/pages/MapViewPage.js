@@ -37,14 +37,15 @@ class MapViewPage extends Component {
       plusCode: props.history.location.state.plus_code,
       loggedIn: props.location.state.loggedIn
     };
-     console.log(this.state.plusCode);
+     //console.log(this.state.plusCode);
+     console.log(this.props.articles);
 
   }
 
   render() {
-    console.log(this.props.history.location.state.plus_code);
-    console.log(this.props.location.state.plus_code);
-    console.log(this.state.plus_code);
+    //console.log(this.props.history.location.state.plus_code);
+    //console.log(this.props.location.state.plus_code);
+    //console.log(this.state.plus_code);
     return (
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
@@ -81,7 +82,7 @@ class MapViewPage extends Component {
         locationObject: addressObject,
         viewport: addressGeometry.viewport,
       }
-      console.log(currentState);
+      //console.log(currentState);
       this.props.changeMapState(currentState);
 
       this.setState({plusCode: addressObject.plus_code.global_code});

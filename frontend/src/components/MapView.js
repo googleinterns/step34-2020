@@ -25,16 +25,16 @@ class MapView extends Component {
       showInfoWindows: true
     };
     var plusCode = this.state.plusCode;
-    console.log(this.state.plusCode);
-    console.log("constr");
+    //console.log(this.state.plusCode);
+    //console.log("constr");
     this.queryEventsAndStoreInMemory(plusCode);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    console.log("componentWillRec");
-    console.log(nextProps)
+    //console.log("componentWillRec");
+    //console.log(nextProps)
     this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, () => {
-      console.log(this.state.showInfoWinddows);
+      //console.log(this.state.showInfoWinddows);
       this.queryEventsAndStoreInMemory(nextProps.plusCode);
       this.setState({showInfoWindows: true});
     });
@@ -42,14 +42,14 @@ class MapView extends Component {
   
   // Queries all events with a given university plus code
   queryEventsAndStoreInMemory(plusCode) {
-    console.log("queryEvents");
+    //console.log("queryEvents");
     if (plusCode !== undefined) {
       const eventsRef = fb.eventsRef;
       eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", (dataSnapshot) => {
       if (dataSnapshot.numChildren() !== 0) {
 	  var events = Object.values(dataSnapshot.val());
 	  for (var i = 0; i < events.length; i++) {
-	    console.log(events[i]);
+	    //console.log(events[i]);
 	    this.updateEventIdsAndLoadEvent(events[i]);
 	  }
 	}
@@ -60,7 +60,7 @@ class MapView extends Component {
       if (dataSnapshot.numChildren() !== 0) {
 	  var events = Object.values(dataSnapshot.val());
 	  for (var i = 0; i < events.length; i++) {
-	    console.log(events[i]);
+	    //console.log(events[i]);
 	    this.updateEventIdsAndLoadEvent(events[i]);
 	  }
 	}
@@ -70,8 +70,8 @@ class MapView extends Component {
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
   updateEventIdsAndLoadEvent(eventId) {
-    console.log("update events");
-    console.log("event id " + eventId);
+    //console.log("update events");
+    //console.log("event id " + eventId);
     // Events reference
     const eventsRef = fb.eventsRef;
     // Query and then listen for any changes of that event
@@ -93,7 +93,7 @@ class MapView extends Component {
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
-    console.log("updatesEvent")
+    //console.log("updatesEvent")
     // TODO: Update event info box
     this.state.allEvents.push({
       key: eventId,
@@ -105,8 +105,8 @@ class MapView extends Component {
   }
 
   loadArticle(article) {
-    console.log(article);
-    console.log("loadArticle:");
+    //console.log(article);
+    //console.log("loadArticle:");
     if (article.locationObject) {
       this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
       this.setState({allEvents: []});
@@ -118,7 +118,7 @@ class MapView extends Component {
   }
 
   getInfoBox(event) {
-    console.log("infobox");
+    //console.log("infobox");
     var location = this.getCoords(event.location);
     var lat = parseFloat(location[0]);
     var lng = parseFloat(location[1]);
@@ -192,7 +192,7 @@ render() {
               zoomControl={true}
              >
 	      {this.state.allEvents.map(element => {
-		console.log(element);
+		//console.log(element);
 		return (this.getInfoBox(element));
 	      })}
 	    </Map>
