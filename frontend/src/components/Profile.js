@@ -15,6 +15,7 @@ class Profile extends React.Component {
 
     const JSONString = props.history.location.state.credentials;
     const JSONObject = JSON.parse(JSONString);
+    console.log(props)
 
     console.log(JSONObject);
 
@@ -27,7 +28,8 @@ class Profile extends React.Component {
 
 
   didUpdate(event) {
-    var attendees = ["user1", "user2", "user3"];
+    if(event !== null) {
+      var attendees = ["user1", "user2", "user3"];
     var len = 0;
     var imageUrl = "";
     var card = "";
@@ -80,6 +82,8 @@ class Profile extends React.Component {
         {this.state.cards.map(element   => element)}
       </CardColumns>,
       document.getElementById("content"))
+    }
+    
   }
 
   getData(eventKeys){
@@ -126,22 +130,22 @@ class Profile extends React.Component {
   render() {
     return (
       <div>
-          <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials}/>
-          {/* get user profile picture and user name */}
-          <div class="profile" 
-            style={{borderBottom:"4px solid grey"}}>
-            <div className="profilephoto">
-              <img style={{
-                width:"180px",
-                height:"180px",
-                borderRadius:"80px"}}
-                src={this.state.profilePicture}
-                alt="" /> 
-              <h4 style={{
-                marginLeft:"1.8rem",
-                marginTop:".8rem"}}>
-                  {this.state.credentials.displayName}
-              </h4>
+        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials} plus_code={this.props.history.location.state.plus_code}/>
+        {/* get user profile picture and user name */}
+        <div className="profilepictureContent" 
+          style={{borderBottom:"4px solid grey"}}>
+          <div className="profilephoto">
+            <img style={{
+              width:"180px",
+              height:"180px",
+              borderRadius:"80px"}}
+              src={this.state.profilePicture}
+              alt="" /> 
+            <h4 style={{
+              marginLeft:"1.8rem",
+              marginTop:".8rem"}}>
+                {this.state.username}
+            </h4>
             </div>
           </div>
           <div 

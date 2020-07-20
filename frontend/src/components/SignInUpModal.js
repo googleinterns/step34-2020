@@ -126,16 +126,17 @@ export default class LogInAndSignUp extends Component {
   }
 
   render() {
+    console.log(this.props.plus_code)
     if (this.state.loggedIn) {
       if (this.state.credentials) {
         this.props.history.push({
           pathname: '/profile',
-          state: {credentials: JSON.stringify(this.state.credentials)}
+          state: {credentials: JSON.stringify(this.state.credentials), plus_code: this.props.plus_code}
         })
       } else if (this.props.credentials) {
         this.props.history.push({
           pathname: '/profile',
-          state: {credentials: JSON.stringify(this.props.credentials)}
+          state: {credentials: JSON.stringify(this.props.credentials), plus_code: this.props.plus_code}
         })
       }
     }

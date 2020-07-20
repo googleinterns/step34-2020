@@ -3,7 +3,7 @@ import 'firebase/database';
 import { Deferred } from '@firebase/util';
 
 const config = {
-  apiKey: "API-KEY",
+  apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020.firebaseio.com",
   projectId: "step-34-2020",
@@ -14,7 +14,7 @@ const config = {
 };
 
 const testConfig = {
-  apiKey: "API-KEY",
+  apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "step-34-2020.firebaseapp.com",
   databaseURL: "https://step-34-2020-test.firebaseio.com",
   projectId: "step-34-2020",
@@ -159,7 +159,7 @@ class Firebase {
 
  // Request event creation given the parameters. 
  // The first three parameters are required, the rest are optional.
- requestEventCreation(title, date, startTime, endTime, description, location, files, category, organization, invitedAttendees = "", uid) {
+ requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, files = "", category, organization = "", invitedAttendees = "", uid) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     
@@ -172,7 +172,9 @@ class Firebase {
       startTime: startTime,
       endTime: endTime,
       description: description,
+      plusCode: plusCode,
       location: location,
+      locationName: locationName,
       imagePaths: files,
       category: category,
       organization: organization,

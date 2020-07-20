@@ -22,8 +22,11 @@ public class Event {
   private String startTime;
   private String endTime;
   private String description;
+  private String plusCode;
   private String location;
+  private String locationName;
   private String ownerId;
+  private String category;
   private String organization;
   private String imageUrls;
   private String attendees;
@@ -36,8 +39,11 @@ public class Event {
     private String startTime;
     private String endTime;
     private String description;
+    private String plusCode;
     private String location;
+    private String locationName;
     private String ownerId;
+    private String category;
     private String organization;
     private String imageUrls;
     private String attendees;
@@ -49,7 +55,9 @@ public class Event {
       this.startTime = "";
       this.endTime = "";
       this.description = "";
+      this.plusCode = "";
       this.location = "";
+      this.locationName = "";
       this.ownerId = "";
       this.organization = "";
       // imageUrls will be a string in the form of [url0,url1,....]. 
@@ -84,8 +92,23 @@ public class Event {
       return this;
     }
 
+    public Builder withPlusCode(String plusCode) {
+      this.plusCode = plusCode;
+      return this;
+    }
+
     public Builder atLocation(String location) {
       this.location = location;
+      return this;
+    }
+
+    public Builder withLocationName(String locationName) {
+      this.locationName = locationName;
+      return this;
+    }
+
+    public Builder withCategory(String category) {
+      this.category = category;
       return this;
     }
 
@@ -118,7 +141,10 @@ public class Event {
       event.endTime = this.endTime;
       event.eventName = this.eventName;
       event.description = this.description;
+      event.plusCode = this.plusCode;
       event.location = this.location;
+      event.locationName = this.locationName;
+      event.category = this.category;
       event.ownerId = this.ownerId;
       event.organization = this.organization;
       event.imageUrls = this.imageUrls;
@@ -153,9 +179,21 @@ public class Event {
   public String getDescription() {
     return this.description;
   }
+
+  public String getPlusCode() {
+    return this.plusCode;
+  }
+
+  public String getLocationName() {
+    return this.locationName;
+  }
   
   public String getLocation() {
     return this.location;
+  }
+
+  public String getCategory() {
+    return this.category;
   }
 
   public String getOwnerId() {

@@ -22,27 +22,33 @@ class MapViewPage extends Component {
     super(props);
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    this.inputRef = React.createRef();
 
     this.types = ['university'];
     this.autocomplete = null;
 
+    this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
     // Declare state
     this.state = {
       query: null,
       location: null,
       viewport: null,
       history: props.history,
+      plusCode: props.history.location.state.plus_code,
       loggedIn: props.location.state.loggedIn
     };
+     console.log(this.state.plusCode);
 
-    console.log(props);
   }
 
   render() {
+    console.log(this.props.history.location.state.plus_code);
+    console.log(this.props.location.state.plus_code);
+    console.log(this.state.plus_code);
     return (
       <div>
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=API-KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn}/>
+        <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
+        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
         <Form>
           <Form.Group>
           <Form.Label> Enter your university </Form.Label>
@@ -50,7 +56,7 @@ class MapViewPage extends Component {
           <Form.Control id = "autocomplete" placeholder = "Enter university"/>
           </Form.Group>
         </Form>
-        <MapView />
+        <MapView plusCode={this.state.plusCode}/>
       </div>
     );
   }
@@ -59,7 +65,7 @@ class MapViewPage extends Component {
     /*global google*/
     this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
 
-    this.autocomplete.setFields(['address_components', 'formatted_address', 'geometry', 'adr_address']);
+    this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
@@ -70,13 +76,15 @@ class MapViewPage extends Component {
 
     if (address) {
       const currentState = {
-        query: addressObject.formatted_address,
+        query: addressObject.name,
         location: addressGeometry.location,
+        locationObject: addressObject,
         viewport: addressGeometry.viewport,
       }
       console.log(currentState);
       this.props.changeMapState(currentState);
 
+      this.setState({plusCode: addressObject.plus_code.global_code});
       this.setState(currentState);
     }
   }
@@ -88,5 +96,5 @@ const ConnectedMapViewPage = connect(
 )(MapViewPage);
 
 export default GoogleApiWrapper({
-  apiKey: 'API-KEY'
+  apiKey: process.env.REACT_APP_API_KEY
 })(ConnectedMapViewPage);

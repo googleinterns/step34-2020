@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import TopNavbar from './Navbar';
 import '../App.css';
 
+const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+
 function mapDispatchToProps(dispatch) {
   return {
     changeMapState: mapState => dispatch(changeMapState(mapState))
@@ -22,6 +24,7 @@ class Search extends Component {
 
     this.types = ['university'];
     this.autocomplete = null;
+    this.plus_code = "";
 
     // Declare State
     this.state = {
@@ -33,15 +36,16 @@ class Search extends Component {
   }
   
   render() {
-    return (
-      <div class="welcomeContent">
-        <Script url = "https://maps.googleapis.com/maps/api/js?key=API-KEY&libraries=places" onLoad = {this.handleScriptLoad}/> 
+    return ( 
+      <div className="welcomeContent">
+        <Script url = {url} onLoad = {this.handleScriptLoad}/> 
         <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
           <Form>
             <Form.Group>
-            <Form.Label> <h4>Our Mission</h4> </Form.Label> 
+            <Form.Label> <h4>Our Mission</h4> </Form.Label>
+      	    <br/>
             <Form.Label>The objective of MapIT is to manage and visualize student-created public events, and expose these events to their college community. <br />
               We are here to help you explore campus events beyond your social circle.</Form.Label> <br/><br/>
             <Form.Label> Enter your university </Form.Label> 
@@ -61,7 +65,7 @@ class Search extends Component {
     /*global google*/
     this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
 
-    this.autocomplete.setFields(['address_components', 'formatted_address', 'geometry', 'adr_address']);
+    this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
@@ -72,12 +76,15 @@ class Search extends Component {
 
     if (address) {
       const currentState  = {
-        query: addressObject.formatted_address,
+        query: addressObject.name,
         location: addressGeometry.location,
+        locationObject: addressObject,
         viewport: addressGeometry.viewport,  
       }
       console.log(currentState);
       this.props.changeMapState(currentState);
+      this.plus_code = addressObject.plus_code.global_code;
+      console.log(addressObject.plus_code.global_code);
 
       this.setState(currentState);
     }
@@ -91,9 +98,10 @@ class Search extends Component {
     } else {
       event.preventDefault();
     //   this.props.history.push('/map/');
+      console.log(this.plus_code);
       this.props.history.push({
         pathname: '/map',
-        state: {loggedIn: this.state.loggedIn}
+        state: {loggedIn: this.state.loggedIn, plus_code: this.plus_code}
       });
     }
   }
