@@ -15,9 +15,6 @@ class Profile extends React.Component {
 
     const JSONString = props.history.location.state.credentials;
     const JSONObject = JSON.parse(JSONString);
-    console.log(props)
-
-    console.log(JSONObject);
 
     this.state = {
       profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
@@ -26,8 +23,20 @@ class Profile extends React.Component {
     };
   }
 
+ handleDelete(key) {
+    // delete event from entire database
+    // fb.eventsRef.child("events").child(key).remove();
+    //delete event from user's table
+    fb.userRef.child("events").child(this.state.credentials.uid).child(key).remove();
 
-  didUpdate(event) {
+  }
+
+  test () {
+    console.log("test")
+  }
+
+
+  didUpdate(event, parent, ref) {
     if(event !== null) {
       var attendees = ["user1", "user2", "user3"];
     var len = 0;
@@ -71,7 +80,13 @@ class Profile extends React.Component {
           <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
             Edit
           </Button>
-          <Button variant="danger" style={{ width:"80px" }}>
+          <Button 
+            variant="danger" 
+            style={{ width:"80px" }}
+            onClick={() => {
+              console.log(ref);
+              this.handleDelete(ref);
+            }}>
             Delete
           </Button>
         </Card.Body>
@@ -101,7 +116,7 @@ class Profile extends React.Component {
       if (ref != null) {
         ref.on('value', snapshot => {
           const event = snapshot.val();
-          this.didUpdate(event);
+          this.didUpdate(event,eventKeys, key);
         });
       }
       return null;
