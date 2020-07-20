@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
 import Button from 'react-bootstrap/Button';
+import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
 import { fb } from '../App';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
+import Modal from 'react-bootstrap/Modal';
+import ConfirmDelete from './ConfirmDelete';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -15,19 +18,22 @@ class Profile extends React.Component {
 
     const JSONString = props.history.location.state.credentials;
     const JSONObject = JSON.parse(JSONString);
-    console.log(props)
-
-    console.log(JSONObject);
 
     this.state = {
       profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
       credentials: JSONObject,
       cards:[],
+      showConfirmModal: false,
     };
+
+    this.showModal =  this.showModal.bind(this);
+    
   }
 
 
-  didUpdate(event) {
+
+
+  didUpdate(event, parent, ref) {
     if(event !== null) {
       var attendees = ["user1", "user2", "user3"];
     var len = 0;
@@ -68,12 +74,17 @@ class Profile extends React.Component {
             {attendees.map(attendee => (
               <Dropdown.Item>{attendee}</Dropdown.Item>))}
           </DropdownButton><br />
-          <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
-            Edit
-          </Button>
-          <Button variant="danger" style={{ width:"80px" }}>
-            Delete
-          </Button>
+          <ButtonToolBar>
+            <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
+              Edit
+            </Button>
+            <Button 
+              variant="danger" 
+              style={{ width:"80px" }}
+              onClick={() => this.showModal(ref)}>
+              Delete
+            </Button>
+          </ButtonToolBar>
         </Card.Body>
       </Card>)
 
@@ -101,7 +112,7 @@ class Profile extends React.Component {
       if (ref != null) {
         ref.on('value', snapshot => {
           const event = snapshot.val();
-          this.didUpdate(event);
+          this.didUpdate(event,eventKeys, key);
         });
       }
       return null;
@@ -124,10 +135,36 @@ class Profile extends React.Component {
         }
       });
     }
+  }
 
+  async showModal (props) {
+    console.log(props)
+    await this.setState({
+      showConfirmModal: true,
+    })
+    ReactDOM.render(
+      <div>
+       <ConfirmDelete 
+        show={this.state.showConfirmModal}
+        onHide={this.hideModal.bind(this)}
+        uid={this.state.credentials.uid}
+        reference={props} />
+      </div>,
+      document.getElementById('modal-wrapper')
+    );
+  }
+
+  async hideModal() {
+    await this.setState({
+      showConfirmModal: false,
+    })
+    const modal = document.getElementById('modal-wrapper');
+    let response = ReactDOM.unmountComponentAtNode(modal);
+    console.log(response)
   }
 
   render() {
+
     return (
       <div>
         <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials} plus_code={this.props.history.location.state.plus_code}/>
