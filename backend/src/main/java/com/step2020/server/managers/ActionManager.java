@@ -108,7 +108,13 @@ public class ActionManager {
 	break;
       case 5:
 	eventManager.createEvent(requestId, value);
-	break;	
+	break;
+      case 6:	
+	eventManager.updateEvent(requestId, value);
+	break;
+      case 7:
+	eventManager.deleteEvent(requestId, value);
+	break;
     } 
   }
 
