@@ -3,11 +3,25 @@ import { Modal, Button} from 'react-bootstrap';
 import { fb } from '../App';
 
 export default class ConfirmDelete extends Component {
- 
+
   handleDelete() {
-    let id = this.props.uid;
+    // Get uid and event id from props
+    let uid = this.props.uid;
     let eventId = this.props.reference;
-    let successCallback = this.props.onHide;
+    console.log(this.props);
+    let isSuccess = fb.requestEventDeletion(eventId, uid);
+    
+    // Check if the response is success
+    // If success then hide the modal, if not send in an alert
+    if (isSuccess) {
+      this.props.onHide();
+    } else {
+      this.onDeleteFailed();
+    }
+  }
+
+  onDeleteFailed() {
+    alert("Something went wrong deleting the event. Please try again.");
   }
 
   render() {
