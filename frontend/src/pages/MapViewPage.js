@@ -42,9 +42,6 @@ class MapViewPage extends Component {
   }
 
   render() {
-    console.log(this.props.history.location.state.plus_code);
-    console.log(this.props.location.state.plus_code);
-    console.log(this.state.plus_code);
     return (
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 

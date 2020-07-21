@@ -68,7 +68,7 @@ class Profile extends React.Component {
           <Card.Text>
             {event.description}
           </Card.Text>
-          <Card.Text>{event.location}</Card.Text>
+          <Card.Text>{event.locationName}</Card.Text>
           <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
           <DropdownButton id="dropdown-basic-button" title="Attendees">
             {attendees.map(attendee => (
@@ -129,7 +129,7 @@ class Profile extends React.Component {
         
         // Do nothing when it's null
         if (snapshot.val() != null) {
-          const mykeys = Object.keys(snapshot.val())
+          const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
           this.getData(mykeys)
         }
