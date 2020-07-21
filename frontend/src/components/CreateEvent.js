@@ -193,7 +193,7 @@ class Events extends Component {
       // The respone acquired from the server
       let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.history.location.state.credentials.uid);
       if (response) {
-	console.log(this.props.location.state.plus_code);
+        console.log(this.props.location.state.plus_code);
         this.props.history.push({
           pathname: '/map/',
           state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
@@ -299,30 +299,30 @@ class Events extends Component {
                       Add a description to let people know what your event is all about!
                     </Form.Text>
                   </Form.Group>
-	            <Form.Row>
-	              <Form.Group as={Col}>
-		        <Form.Label>University</Form.Label>
-		        <Form.Control
+              <Form.Row>
+                <Form.Group as={Col}>
+            <Form.Label>University</Form.Label>
+            <Form.Control
                   id="university-autocomplete"
-      		      required
-      		      type="text" 
-      		      placeholder="Stanford University" />
-		        <Form.Text className="text-muted">
-		          Tell people what university your event is at!
-		        </Form.Text>
-	              </Form.Group>
-	              <Form.Group as={Col}>
-		        <Form.Label>Location</Form.Label>
-		        <Form.Control 
+                required
+                type="text" 
+                placeholder="Stanford University" />
+            <Form.Text className="text-muted">
+              Tell people what university your event is at!
+            </Form.Text>
+                </Form.Group>
+                <Form.Group as={Col}>
+            <Form.Label>Location</Form.Label>
+            <Form.Control 
                   id="location-autocomplete"	
-		          required
-		          type="text"
-		          placeholder="12345 Main St" />
-		        <Form.Text className="text-muted">
-		          Tell people where your event is at!
-		        </Form.Text>
-	              </Form.Group> 
-	            </Form.Row>
+              required
+              type="text"
+              placeholder="12345 Main St" />
+            <Form.Text className="text-muted">
+              Tell people where your event is at!
+            </Form.Text>
+                </Form.Group> 
+              </Form.Row>
                   <Form.Group>
                     <Form.Label>Categories</Form.Label>
                     <Form.Control	

@@ -8,6 +8,7 @@ import Profile from './components/Profile';
 import Firebase from './components/Firebase';
 import Events from './components/CreateEvent';
 import Footer  from './components/Footer';
+import Update from './components/UpdateEvent';
 
 const history = createBrowserHistory();
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/map" component={MapViewPage} />
             <Route path="/profile" component={Profile} />
             <Route path="/create" component={Events} />
+            <Route path="/update" component={Update} />
           </Switch>
         </div>
       </Router>

@@ -11,6 +11,7 @@ import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
 import Modal from 'react-bootstrap/Modal';
 import ConfirmDelete from './ConfirmDelete';
+import UpdateEvent from './UpdateEvent';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -27,6 +28,8 @@ class Profile extends React.Component {
     };
 
     this.showModal =  this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
     
   }
 
@@ -75,7 +78,10 @@ class Profile extends React.Component {
               <Dropdown.Item>{attendee}</Dropdown.Item>))}
           </DropdownButton><br />
           <ButtonToolBar>
-            <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
+            <Button 
+            variant="success"
+            style={{ marginRight:".8rem", width:"80px" }}
+            onClick={() => this.handleEdit(ref, event)}>
               Edit
             </Button>
             <Button 
@@ -129,7 +135,7 @@ class Profile extends React.Component {
         
         // Do nothing when it's null
         if (snapshot.val() != null) {
-          const mykeys = Object.keys(snapshot.val())
+          const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
           this.getData(mykeys)
         }
@@ -162,6 +168,14 @@ class Profile extends React.Component {
     let response = ReactDOM.unmountComponentAtNode(modal);
     console.log(response)
   }
+
+  handleEdit(key, event) {
+    this.props.history.push({
+      pathname: '/update',
+      state: {eventObject: event, reference: key, loggedIn: this.props.loggedIn, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
+    })
+  }
+
 
   render() {
 
