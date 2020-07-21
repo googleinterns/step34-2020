@@ -187,6 +187,14 @@ class Firebase {
     return deferred.promise;
   }
 
+  // Request event edit given the parameters. 
+ // all parameters are optional except credentials and eventId
+ requestEventUpdate(eventId, title, date, startTime, endTime, description, plusCode, location, locationName, files = "", category, organization = "", invitedAttendees = "", uid) {
+    
+    //To be completed by John
+    console.log("update")
+  }
+
   handleResponses(requestId, deferred, successCallback = this.defaultSuccessCallback, failureCallback = this.defaultFailureCallback) {
 
     var ref = this.sessionsRef;
