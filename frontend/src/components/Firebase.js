@@ -187,34 +187,11 @@ class Firebase {
     return deferred.promise;
   }
 
-  // Request event creation given the parameters. 
- // The first three parameters are required, the rest are optional.
- requestEventUpdate(title, date, startTime, endTime, description, plusCode, location, locationName, files = "", category, organization = "", invitedAttendees = "", uid) {
-  // var requestId = this.generateRequestId();
-  // var path = this.sessionId + "/" + requestId;
-  
-  // // Send a request under the sessionid
-  // this.sessionsRef.ref('REQUESTS').child(path).set({
-  //   code: 5,
-  //   uid: uid,
-  //   title: title,
-  //   date: date,
-  //   startTime: startTime,
-  //   endTime: endTime,
-  //   description: description,
-  //   plusCode: plusCode,
-  //   location: location,
-  //   locationName: locationName,
-  //   imagePaths: files,
-  //   category: category,
-  //   organization: organization,
-  //   attendees: invitedAttendees
-  // });
- 
-  // // Setup deferred
-  // const deferred = new Deferred();
-  // this.handleResponses(requestId, deferred);
-  // return deferred.promise;
+  // Request event edit given the parameters. 
+ // all parameters are optional except credentials and eventId
+ requestEventUpdate(eventId, title, date, startTime, endTime, description, plusCode, location, locationName, files = "", category, organization = "", invitedAttendees = "", uid) {
+
+  //To be completed by John
   console.log("update")
 }
 

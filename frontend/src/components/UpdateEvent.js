@@ -225,8 +225,9 @@ export default class UpdateEvent extends Component {
       var attendees = []
       attendees.push(this.props.history.location.state.credentials.uid)
 
+      var eventiId = this.props.history.location.state.reference;
       // The respone acquired from the server
-      let response = await fb.requestEventUpdate(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.history.location.state.credentials.uid);
+      let response = await fb.requestEventUpdate(eventiId,title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.history.location.state.credentials.uid);
       if (response) {
         console.log(this.props.location.state.plus_code);
         this.props.history.push({
