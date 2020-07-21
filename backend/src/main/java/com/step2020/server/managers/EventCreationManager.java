@@ -153,9 +153,6 @@ public class EventCreationManager {
 	// Check to make sure the ownerId and the uid are the same
 	if (ownerId.equals(uid)) {
 	  // remove event
-	  // TODO: FIX ERROR HERE
-	  removeEventFromUsers(requestId, eventId);
-	  removeEventFromUniversity(requestId, eventId);
 	  removeEvent(requestId, eventId);
 	} else {
 	  String errorMessage = "You are not the owner of this event.";
@@ -174,19 +171,8 @@ public class EventCreationManager {
 
   // Removes the requested event id and send a response of success or failure
   private void removeEvent(String requestId, String eventId) {
-    this.eventsRef.child(EVNTS).child(eventId).removeValue(new DatabaseReference.CompletionListener() {
-      @Override
-      public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        if (databaseError == null) {
-	  Map<String, String> response = Utility.createResponse("success", "");
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	} else {
-	  String errorMessage = databaseError.getMessage();
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	}
-      }
-    });
+    removeEventFromUsers(requestId, eventId);
+    removeEventFromUniversityAndEvents(requestId, eventId);
   }
 
   // Removes the requested event id from user's events and send a response of success or failure
@@ -205,7 +191,7 @@ public class EventCreationManager {
 		  usersRef.child(EVNTS).child(id).child(key).removeValueAsync();
 		}
 	      }
-	      removeEventFromAttendees(eventId);
+              removeEventFromAttendees(eventId);
 	    }
 	    public void onCancelled(DatabaseError error) {
 	      String errorMessage = error.getMessage();
@@ -228,19 +214,19 @@ public class EventCreationManager {
     this.eventsRef.child(ATND).child(eventId).removeValueAsync();
   }
   
-  private void removeEventFromUniversity(String requestId, String eventId) {
+  private void removeEventFromUniversityAndEvents(String requestId, String eventId) {
     this.eventsRef.child(EVNTS).child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
       public void onDataChange(DataSnapshot snapshot) {
-	System.out.println(snapshot);
 	String plusCode = snapshot.child("plusCode").getValue(String.class);
 	String category = snapshot.child("category").getValue(String.class);
-	eventsRef.child(EVNTS).child(UNI).child(plusCode).child(ALL).addListenerForSingleValueEvent(new ValueEventListener() {
+	removeEventFromEvents(requestId, eventId);
+	eventsRef.child(UNI).child(plusCode).child(ALL).addListenerForSingleValueEvent(new ValueEventListener() {
 	  public void onDataChange(DataSnapshot snapshot) { 
 	    for (DataSnapshot child : snapshot.getChildren()) {
 	      String childEventId = child.getValue(String.class);
 	      String key = child.getKey();
 	      if (childEventId.equals(eventId)) {
-		usersRef.child(EVNTS).child(UNI).child(plusCode).child(ALL).child(key).removeValueAsync();
+		eventsRef.child(UNI).child(plusCode).child(ALL).child(key).removeValueAsync();
 	      }
 	    }
 	  }
@@ -251,13 +237,13 @@ public class EventCreationManager {
 	  }	
 	});
 	
-	eventsRef.child(EVNTS).child(UNI).child(plusCode).child(category).addListenerForSingleValueEvent(new ValueEventListener() {
+	eventsRef.child(UNI).child(plusCode).child(category).addListenerForSingleValueEvent(new ValueEventListener() {
 	  public void onDataChange(DataSnapshot snapshot) { 
 	    for (DataSnapshot child : snapshot.getChildren()) {
 	      String childEventId = child.getValue(String.class);
 	      String key = child.getKey();
 	      if (childEventId.equals(eventId)) {
-		usersRef.child(EVNTS).child(UNI).child(plusCode).child(category).child(key).removeValueAsync();
+		eventsRef.child(UNI).child(plusCode).child(category).child(key).removeValueAsync();
 	      }
 	    }
 	  }
@@ -276,6 +262,22 @@ public class EventCreationManager {
     });
   }
 
+  private void removeEventFromEvents(String requestId, String eventId) {
+    this.eventsRef.child(EVNTS).child(eventId).removeValue(new DatabaseReference.CompletionListener() {
+      @Override
+      public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+        if (databaseError == null) {
+	  Map<String, String> response = Utility.createResponse("success", "");
+	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	} else {
+	  String errorMessage = databaseError.getMessage();
+	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
+	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	}
+      }
+    });
+  }
+  
   // Creates a new event from the given event info along with the request id
   public void createEvent(String requestId, Map<String, String> eventInfo) {
     // Check for minimum requirements for event info
