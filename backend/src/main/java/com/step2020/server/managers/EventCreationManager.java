@@ -77,8 +77,7 @@ public class EventCreationManager {
     // Check if uid and event id exist in the update info
     if (!updateInfo.containsKey("uid") && !updateInfo.containsKey("eventId")) { 
       String errorMessage = "Required fields are empty: uid and eventId.";
-      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+      Utility.sendFailure(sessionId, requestId, errorMessage);
     }
 
     // Get uid and eventId
@@ -102,15 +101,13 @@ public class EventCreationManager {
 	} else {
 	  // Send failed information
 	  String errorMessage = "You are not the owner of this event.";
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
 	}
       }
       public void onCancelled(DatabaseError error) {
 	// Send failed information
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
@@ -126,12 +123,10 @@ public class EventCreationManager {
       public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         // If there aren't any errors, send in a success response, if not, send in failed error
 	if (databaseError == null) {
-	  Map<String, String> response = Utility.createResponse("success", "");
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+          Utility.sendSuccess(sessionId, requestId);
 	} else {
 	  String errorMessage = databaseError.getMessage();
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
 	}
       }
     });
@@ -142,8 +137,7 @@ public class EventCreationManager {
     // Check to make sure the requestinfo has the required keys
     if (!requestInfo.containsKey("uid") && !requestInfo.containsKey("eventId")) {
       String errorMessage = "Required fields are empty: uid and eventId.";
-      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+      Utility.sendFailure(sessionId, requestId, errorMessage);
     }
     
     // Get the uid and event id
@@ -161,15 +155,13 @@ public class EventCreationManager {
 	  removeEvent(requestId, eventId);
 	} else {
 	  String errorMessage = "You are not the owner of this event.";
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
 	}
       }
 
       public void onCancelled(DatabaseError error) {
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
@@ -211,16 +203,14 @@ public class EventCreationManager {
 	    }
 	    public void onCancelled(DatabaseError error) {
 	      String errorMessage = error.getMessage();
-	      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	      Utility.sendFailure(sessionId, requestId, errorMessage);
 	    }	
 	  });
 	}
       }
       public void onCancelled(DatabaseError error) {
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
@@ -255,8 +245,7 @@ public class EventCreationManager {
 	  }
 	  public void onCancelled(DatabaseError error) {
 	    String errorMessage = error.getMessage();
-	    Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	    Utility.sendFailure(sessionId, requestId, errorMessage);
 	  }	
 	});
 	
@@ -273,15 +262,13 @@ public class EventCreationManager {
 	  }
 	  public void onCancelled(DatabaseError error) {
 	    String errorMessage = error.getMessage();
-	    Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	    Utility.sendFailure(sessionId, requestId, errorMessage);
 	  }	
 	});
       }
       public void onCancelled(DatabaseError error) {
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
@@ -292,12 +279,10 @@ public class EventCreationManager {
       @Override
       public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         if (databaseError == null) {
-	  Map<String, String> response = Utility.createResponse("success", "");
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+          Utility.sendSuccess(sessionId, requestId);
 	} else {
 	  String errorMessage = databaseError.getMessage();
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
 	}
       }
     });
@@ -311,8 +296,7 @@ public class EventCreationManager {
       System.err.println(errorMessage);
 
       // Write failed response
-      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+      Utility.sendFailure(sessionId, requestId, errorMessage);
       return;
     }
 
@@ -387,12 +371,11 @@ public class EventCreationManager {
           addAttendeesToDatabase(event.getEventId(), attendees);
 
           // Write success response
-          Map<String, String> response = Utility.createResponse("success", "");
-          Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+          Utility.sendSuccess(sessionId, requestId);
         } else {
           // Write failed response
-          Map<String, String> response = Utility.createResponse("failed", error.getMessage());
-          Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  String errorMessage = error.getMessage();
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
         }
       }
     });

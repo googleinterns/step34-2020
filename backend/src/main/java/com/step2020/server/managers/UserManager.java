@@ -131,11 +131,11 @@ public class UserManager {
         if (error == null) {
     System.out.println("User created");
         // Send a response to the client to let them know the account has been created
-    sendSuccess(requestId, sessionId);
+    Utility.sendSuccess(sessionId, requestId);
   } else {
     System.out.println("User creation failed");
     // Send a response to the client to let them know the account creation has failed
-    sendFailure(requestId, sessionId, error.getMessage());
+    Utility.sendFailure(sessionId, requestId, error.getMessage());
   }	  
       }
     });
@@ -161,23 +161,7 @@ public class UserManager {
       default:
         message = "Unknown error occurred.";
     }
-    this.sendFailure(requestId, sessionId, message);
-  }
-
-  // Sends a success response to the request id
-  private void sendSuccess(String requestId, String sessionId) {
-    String status = "success";
-    String message = "";
-    Map<String, String> response = Utility.createResponse(status, message);
-    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-  }
-
-  // Sends a failure response to the request id along with a error message
-  private void sendFailure(String requestId, String sessionId, String message) {
-    // Send a response to the client to let them know the account creation has failed
-    String status = "failed";
-    Map<String, String> response = Utility.createResponse(status, message);
-    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+    Utility.sendFailure(sessionId, requestId, message);
   }
 }
 
