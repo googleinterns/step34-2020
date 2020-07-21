@@ -3,15 +3,11 @@ import { Modal, Button} from 'react-bootstrap';
 import { fb } from '../App';
 
 export default class ConfirmDelete extends Component {
+ 
   handleDelete() {
-    // delete event from entire database
-    fb.eventsRef.child("events").child(this.props.reference).remove();
-
-    //delete event from user's table
-    fb.userRef.child("events").child(this.props.uid).child(this.props.reference).remove();
-
-    // hide the modal
-    this.props.onHide();
+    let id = this.props.uid;
+    let eventId = this.props.reference;
+    let successCallback = this.props.onHide;
   }
 
   render() {
