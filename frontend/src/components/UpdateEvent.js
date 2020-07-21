@@ -215,19 +215,16 @@ export default class UpdateEvent extends Component {
      
       
       // If there were no images inputted then ignore image upload
-      var imageUrls = ""; 
+      var imageUrls = null; 
       if (files.length > 0) {
         // Uploads images inputted from the form
         imageUrls = this.changeListToString(await this.uploadImages(files));
       }
 
-      // Assign creator as attendee
-      var attendees = []
-      attendees.push(this.props.history.location.state.credentials.uid)
-
-      var eventiId = this.props.history.location.state.reference;
+      var uid = this.props.history.location.state.credentials.uid;
+      var eventId = this.props.history.location.state.reference;
       // The respone acquired from the server
-      let response = await fb.requestEventUpdate(eventiId,title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.history.location.state.credentials.uid);
+      let response = await fb.requestEventUpdate(eventId, uid, title, date, startTime, endTime, description, location, locationName, imageUrls, category, organization);
       if (response) {
         console.log(this.props.location.state.plus_code);
         this.props.history.push({

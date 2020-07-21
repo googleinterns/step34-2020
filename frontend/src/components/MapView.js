@@ -85,8 +85,9 @@ class MapView extends Component {
 	// If the state doesnt have the event, add the event to the map
 	this.setState(prevState => ({
   	  allEvents: [...prevState.allEvents, event]
-	}));
-	this.forceUpdate();
+	}), () => {
+	  this.forceUpdate();
+	});
       }
     });
   }

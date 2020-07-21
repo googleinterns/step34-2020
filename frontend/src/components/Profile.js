@@ -31,9 +31,6 @@ class Profile extends React.Component {
     
   }
 
-
-
-
   didUpdate(event, parent, ref) {
     if(event !== null) {
       var attendees = ["user1", "user2", "user3"];
@@ -117,7 +114,7 @@ class Profile extends React.Component {
       if (ref != null) {
         ref.on('value', snapshot => {
           const event = snapshot.val();
-          this.didUpdate(event,eventKeys, key);
+          this.didUpdate(event, eventKeys, key);
         });
       }
       return null;
@@ -130,13 +127,13 @@ class Profile extends React.Component {
 
     // Shouldn't be null. if it is, do nothing
     if (myEventsRef != null) {
-      myEventsRef.on('value', snapshot => {
-        
-        // Do nothing when it's null
+      myEventsRef.on('value', snapshot => {  
+	// Do nothing when it's null
         if (snapshot.val() != null) {
-          const mykeys = Object.values(snapshot.val())
+          const mykeys = Object.values(snapshot.val());
+	  console.log(mykeys);
           //retrieve data from database using this reference
-          this.getData(mykeys)
+          this.getData(mykeys);
         }
       });
     }
