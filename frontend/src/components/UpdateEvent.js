@@ -6,7 +6,6 @@ import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 import Script from 'react-load-script';
 import { connect } from "react-redux";
-import { changeMapState } from "../actions/index";
 
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
@@ -167,7 +166,7 @@ export default class UpdateEvent extends Component {
       var title = null;
       var description = null;
       var location = null;
-      var files = null;
+      var files = [];
       var category = null;
       var organization = null;
       var startTime = null;
@@ -214,7 +213,6 @@ export default class UpdateEvent extends Component {
         locationName = this.state.locationName.value;
       }
      
-      locationName = this.state.locationName.value;
       
       // If there were no images inputted then ignore image upload
       var imageUrls = ""; 
@@ -266,12 +264,14 @@ export default class UpdateEvent extends Component {
   
   render() { 
     console.log(this.props.history.location.state.eventObject)
+    console.log(this.props.history.location.state.loggedIn)
+    console.log(this.props.history.location.state.plus_code)
     return (
       <div>
         <Script url={url} onLoad = {this.handleScriptLoad}/>
-        <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn} plus_code={this.props.location.state.plus_code}/>
+        <TopNavbar history={this.props.history} loggedIn={this.props.history.location.state.loggedIn} plus_code={this.props.history.location.state.plus_code}/>
         <Jumbotron >
-          <h1>Create Your Event</h1>
+          <h1>Edit Your Event</h1>
           <Form noValidate validated={this.validated} onSubmit={this.handleSubmit}>
             <Form.Group>
               <Form.Label>Event title</Form.Label>
@@ -409,7 +409,7 @@ export default class UpdateEvent extends Component {
                 id="eventSubmit"
                 variant="primary" 
                 type="submit">
-                Make your event!
+                Save Changes
               </Button>
               </Col>
               <Col md="auto" id="spinner-area">

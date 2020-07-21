@@ -9,9 +9,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
-import Modal from 'react-bootstrap/Modal';
 import ConfirmDelete from './ConfirmDelete';
-import UpdateEvent from './UpdateEvent';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -170,9 +168,11 @@ class Profile extends React.Component {
   }
 
   handleEdit(key, event) {
+    console.log(this.state.credentials)
+    console.log(this.props.history.location.state.plus_code)
     this.props.history.push({
       pathname: '/update',
-      state: {eventObject: event, reference: key, loggedIn: this.props.loggedIn, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
+      state: {eventObject: event, reference: key, loggedIn: true, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
     })
   }
 
