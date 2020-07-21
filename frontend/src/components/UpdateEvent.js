@@ -262,10 +262,7 @@ export default class UpdateEvent extends Component {
     return "[" + string + "]";
   }
   
-  render() { 
-    console.log(this.props.history.location.state.eventObject)
-    console.log(this.props.history.location.state.loggedIn)
-    console.log(this.props.history.location.state.plus_code)
+  render() {
     return (
       <div>
         <Script url={url} onLoad = {this.handleScriptLoad}/>
