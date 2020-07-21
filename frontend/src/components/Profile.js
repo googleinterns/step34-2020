@@ -9,7 +9,6 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
-import Modal from 'react-bootstrap/Modal';
 import ConfirmDelete from './ConfirmDelete';
 
 class Profile extends React.Component {
@@ -27,11 +26,10 @@ class Profile extends React.Component {
     };
 
     this.showModal =  this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
     
   }
-
-
-
 
   didUpdate(event, parent, ref) {
     if(event !== null) {
@@ -55,7 +53,8 @@ class Profile extends React.Component {
 
     // Add this card to the list of all cards to be displayed on the profile
     this.state.cards.push(
-      <Card 
+      <Card
+        key={Math.random(1001,5000)} 
         bg={'light'}
         border="secondary"
         text={'light' ? 'dark' : 'white'}
@@ -72,10 +71,13 @@ class Profile extends React.Component {
           <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
           <DropdownButton id="dropdown-basic-button" title="Attendees">
             {attendees.map(attendee => (
-              <Dropdown.Item>{attendee}</Dropdown.Item>))}
+              <Dropdown.Item key={Math.random(1000)} >{attendee}</Dropdown.Item>))}
           </DropdownButton><br />
           <ButtonToolBar>
-            <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
+            <Button 
+            variant="success"
+            style={{ marginRight:".8rem", width:"80px" }}
+            onClick={() => this.handleEdit(ref, event)}>
               Edit
             </Button>
             <Button 
@@ -112,7 +114,7 @@ class Profile extends React.Component {
       if (ref != null) {
         ref.on('value', snapshot => {
           const event = snapshot.val();
-          this.didUpdate(event,eventKeys, key);
+          this.didUpdate(event, eventKeys, key);
         });
       }
       return null;
@@ -125,20 +127,18 @@ class Profile extends React.Component {
 
     // Shouldn't be null. if it is, do nothing
     if (myEventsRef != null) {
-      myEventsRef.on('value', snapshot => {
-        
-        // Do nothing when it's null
+      myEventsRef.on('value', snapshot => {  
+	// Do nothing when it's null
         if (snapshot.val() != null) {
           const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
-          this.getData(mykeys)
+          this.getData(mykeys);
         }
       });
     }
   }
 
   async showModal (props) {
-    console.log(props)
     await this.setState({
       showConfirmModal: true,
     })
@@ -160,11 +160,17 @@ class Profile extends React.Component {
     })
     const modal = document.getElementById('modal-wrapper');
     let response = ReactDOM.unmountComponentAtNode(modal);
-    console.log(response)
   }
 
-  render() {
+  handleEdit(key, event) {
+    this.props.history.push({
+      pathname: '/update',
+      state: {eventObject: event, reference: key, loggedIn: true, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
+    })
+  }
 
+
+  render() {
     return (
       <div>
         <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials} plus_code={this.props.history.location.state.plus_code}/>

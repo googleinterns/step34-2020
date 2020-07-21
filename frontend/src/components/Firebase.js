@@ -187,11 +187,55 @@ class Firebase {
     return deferred.promise;
   }
 
-  handleResponses(requestId, deferred, successCallback = this.defaultSuccessCallback, failureCallback = this.defaultFailureCallback) {
+  // Request event edit given the parameters. 
+  // all parameters are optional except uid and eventId
+  requestEventUpdate(eventId, uid, eventName = null, date = null, startTime = null, endTime = null, description = null, location = null, locationName = null, imagePaths = null, category = null, organization = null) {
+    var requestId = this.generateRequestId();
+    var path = this.sessionId + "/" + requestId;
 
+    // Send in a request
+    this.sessionsRef.ref('REQUESTS').child(path).set({
+      code: 6,
+      uid: uid,
+      eventId: eventId,
+      eventName: eventName,
+      date: date,
+      startTime: startTime,
+      endTime: endTime,
+      description: description,
+      location: location,
+      locationName: locationName,
+      imagePaths: imagePaths,
+      category: category,
+      organization: organization,
+    });
+
+    // Handle the response
+    const deferred = new Deferred();
+    this.handleResponses(requestId, deferred);
+    return deferred.promise;
+  }
+
+  // Requests event deletion with the given event id and the uid
+  requestEventDeletion(eventId, uid) {
+    var requestId = this.generateRequestId();
+    var path = this.sessionId + "/" + requestId;
+
+    this.sessionsRef.ref('REQUESTS').child(path).set({
+      code: 7,
+      uid: uid,
+      eventId: eventId
+    });
+
+    const deferred = new Deferred();
+    this.handleResponses(requestId, deferred);
+    return deferred.promise;
+  }
+
+  // Handles the response by passing the deferred promise and request id 
+  handleResponses(requestId, deferred, successCallback = this.defaultSuccessCallback, failureCallback = this.defaultFailureCallback) {
     var ref = this.sessionsRef;
     var sessionId = this.sessionId;
-
 
     // Listen for responses under the RESPONSES path
     var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', function(snapshot) {
