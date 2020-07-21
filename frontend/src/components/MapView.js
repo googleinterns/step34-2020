@@ -26,17 +26,12 @@ class MapView extends Component {
       showInfoWindows: true
     };
     var plusCode = this.state.plusCode;
-    console.log(this.state.plusCode);
-    console.log("constr");
     this.queryEventsAndStoreInMemory(plusCode);
     this.renderInfo = this.renderInfo.bind(this);
   }
 
   async UNSAFE_componentWillReceiveProps(nextProps) {
-    console.log("componentWillRec");
-    console.log(nextProps)
     await this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, async () => {
-      console.log(this.state.showInfoWinddows);
       await this.queryEventsAndStoreInMemory(nextProps.plusCode);
       await this.setState({showInfoWindows: true});
     });
@@ -47,10 +42,14 @@ class MapView extends Component {
     this.renderInfo()
   }
 
+  handleShowWindow() {
+    this.setState({showInfoWindows: true})
+  }
+
   async componentDidMount() {
-    console.log(this.state.showInfoWinddows)
-    await this.queryEventsAndStoreInMemory(this.props.plusCode)
-    this.renderInfo()
+    await this.queryEventsAndStoreInMemory(this.props.plusCode);
+    await this.handleShowWindow()
+    await this.renderInfo()
   }
 
   renderInfo () {
