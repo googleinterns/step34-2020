@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { Container, Card, Button } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
-import '../gm-styles.css';
-import { Card } from 'react-bootstrap';
+import EventInfoWindow from "./EventInfoWindow";
+import '../gm-styles.css'
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -24,6 +25,12 @@ class MapView extends Component {
       plusCode: props.plusCode,
       showInfoWindows: true
     };
+
+    document.addEventListener('domready', () => {
+      console.log("asdas");
+      document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
+    });
+
     var plusCode = this.state.plusCode;
     this.queryEventsAndStoreInMemory(plusCode);
     this.renderInfo = this.renderInfo.bind(this);
@@ -171,10 +178,10 @@ class MapView extends Component {
       var key = (String)(Math.round(Math.random(100)));
 
       return(
-        <InfoWindow
+        <EventInfoWindow
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
-          <Card border="light" style={{backgroundColor: 'lightgreen', display: 'flex'}}>
+          <Card border="light" tag="a" onClick={this.printSomething} style={{backgroundColor: 'lightgreen', display: 'flex', cursor: 'pointer'}}>
             <Card.Img variant="right" src={imageUrl} />
               <Card.Body>
                 <Card.Title>{event.eventName}</Card.Title>
@@ -185,9 +192,13 @@ class MapView extends Component {
                 <Card.Text>{event.date}</Card.Text>
               </Card.Body>
           </Card>
-        </InfoWindow>
+        </EventInfoWindow>
       );
     }
+  }
+
+  printSomething() {
+    console.log("printSomething");
   }
 
   // Gets coordinate from string of location. Element 0 is latitude and 1 is longitude
@@ -210,13 +221,38 @@ class MapView extends Component {
     });
   }
 
-  render() {
-      return (
-        <div  className="mapView" id="map-view">
-        </div>
-      )
-    }
-
+render() {
+    return (
+      <div className="mapView" id="map-view">
+        {this.props.articles.map(article => {
+          return (
+            <Map
+	      id="map"
+              key={article.toString()}
+              google={this.props.google}
+              zoom={17}
+	          onReady={this.onReady}
+              style={mapStyles}
+              initialCenter={{
+                lat: article.location.lat(),
+                lng: article.location.lng()
+              }}
+              center={{
+                lat: article.location.lat(),
+                lng: article.location.lng()
+              }}
+              zoomControl={true}
+             >
+	      {this.state.allEvents.map(element => {
+		console.log(this.getInfoBox(element));
+		return (this.getInfoBox(element));
+	      })}
+	    </Map>
+          )
+        })}
+      </div>
+    )
+  }
 }
 
 
