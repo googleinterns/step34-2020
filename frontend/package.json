@@ -22,7 +22,7 @@
     "mui-autocomplete": "^2.0.1",
     "react": "^16.13.1",
     "react-accessible-accordion": "^3.3.0",
-    "react-bootstrap": "^1.0.0-beta.6",
+    "react-bootstrap": "^1.2.2",
     "react-dom": "^16.13.1",
     "react-dropdown": "^1.7.0",
     "react-load-script": "0.0.6",

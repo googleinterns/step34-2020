@@ -23,6 +23,7 @@ class Profile extends React.Component {
       credentials: JSONObject,
       cards:[],
       showConfirmModal: false,
+      contents: null,
     };
 
     this.showModal =  this.showModal.bind(this);
@@ -90,11 +91,12 @@ class Profile extends React.Component {
         </Card.Body>
       </Card>)
 
-    ReactDOM.render( 
-      <CardColumns>
-        {this.state.cards.map(element   => element)}
-      </CardColumns>,
-      document.getElementById("content"))
+
+      this.setState({
+        contents: <CardColumns>
+                    {this.state.cards.map(element   => element)}
+                  </CardColumns>
+      })
     }
     
   }
@@ -130,8 +132,7 @@ class Profile extends React.Component {
       myEventsRef.on('value', snapshot => {  
 	// Do nothing when it's null
         if (snapshot.val() != null) {
-          const mykeys = Object.values(snapshot.val());
-	  console.log(mykeys);
+          const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
           this.getData(mykeys);
         }
@@ -160,7 +161,7 @@ class Profile extends React.Component {
       showConfirmModal: false,
     })
     const modal = document.getElementById('modal-wrapper');
-    let response = ReactDOM.unmountComponentAtNode(modal);
+    ReactDOM.unmountComponentAtNode(modal);
   }
 
   handleEdit(key, event) {
@@ -198,6 +199,7 @@ class Profile extends React.Component {
             marginLeft:"1.8rem",
             marginTop:".8rem"}}>
             <br />
+            {this.state.contents}
           </div>
       </div>
     )

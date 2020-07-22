@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Card } from 'react-bootstrap';
-import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
+import EventInfoWindow from "./EventInfoWindow";
 import '../gm-styles.css'
-import { async } from '@firebase/util';
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -23,8 +23,18 @@ class MapView extends Component {
       allEvents: [],
       location: undefined,
       plusCode: props.plusCode,
-      showInfoWindows: true
+      showInfoWindows: true,
+      contents: null,
+      resizeState: false,
+      maxWidth: 100,
+      filter_choice: props.filter_choice,
     };
+
+    document.addEventListener('domready', () => {
+      console.log("asdas");
+      document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
+    });
+
     var plusCode = this.state.plusCode;
     this.queryEventsAndStoreInMemory(plusCode);
     this.renderInfo = this.renderInfo.bind(this);
@@ -52,8 +62,20 @@ class MapView extends Component {
     await this.renderInfo()
   }
 
-  renderInfo () {
-    console.log(this.state.allEvents)
+  async renderInfo () {
+    var listEvents = [];
+
+    if (this.props.filter_choice === null) {
+      listEvents = this.state.allEvents;
+    } else {
+      console.log("changed filter")
+      listEvents = await this.state.allEvents.filter((event) => {
+        console.log(event.category)
+        return event.category.toLowerCase() === (this.props.filter_choice).toLowerCase();
+      });
+    }
+    console.log(listEvents)
+    console.log(this.props.filter_choice)
     ReactDOM.render(
     this.props.articles.map(article => {
       return (
@@ -74,8 +96,8 @@ class MapView extends Component {
             }}
             zoomControl={true}
           >
-        {this.state.allEvents.map(element => {
-          return (this.getInfoBox(element));
+        {listEvents.map((element, index) => {
+          return (this.getInfoBox(element, index));
         })}
       </Map>
       )
@@ -113,25 +135,24 @@ class MapView extends Component {
     const eventsRef = fb.eventsRef;
     // Query and then listen for any changes of that event
     eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
-      // The event object
-      const event = dataSnapshot.val();
-      // If the state has the event then update the change
-      if (this.state.allEvents[eventId] !== undefined) {
-	this.updateEvent(eventId, event);
-      } else {
-	// If the state doesnt have the event, add the event to the map
-	this.setState(prevState => ({
-  	  allEvents: [...prevState.allEvents, event]
-	}), () => {
-	  this.forceUpdate();
-	});
-      }
+        // The event object
+        const event = dataSnapshot.val();
+        // If the state has the event then update the change
+        if (this.state.allEvents[eventId] !== undefined) {
+          this.updateEvent(eventId, event);
+        } else {
+          // If the state doesnt have the event, add the event to the map
+          this.setState(prevState => ({
+            allEvents: [...prevState.allEvents, event]
+          }));
+          this.forceUpdate();
+        }
     });
   }
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
-    // TODO: Update event info box
+    // Update event info box
     this.state.allEvents.push({
       key: eventId,
       value: event
@@ -152,9 +173,8 @@ class MapView extends Component {
     return this.getInfoBox(event);
   }
 
-  getInfoBox(event) {
+  getInfoBox(event, index) {
     if(event != null) {
-      console.log("infobox");
       var location = this.getCoords(event.location);
       var lat = parseFloat(location[0]);
       var lng = parseFloat(location[1]);
@@ -171,18 +191,39 @@ class MapView extends Component {
       }
 
       return(
-        <InfoWindow
+        <EventInfoWindow
+          key={index}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
-          <Card border="light">
+          <Card border="light" tag="a" onClick={this.printSomething.bind(this)} style={{minWidth: this.state.maxWidth, backgroundColor: 'lightgreen', display: 'flex', cursor: 'pointer'}}>
             <Card.Img variant="right" src={imageUrl} />
               <Card.Body>
                 <Card.Title>{event.eventName}</Card.Title>
                 <Card.Text>{event.description}</Card.Text>
+                <Card.Text>{event.locationName}</Card.Text>
+                <Card.Text>{event.startTime}</Card.Text>
+                <Card.Text>{event.endTime}</Card.Text>
+                <Card.Text>{event.date}</Card.Text>
               </Card.Body>
           </Card>
-        </InfoWindow>
+        </EventInfoWindow>
       );
+    }
+  }
+
+  printSomething() {
+    if (!this.state.resizeState) {
+      this.setState({
+        maxWidth: 600,
+        resizeState: true,
+      })
+      console.log("true");
+    } else {
+      this.setState({
+        maxWidth: 240,
+        resizeState: false,
+      })
+      console.log("false");
     }
   }
 
@@ -200,20 +241,21 @@ class MapView extends Component {
     return coords;
   }
 
+
   onReady = () => {
     this.setState({
       showInfoWindows: true
     });
   }
 
-render() {
+  render() {
     return (
-      <div  className="mapView" id="map-view">
+      <div className="mapView" id="map-view">
       </div>
     )
   }
-
 }
+
 
 const ConnectMapViewToStore = connect(mapStateToProps);
 

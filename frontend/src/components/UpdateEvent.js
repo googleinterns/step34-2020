@@ -162,7 +162,6 @@ export default class UpdateEvent extends Component {
       // Else, make the warning message empty and add a spinner on the side to show it processing
       ReactDOM.render("", document.getElementById("warning"));
       ReactDOM.render(<Spinner animation="border" variant="secondary"/>, document.getElementById("spinner-area"));
-      var plusCode = null;
       var title = null;
       var description = null;
       var location = null;
@@ -228,7 +227,7 @@ export default class UpdateEvent extends Component {
       if (response) {
         console.log(this.props.location.state.plus_code);
         this.props.history.push({
-          pathname: '/profile/',
+          pathname: '/map/',
           state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
         })
       } 
