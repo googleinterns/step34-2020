@@ -28,8 +28,18 @@ public class Utility {
     throw new AssertionError();
   }
 
+  public static void sendSuccess(String sessionId, String requestId) {
+    Map<String, String> response = createResponse("success", null);
+    sendResponseAndRemoveRequest(sessionId, requestId, response);
+  }
+
+  public static void sendFailure(String sessionId, String requestId, String errorMessage) {
+    Map<String, String> response = createResponse("failed", errorMessage);
+    sendResponseAndRemoveRequest(sessionId, requestId, response);
+  }
+
   // Creates a response based off of the status and message given
-  public static Map<String, String> createResponse(String status, String message) {
+  private static Map<String, String> createResponse(String status, String message) {
     Map<String, String> response = new HashMap();
     response.put("status", status);
     response.put("message", message);
@@ -37,7 +47,7 @@ public class Utility {
   }
 
   // Sends a response under the session id and request id and removes the request from the session.
-  public static void sendResponseAndRemoveRequest(String sessionId, String requestId, Map<String, String> response) {
+  private static void sendResponseAndRemoveRequest(String sessionId, String requestId, Map<String, String> response) {
     DatabaseReference responseRef = FirebaseDatabase.getInstance().getReference();
     responseRef.child(RSPNSE).child(sessionId).child(requestId).setValue(response, new DatabaseReference.CompletionListener() {
      public void onComplete(DatabaseError error, DatabaseReference ref) {

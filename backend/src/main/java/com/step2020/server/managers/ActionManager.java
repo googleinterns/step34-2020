@@ -36,7 +36,7 @@ import com.google.firebase.database.Query;
 import com.google.auth.oauth2.GoogleCredentials;
 
 public class ActionManager {
-  
+
   private String sessionId;
 
   // The user manager to access user information
@@ -98,21 +98,21 @@ public class ActionManager {
   private void manageRequests(String requestId, Map<String, String> value) {
     // Given the command code, execute the command
     int code = Integer.parseInt(value.get("code"));
-    switch (code) {
-      // Code 1 is creating a user with the email, password, and name
-      case 1:
+    Code enumCode = Code.valueOf(code); 
+    switch (enumCode) {
+      case CREATE_USER:
 	String email = value.get("email");
 	String password = value.get("password");
 	String name = value.get("name");
 	userManager.createUserAndAddToDatabase(requestId, email, password, name);
 	break;
-      case 5:
+      case CREATE_EVENT:
 	eventManager.createEvent(requestId, value);
 	break;
-      case 6:	
+      case UPDATE_EVENT:	
 	eventManager.updateEvent(requestId, value);
 	break;
-      case 7:
+      case DELETE_EVENT:
 	eventManager.deleteEvent(requestId, value);
 	break;
     } 
