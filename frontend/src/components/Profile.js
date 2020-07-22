@@ -23,6 +23,7 @@ class Profile extends React.Component {
       credentials: JSONObject,
       cards:[],
       showConfirmModal: false,
+      contents: null,
     };
 
     this.showModal =  this.showModal.bind(this);
@@ -90,11 +91,17 @@ class Profile extends React.Component {
         </Card.Body>
       </Card>)
 
-    ReactDOM.render( 
-      <CardColumns>
-        {this.state.cards.map(element   => element)}
-      </CardColumns>,
-      document.getElementById("content"))
+    // ReactDOM.render( 
+    //   <CardColumns>
+    //     {this.state.cards.map(element   => element)}
+    //   </CardColumns>,
+    //   document.getElementById("content"))
+
+      this.setState({
+        contents: <CardColumns>
+                    {this.state.cards.map(element   => element)}
+                  </CardColumns>
+      })
     }
     
   }
@@ -197,6 +204,7 @@ class Profile extends React.Component {
             marginLeft:"1.8rem",
             marginTop:".8rem"}}>
             <br />
+            {this.state.contents}
           </div>
       </div>
     )
