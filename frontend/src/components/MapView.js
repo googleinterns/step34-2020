@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Container, Card, Button } from 'react-bootstrap';
-import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+import { Card } from 'react-bootstrap';
+import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
 import EventInfoWindow from "./EventInfoWindow";
@@ -23,7 +23,10 @@ class MapView extends Component {
       allEvents: [],
       location: undefined,
       plusCode: props.plusCode,
-      showInfoWindows: true
+      showInfoWindows: true,
+      contents: null,
+      resizeState: false,
+      maxWidth: 100
     };
 
     document.addEventListener('domready', () => {
@@ -59,7 +62,6 @@ class MapView extends Component {
   }
 
   renderInfo () {
-    console.log(this.state.allEvents)
     ReactDOM.render(
     this.props.articles.map(article => {
       return (
@@ -80,8 +82,8 @@ class MapView extends Component {
             }}
             zoomControl={true}
           >
-        {this.state.allEvents.map(element => {
-          return (this.getInfoBox(element));
+        {this.state.allEvents.map((element, index) => {
+          return (this.getInfoBox(element, index));
         })}
       </Map>
       )
@@ -157,9 +159,8 @@ class MapView extends Component {
     return this.getInfoBox(event);
   }
 
-  getInfoBox(event) {
+  getInfoBox(event, index) {
     if(event != null) {
-      console.log("infobox");
       var location = this.getCoords(event.location);
       var lat = parseFloat(location[0]);
       var lng = parseFloat(location[1]);
@@ -175,13 +176,12 @@ class MapView extends Component {
         imageUrl = imageUrl.split(",")[0];
       }
 
-      var key = (String)(Math.round(Math.random(100)));
-
       return(
         <EventInfoWindow
+          key={index}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
-          <Card border="light" tag="a" onClick={this.printSomething} style={{backgroundColor: 'lightgreen', display: 'flex', cursor: 'pointer'}}>
+          <Card border="light" tag="a" onClick={this.printSomething.bind(this)} style={{minWidth: this.state.maxWidth, backgroundColor: 'lightgreen', display: 'flex', cursor: 'pointer'}}>
             <Card.Img variant="right" src={imageUrl} />
               <Card.Body>
                 <Card.Title>{event.eventName}</Card.Title>
@@ -198,7 +198,19 @@ class MapView extends Component {
   }
 
   printSomething() {
-    console.log("printSomething");
+    if (!this.state.resizeState) {
+      this.setState({
+        maxWidth: 600,
+        resizeState: true,
+      })
+      console.log("true");
+    } else {
+      this.setState({
+        maxWidth: 240,
+        resizeState: false,
+      })
+      console.log("false");
+    }
   }
 
   // Gets coordinate from string of location. Element 0 is latitude and 1 is longitude
@@ -215,41 +227,16 @@ class MapView extends Component {
     return coords;
   }
 
+
   onReady = () => {
     this.setState({
       showInfoWindows: true
     });
   }
 
-render() {
+  render() {
     return (
       <div className="mapView" id="map-view">
-        {this.props.articles.map(article => {
-          return (
-            <Map
-	      id="map"
-              key={article.toString()}
-              google={this.props.google}
-              zoom={17}
-	          onReady={this.onReady}
-              style={mapStyles}
-              initialCenter={{
-                lat: article.location.lat(),
-                lng: article.location.lng()
-              }}
-              center={{
-                lat: article.location.lat(),
-                lng: article.location.lng()
-              }}
-              zoomControl={true}
-             >
-	      {this.state.allEvents.map(element => {
-		console.log(this.getInfoBox(element));
-		return (this.getInfoBox(element));
-	      })}
-	    </Map>
-          )
-        })}
       </div>
     )
   }

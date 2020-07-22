@@ -227,7 +227,7 @@ export default class UpdateEvent extends Component {
       if (response) {
         console.log(this.props.location.state.plus_code);
         this.props.history.push({
-          pathname: '/profile/',
+          pathname: '/map/',
           state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
         })
       } 

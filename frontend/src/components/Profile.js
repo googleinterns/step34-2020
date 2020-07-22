@@ -91,11 +91,6 @@ class Profile extends React.Component {
         </Card.Body>
       </Card>)
 
-    // ReactDOM.render( 
-    //   <CardColumns>
-    //     {this.state.cards.map(element   => element)}
-    //   </CardColumns>,
-    //   document.getElementById("content"))
 
       this.setState({
         contents: <CardColumns>
@@ -166,7 +161,7 @@ class Profile extends React.Component {
       showConfirmModal: false,
     })
     const modal = document.getElementById('modal-wrapper');
-    let response = ReactDOM.unmountComponentAtNode(modal);
+    ReactDOM.unmountComponentAtNode(modal);
   }
 
   handleEdit(key, event) {
