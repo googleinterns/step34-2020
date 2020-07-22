@@ -4,6 +4,8 @@ import { Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import Firebase from 'firebase';
+import logo from '../IT.png';
+import '../navbarStyle.css';
 
 export default class TopNavbar extends React.Component {
   constructor(props) {
@@ -35,6 +37,11 @@ export default class TopNavbar extends React.Component {
   }
 
   handleMapViewonClick() {
+    this.props.history.push({
+      pathname: '/map/',
+      state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
+    });
+    /*
     if (!this.props.loggedIn) {
       ReactDOM.render(
         <div id="modal">
@@ -48,6 +55,7 @@ export default class TopNavbar extends React.Component {
         state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       });
     }
+    */
   }
 
   handleProfileButtonClick() {
@@ -96,17 +104,16 @@ export default class TopNavbar extends React.Component {
   
   render() {
     return(
-      <Navbar bg="dark" expand="lg" style={style}>
-        <Navbar.Brand>MapIT</Navbar.Brand>
+      <Navbar bg="light" expand="lg" style={style}>
+        <Navbar.Brand href="/">IT</Navbar.Brand>
+        <Navbar.Brand onClick={this.handleMapViewonClick.bind(this)}>Map</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
           <Nav>
-            <MapViewButton onClick={this.handleMapViewonClick.bind(this)} loggedIn={this.props.loggedIn} />
             <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.props.loggedIn} />
             <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.props.loggedIn} credentials={this.props.credentials} />
             <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
-            <LogOutButton onClick={this.handleLogoutButton.bind(this)} loggedIn={this.props.loggedIn} />
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -153,6 +160,7 @@ function CreateEventButton(props) {
         style={{marginRight:".8rem"}}
         type="button" 
         variant="primary"
+    	size="sm"
         onClick={props.onClick}>
         Create Event
       </Button>
@@ -167,7 +175,8 @@ function LoginButtonNav(props) {
         <Button 
           style={{marginRight:".8rem"}}
           type="button" 
-          variant="primary" 
+      	  size="sm"
+          variant="outline-primary" 
           onClick={props.onClick}>
           Login
         </Button>
@@ -179,15 +188,19 @@ function LoginButtonNav(props) {
 }
 
 function ProfileButtonNav(props) {
-  return (
-    <div>
-      <Button 
-        style={{marginRight:".8rem"}}
-        type="button" 
-        variant="primary" 
-        onClick={props.onClick}>
-        Profile
-      </Button>
-    </div>
-  );
+  if (props.loggedIn) {
+    return (
+      <div>
+	<Button 
+	  style={{marginRight:".8rem"}}
+	  type="button" 
+	  variant="primary" 
+	  onClick={props.onClick}>
+	  Profile
+	</Button>
+      </div>
+    );
+  } else {
+    return null;
+  }
 }
