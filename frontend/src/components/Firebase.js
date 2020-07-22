@@ -121,6 +121,7 @@ class Firebase {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     // Send a request under the sessionid
+    // Code 1 is to create users
     this.sessionsRef.ref('REQUESTS').child(path).set({
       email: email,
       password: password,
@@ -164,6 +165,7 @@ class Firebase {
     var path = this.sessionId + "/" + requestId;
     
     // Send a request under the sessionid
+    // Code 5 is to create events
     this.sessionsRef.ref('REQUESTS').child(path).set({
       code: 5,
       uid: uid,
@@ -194,6 +196,7 @@ class Firebase {
     var path = this.sessionId + "/" + requestId;
 
     // Send in a request
+    // Code 6 is to update events
     this.sessionsRef.ref('REQUESTS').child(path).set({
       code: 6,
       uid: uid,
@@ -221,6 +224,7 @@ class Firebase {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
 
+    // Code 7 is to delete events
     this.sessionsRef.ref('REQUESTS').child(path).set({
       code: 7,
       uid: uid,
