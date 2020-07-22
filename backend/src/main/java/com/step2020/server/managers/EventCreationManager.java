@@ -75,14 +75,15 @@ public class EventCreationManager {
   // Updates the event with the given update info and request id
   public void updateEvent(String requestId, Map<String, String> updateInfo) {
     // Check if uid and event id exist in the update info
-    if (!updateInfo.containsKey("uid") && !updateInfo.containsKey("eventId")) { 
+    if (checkRequestInfoForRequiredKeys(updateInfo)) {
       String errorMessage = "Required fields are empty: uid and eventId.";
       Utility.sendFailure(sessionId, requestId, errorMessage);
+      return;
     }
 
     // Get uid and eventId
-    String uid = updateInfo.get("uid");
-    String eventId = updateInfo.get("eventId");
+    String uid = updateInfo.get(UID);
+    String eventId = updateInfo.get(EVENTID);
 
    // Query the ownerId of the event to make sure the request is issued by the owner
     this.eventsRef.child(EVNTS).child(eventId).child("ownerId").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -93,15 +94,13 @@ public class EventCreationManager {
 	// Check if the ownerId and request uid are the same
 	if (ownerId.equals(uid)) {
 	  // Remove uid and event id and just leave the info needed to be updated
-	  updateInfo.remove("uid");
-	  updateInfo.remove("eventId");
+	  updateInfo.remove(UID);
+	  updateInfo.remove(EVENTID);
 
 	  // update event
 	  updateEventWithMapInfo(requestId, eventId, updateInfo);
 	} else {
-	  // Send failed information
-	  String errorMessage = "You are not the owner of this event.";
-	  Utility.sendFailure(sessionId, requestId, errorMessage);
+	  handleUnownedEventActionForRequestID(sessionId, requestId);
 	}
       }
       public void onCancelled(DatabaseError error) {
@@ -135,14 +134,15 @@ public class EventCreationManager {
   // Deletes the event with the requested event id in the requestInfo map and make sure the user is the owner
   public void deleteEvent(String requestId, Map<String, String> requestInfo) {
     // Check to make sure the requestinfo has the required keys
-    if (!requestInfo.containsKey("uid") && !requestInfo.containsKey("eventId")) {
+    if (checkRequestInfoForRequiredKeys(requestInfo)) {
       String errorMessage = "Required fields are empty: uid and eventId.";
       Utility.sendFailure(sessionId, requestId, errorMessage);
+      return;
     }
-    
+   
     // Get the uid and event id
-    String uid = requestInfo.get("uid");
-    String eventId = requestInfo.get("eventId"); 
+    String uid = requestInfo.get(UID);
+    String eventId = requestInfo.get(EVENTID); 
 
     System.out.println(eventId);
     // Query the event and owner id
@@ -154,8 +154,7 @@ public class EventCreationManager {
 	  // remove event
 	  removeEvent(requestId, eventId);
 	} else {
-	  String errorMessage = "You are not the owner of this event.";
-	  Utility.sendFailure(sessionId, requestId, errorMessage);
+	  handleUnownedEventActionForRequestID(sessionId, requestId);
 	}
       }
 
@@ -164,6 +163,10 @@ public class EventCreationManager {
 	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
+  }
+
+  private boolean checkRequestInfoForRequiredKeys(Map<String, String> info) {
+    return !requestInfo.containsKey(UID) && !requestInfo.containsKey(EVENTID);  
   }
 
   // Removes the requested event id and send a response of success or failure
@@ -288,7 +291,12 @@ public class EventCreationManager {
     });
   }
   
-  // Creates a new event from the given event info along with the request id
+  private void handleUnownedEventActionForRequestID(String sessionId, String requestId) {
+    String errorMessage = "You are not the owner of this event.";
+    Utility.sendFailure(sessionId, requestId, errorMessage);
+  }
+ 
+    // Creates a new event from the given event info along with the request id
   public void createEvent(String requestId, Map<String, String> eventInfo) {
     // Check for minimum requirements for event info
     if (!checkMinimumInfoInput(eventInfo)) {
@@ -347,7 +355,7 @@ public class EventCreationManager {
     while(it.hasNext()) {
       Map.Entry<String, String> entry = it.next();
       if (!entry.getKey().equals("imagePaths") && !entry.getKey().equals("organization")) {
-        if (entry.getValue() == null && entry.getValue().isEmpty()) {
+        if (entry.getValue() == null || entry.getValue().isEmpty()) {
 	  System.out.println(entry.getKey());
           return false;
         }
