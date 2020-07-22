@@ -113,18 +113,19 @@ class MapView extends Component {
     const eventsRef = fb.eventsRef;
     // Query and then listen for any changes of that event
     eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
-        // The event object
-        const event = dataSnapshot.val();
-        // If the state has the event then update the change
-        if (this.state.allEvents[eventId] !== undefined) {
-          this.updateEvent(eventId, event);
-        } else {
-          // If the state doesnt have the event, add the event to the map
-          this.setState(prevState => ({
-            allEvents: [...prevState.allEvents, event]
-          }));
-          this.forceUpdate();
-        }
+      // The event object
+      const event = dataSnapshot.val();
+      // If the state has the event then update the change
+      if (this.state.allEvents[eventId] !== undefined) {
+	this.updateEvent(eventId, event);
+      } else {
+	// If the state doesnt have the event, add the event to the map
+	this.setState(prevState => ({
+  	  allEvents: [...prevState.allEvents, event]
+	}), () => {
+	  this.forceUpdate();
+	});
+      }
     });
   }
 

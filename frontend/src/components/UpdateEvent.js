@@ -6,42 +6,29 @@ import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 import Script from 'react-load-script';
 import { connect } from "react-redux";
-import { changeMapState } from "../actions/index";
 
-const mapStateToProps = state => {
-  return { articles: state.articles };
-};
-
-function mapDispatchToProps(dispatch) {
-  return {
-    changeMapState: mapState => dispatch(changeMapState(mapState))
-  };
-}
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
 const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places"; 
-class Events extends Component {
+export default class UpdateEvent extends Component {
   constructor(props) {
     super(props);
     bsCustomFileInput.init();
     this.state = {
-      title: "",
-      description: "",
-      plusCode: "",
-      location: "",
-      files: [],
-      category: 0,
-      organization: "",
-      date: null,
-      startTime: null,
-      endTime: null,
-      validated: false,
-      locationName: "",
+      title: {status: false, value: ""},
+      description: {status: false, value: ""},
+      location: {status: false, value: ""},
+      files: {status: false, value: []},
+      category: {status: false, value: 0},
+      organization: {status: false, value: ""},
+      date: {status: false, value: null},
+      startTime: {status: false, value: null},
+      endTime: {status: false, value: null},
+      validated: {status: false, value: false} ,
+      locationName: {status: false, value: ""},
     };
 
-    this.unviersityAutocomplete = null;
     this.locationAutocomplete = null;
-
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
@@ -53,16 +40,13 @@ class Events extends Component {
     this.handleStartTimeChange = this.handleStartTimeChange.bind(this);
     this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
-    this.handlePlusCodeChange = this.handlePlusCodeChange.bind(this);
     this.handleLocationChange = this.handleLocationChange.bind(this);
   }
+
 
   handleScriptLoad() {
     /*global google*/
     const fields = ['name', 'address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
-    this.universityAutocomplete = new google.maps.places.Autocomplete(document.getElementById('university-autocomplete'));
-    this.universityAutocomplete.setFields(fields);
-    this.universityAutocomplete.addListener('place_changed', this.handlePlusCodeChange);
 
     this.locationAutocomplete = new google.maps.places.Autocomplete(document.getElementById('location-autocomplete'));
     this.locationAutocomplete.setFields(fields);
@@ -71,60 +55,61 @@ class Events extends Component {
 
   handleTitleChange(input) {
     this.setState({
-       title: input.target.value
+       title: {
+        status: true,
+        value: input.target.value}
     });
   }
   
   handleDateChange(input) {
     this.setState({
-      date: input.target.value
+      date: {
+        status: true,
+        value: input.target.value}
     });
   }
   
   handleStartTimeChange(input) {
     this.setState({
-      startTime: input.target.value
+      startTim: {
+        status: true,
+        value: input.target.value}
     });
   }
 
   handleEndTimeChange(input) {
     this.setState({
-      endTime: input.target.value
+      endTime:{
+        status: true,
+        value: input.target.value}
     });
   }
 
   handleDescriptionChange(input) {
     this.setState({
-       description: input.target.value
+      description: {
+        status: true,
+        value: input.target.value}
     });
-  }
-
-  handlePlusCodeChange() {
-    const universityAddressObject = this.universityAutocomplete.getPlace();
-
-    if (typeof universityAddressObject.plus_code != 'undefined') {
-      const universityPlusCode = universityAddressObject.plus_code.global_code;
-      this.setState({
-        plusCode: universityPlusCode
-      });
-      console.log(universityPlusCode);
-    } else {
-      alert("choose a correct address.")
-    }
-    
   }
 
   handleLocationChange() {
     const locationAddressObject = this.locationAutocomplete.getPlace();
     const locationObject = locationAddressObject.geometry.location;
     this.setState({
-       location: locationObject.toString(),
-       locationName: locationAddressObject.name + ", " + locationAddressObject.formatted_address
+       location: {
+        status: true,
+        value: locationObject.toString()},
+
+        
+       locationName: {
+        status: true,
+        value: locationAddressObject.name}
     });
     console.log(locationAddressObject.name);
     console.log(locationAddressObject.formatted_address);
   }
-
+  
   // When the image is inputted, display the image
   handleImageInput(event) {
     var innerCols = "";
@@ -147,16 +132,20 @@ class Events extends Component {
  
   handleCategoryChange(input) {
     this.setState({
-       category: input.target.value
+       category: {
+        status: true,
+        value: input.target.value}
     });
   }
 
   handleOrganizationChange(input) {
     this.setState({
-       organization: input.target.value
+       organization: {
+        status: true,
+        value: input.target.value}
     });
   }
-
+  
   async handleSubmit(event) {
     // Get current target and prevent the default action when submitting
     const form = event.currentTarget;
@@ -173,41 +162,79 @@ class Events extends Component {
       // Else, make the warning message empty and add a spinner on the side to show it processing
       ReactDOM.render("", document.getElementById("warning"));
       ReactDOM.render(<Spinner animation="border" variant="secondary"/>, document.getElementById("spinner-area"));
-      var title = this.state.title;
-      var description = this.state.description;
-      var plusCode = this.state.plusCode;
-      var location = this.state.location;
-      var files = this.state.files;
-      var category = categories[this.state.category];
-      var organization = this.state.organization;
-      var startTime = this.state.startTime;
-      var endTime = this.state.endTime;
-      var date = this.state.date;
-      var locationName = this.state.locationName;
+      var plusCode = null;
+      var title = null;
+      var description = null;
+      var location = null;
+      var files = [];
+      var category = null;
+      var organization = null;
+      var startTime = null;
+      var endTime = null;
+      var date = null;
+      var locationName = null;
+
+      if (this.state.title.status) {
+        title = this.state.title.value;
+      }
+
+      if (this.state.description.status) {
+        description = this.state.description.value;
+      }
+
+      if (this.state.location.status) {
+        location = this.state.location.value;
+      }
+      if (this.state.files.status) {
+        files = this.state.files.value;
+      }
+
+      if (this.state.category.status) {
+        category = categories[this.state.category.value];
+      }
+      
+      if (this.state.organization.status) {
+        organization = this.state.organization.value;
+      }
+
+      if (this.state.startTime.status) {
+        startTime = this.state.startTime.value;
+      }
+      
+      if (this.state.endTime.status) {
+        endTime = this.state.endTime.value;
+      }
+
+      if (this.state.date.status) {
+        date = this.state.date.value;
+      }
+      
+      if (this.state.locationName.status) {
+        locationName = this.state.locationName.value;
+      }
+     
       
       // If there were no images inputted then ignore image upload
-      var imageUrls = ""; 
+      var imageUrls = null; 
       if (files.length > 0) {
         // Uploads images inputted from the form
         imageUrls = this.changeListToString(await this.uploadImages(files));
       }
 
-      // Assign creator as attendee
-      var attendees = []
-      attendees.push(this.props.history.location.state.credentials.uid)
-
+      var uid = this.props.history.location.state.credentials.uid;
+      var eventId = this.props.history.location.state.reference;
       // The respone acquired from the server
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.history.location.state.credentials.uid);
+      let response = await fb.requestEventUpdate(eventId, uid, title, date, startTime, endTime, description, location, locationName, imageUrls, category, organization);
       if (response) {
         console.log(this.props.location.state.plus_code);
         this.props.history.push({
-          pathname: '/map/',
+          pathname: '/profile/',
           state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
         })
       } 
     }
   }
-
+  
   // Uploads images from a FileList and returns the paths of each image.
   async uploadImages(files) {
     var parentPath = "images/events/" + fb.sessionId;
@@ -232,27 +259,19 @@ class Events extends Component {
     }
     return "[" + string + "]";
   }
-
-  defaultValue(universityName) {
-      console.log("here");
-      if (universityName) {
-        return universityName;
-      } else {
-        return "MapIt University";
-      }
-  }
-
-  render() { 
+  
+  render() {
     return (
       <div>
         <Script url={url} onLoad = {this.handleScriptLoad}/>
-        <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn} plus_code={this.props.location.state.plus_code}/>
+        <TopNavbar history={this.props.history} loggedIn={this.props.history.location.state.loggedIn} plus_code={this.props.history.location.state.plus_code}/>
         <Jumbotron >
-          <h1>Create Your Event</h1>
+          <h1>Edit Your Event</h1>
           <Form noValidate validated={this.validated} onSubmit={this.handleSubmit}>
             <Form.Group>
               <Form.Label>Event title</Form.Label>
               <Form.Control
+                defaultValue={this.props.history.location.state.eventObject.eventName}
                 required
                 onChange={this.handleTitleChange}
                 type="text" 
@@ -266,6 +285,7 @@ class Events extends Component {
             <Form.Group>
               <Form.Label>Date</Form.Label>
               <Form.Control
+                defaultValue={this.props.history.location.state.eventObject.date}
                 required
                 onChange={this.handleDateChange}
                 type="date"/>
@@ -275,7 +295,8 @@ class Events extends Component {
             </Form.Group>
             <Form.Group>
               <Form.Label>Start Time</Form.Label>
-              <Form.Control 	
+              <Form.Control 
+                defaultValue={this.props.history.location.state.eventObject.startTime}	
                 onChange={this.handleStartTimeChange}
                 required
                 type="time"/>
@@ -285,7 +306,8 @@ class Events extends Component {
             </Form.Group>
             <Form.Group>
               <Form.Label>End Time</Form.Label>
-              <Form.Control 
+              <Form.Control
+                defaultValue={this.props.history.location.state.eventObject.endTime} 
                 onChange={this.handleEndTimeChange}
                 required
                 type="time"/>
@@ -296,6 +318,7 @@ class Events extends Component {
             <Form.Group>
               <Form.Label>Description of your event</Form.Label>
               <Form.Control
+                defaultValue={this.props.history.location.state.eventObject.description}
                 onChange={this.handleDescriptionChange}
                 required
                 as="textarea" 
@@ -307,31 +330,21 @@ class Events extends Component {
             </Form.Group>
             <Form.Row>
               <Form.Group as={Col}>
-                <Form.Label>University</Form.Label>
+                <Form.Label>Location</Form.Label>
                 <Form.Control
-                  id="university-autocomplete"
+                  defaultValue={this.props.history.location.state.eventObject.locationName} 
+                  id="location-autocomplete"	
                   required
-                  type="text" 
-                  placeholder="Stanford University" />
+                  type="text"
+                  placeholder="12345 Main St" />
                 <Form.Text className="text-muted">
-                  Tell people what university your event is at!
+                  Tell people where your event is at!
                 </Form.Text>
-              </Form.Group>
-              <Form.Group as={Col}>
-              <Form.Label>Location</Form.Label>
-              <Form.Control 
-                    id="location-autocomplete"	
-                required
-                type="text"
-                placeholder="12345 Main St" />
-              <Form.Text className="text-muted">
-                Tell people where your event is at!
-              </Form.Text>
               </Form.Group> 
             </Form.Row>
             <Form.Group>
               <Form.Label>Categories</Form.Label>
-              <Form.Control	
+              <Form.Control
                 onChange={this.handleCategoryChange}
                 as="select"
                 className="my-1 mr-sm-2"
@@ -376,7 +389,8 @@ class Events extends Component {
             </Container>
             <Form.Group>
               <Form.Label>Organization</Form.Label>
-              <Form.Control 
+              <Form.Control
+                defaultValue={this.props.history.location.state.eventObject.organization} 
                 onChange={this.handleOrganizationChange}
                 type="text" 
                 placeholder="Your organization" />
@@ -390,7 +404,7 @@ class Events extends Component {
                 id="eventSubmit"
                 variant="primary" 
                 type="submit">
-                Make your event!
+                Save Changes
               </Button>
               </Col>
               <Col md="auto" id="spinner-area">
@@ -403,10 +417,3 @@ class Events extends Component {
     )
   }
 }
-
-const ConnectedEventPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Events);
-
-export default ConnectedEventPage;

@@ -42,4 +42,10 @@ public final class Constants {
 
   // Where we put attendees going to event
   public static final String ATND = "attendees";
+  
+  // The uid child
+  public static final String UID = "uid";
+
+  // The eventId child
+  public static final String EVENTID = "eventId";
 }

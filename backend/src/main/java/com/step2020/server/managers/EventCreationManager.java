@@ -75,75 +75,74 @@ public class EventCreationManager {
   // Updates the event with the given update info and request id
   public void updateEvent(String requestId, Map<String, String> updateInfo) {
     // Check if uid and event id exist in the update info
-    if (!updateInfo.containsKey("uid") && !updateInfo.containsKey("eventId")) { 
+    if (checkRequestInfoForRequiredKeys(updateInfo)) {
       String errorMessage = "Required fields are empty: uid and eventId.";
-      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+      Utility.sendFailure(sessionId, requestId, errorMessage);
+      return;
     }
 
     // Get uid and eventId
-    String uid = updateInfo.get("uid");
-    String eventId = updateInfo.get("eventId");
+    String uid = updateInfo.get(UID);
+    String eventId = updateInfo.get(EVENTID);
 
-   // Query the ownerId of the event 
+   // Query the ownerId of the event to make sure the request is issued by the owner
     this.eventsRef.child(EVNTS).child(eventId).child("ownerId").addListenerForSingleValueEvent(new ValueEventListener() {
       public void onDataChange(DataSnapshot snapshot) {
+	// Get the owner id from the query
 	String ownerId = snapshot.getValue(String.class);
 
 	// Check if the ownerId and request uid are the same
 	if (ownerId.equals(uid)) {
 	  // Remove uid and event id and just leave the info needed to be updated
-	  updateInfo.remove("uid");
-	  updateInfo.remove("eventId");
+	  updateInfo.remove(UID);
+	  updateInfo.remove(EVENTID);
 
 	  // update event
 	  updateEventWithMapInfo(requestId, eventId, updateInfo);
 	} else {
-	  // Failed
-	  String errorMessage = "You are not the owner of this event.";
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  handleUnownedEventActionForRequestID(sessionId, requestId);
 	}
       }
-
       public void onCancelled(DatabaseError error) {
+	// Send failed information
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
   
   // Updates the event with the map info with just the info needed to be updated
   private void updateEventWithMapInfo(String requestId, String eventId, Map<String, String> updateInfo) {
+    // Change to updated info into a map of String keys and Object values so Firebase can handle input
     Map<String, Object> updateInfoObject = Collections.<String, Object>unmodifiableMap(updateInfo);
+
+    // Query the event id and update the children with the update information
     this.eventsRef.child(EVNTS).child(eventId).updateChildren(updateInfoObject, new DatabaseReference.CompletionListener() {
       @Override
       public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        if (databaseError == null) {
-	  Map<String, String> response = Utility.createResponse("success", "");
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+        // If there aren't any errors, send in a success response, if not, send in failed error
+	if (databaseError == null) {
+          Utility.sendSuccess(sessionId, requestId);
 	} else {
 	  String errorMessage = databaseError.getMessage();
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
 	}
       }
     });
   } 
 
-  //Deletes the event with the requested event id in the requestInfo map
+  // Deletes the event with the requested event id in the requestInfo map and make sure the user is the owner
   public void deleteEvent(String requestId, Map<String, String> requestInfo) {
     // Check to make sure the requestinfo has the required keys
-    if (!requestInfo.containsKey("uid") && !requestInfo.containsKey("eventId")) {
+    if (checkRequestInfoForRequiredKeys(requestInfo)) {
       String errorMessage = "Required fields are empty: uid and eventId.";
-      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+      Utility.sendFailure(sessionId, requestId, errorMessage);
+      return;
     }
-    
+   
     // Get the uid and event id
-    String uid = requestInfo.get("uid");
-    String eventId = requestInfo.get("eventId"); 
+    String uid = requestInfo.get(UID);
+    String eventId = requestInfo.get(EVENTID); 
 
     System.out.println(eventId);
     // Query the event and owner id
@@ -153,72 +152,68 @@ public class EventCreationManager {
 	// Check to make sure the ownerId and the uid are the same
 	if (ownerId.equals(uid)) {
 	  // remove event
-	  // TODO: FIX ERROR HERE
-	  removeEventFromUsers(requestId, eventId);
-	  removeEventFromUniversity(requestId, eventId);
 	  removeEvent(requestId, eventId);
 	} else {
-	  String errorMessage = "You are not the owner of this event.";
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  handleUnownedEventActionForRequestID(sessionId, requestId);
 	}
       }
 
       public void onCancelled(DatabaseError error) {
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
 
+  private boolean checkRequestInfoForRequiredKeys(Map<String, String> info) {
+    return !requestInfo.containsKey(UID) && !requestInfo.containsKey(EVENTID);  
+  }
+
   // Removes the requested event id and send a response of success or failure
   private void removeEvent(String requestId, String eventId) {
-    this.eventsRef.child(EVNTS).child(eventId).removeValue(new DatabaseReference.CompletionListener() {
-      @Override
-      public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        if (databaseError == null) {
-	  Map<String, String> response = Utility.createResponse("success", "");
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	} else {
-	  String errorMessage = databaseError.getMessage();
-	  Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	  Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
-	}
-      }
-    });
+    // Removes event from user-info database from each user
+    removeEventFromUsers(requestId, eventId);
+
+    // Removes event from universities and remove all the event info
+    removeEventFromUniversityAndEvents(requestId, eventId);
   }
 
   // Removes the requested event id from user's events and send a response of success or failure
   private void removeEventFromUsers(String requestId, String eventId) {
+    // Query the event id from the attendees parent
     this.eventsRef.child(ATND).child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
       public void onDataChange(DataSnapshot snapshot) {
+	// Traverse through all the attendees
 	for (DataSnapshot child : snapshot.getChildren()) {
+	  // Get the attendees' id
 	  String id = child.getValue(String.class);
+	  // Query the user's events
 	  usersRef.child(EVNTS).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
 	    public void onDataChange(DataSnapshot snapshot) {
+	      // Traverse through each event to find the event
 	      for (DataSnapshot child : snapshot.getChildren()) {
+		// Get key value pair
 		String childEventId = child.getValue(String.class);
 		String key = child.getKey();
+
+		// Check if the eventId is the same as the eventId we want to delete and delete it
 		if (childEventId.equals(eventId)) {
-		  System.out.println("deleting");
 		  usersRef.child(EVNTS).child(id).child(key).removeValueAsync();
 		}
 	      }
-	      removeEventFromAttendees(eventId);
+	      // Remove the entire attendees parent
+              removeEventFromAttendees(eventId);
 	    }
 	    public void onCancelled(DatabaseError error) {
 	      String errorMessage = error.getMessage();
-	      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	      Utility.sendFailure(sessionId, requestId, errorMessage);
 	    }	
 	  });
 	}
       }
       public void onCancelled(DatabaseError error) {
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
@@ -228,55 +223,80 @@ public class EventCreationManager {
     this.eventsRef.child(ATND).child(eventId).removeValueAsync();
   }
   
-  private void removeEventFromUniversity(String requestId, String eventId) {
+  // Remove event from the univeristy parent and remove event info
+  private void removeEventFromUniversityAndEvents(String requestId, String eventId) {
+    // Query the event info
     this.eventsRef.child(EVNTS).child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
       public void onDataChange(DataSnapshot snapshot) {
-	System.out.println(snapshot);
+	// Get the plus code and category
 	String plusCode = snapshot.child("plusCode").getValue(String.class);
 	String category = snapshot.child("category").getValue(String.class);
-	eventsRef.child(EVNTS).child(UNI).child(plusCode).child(ALL).addListenerForSingleValueEvent(new ValueEventListener() {
+	
+	// Remove the event info
+	removeEventFromEvents(requestId, eventId);
+
+	// Remove the event from the university plus code in the ALL category
+	eventsRef.child(UNI).child(plusCode).child(ALL).addListenerForSingleValueEvent(new ValueEventListener() {
 	  public void onDataChange(DataSnapshot snapshot) { 
 	    for (DataSnapshot child : snapshot.getChildren()) {
 	      String childEventId = child.getValue(String.class);
 	      String key = child.getKey();
 	      if (childEventId.equals(eventId)) {
-		usersRef.child(EVNTS).child(UNI).child(plusCode).child(ALL).child(key).removeValueAsync();
+		eventsRef.child(UNI).child(plusCode).child(ALL).child(key).removeValueAsync();
 	      }
 	    }
 	  }
 	  public void onCancelled(DatabaseError error) {
 	    String errorMessage = error.getMessage();
-	    Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	    Utility.sendFailure(sessionId, requestId, errorMessage);
 	  }	
 	});
 	
-	eventsRef.child(EVNTS).child(UNI).child(plusCode).child(category).addListenerForSingleValueEvent(new ValueEventListener() {
+	// Remove the event from the university plus code in the specified category
+	eventsRef.child(UNI).child(plusCode).child(category).addListenerForSingleValueEvent(new ValueEventListener() {
 	  public void onDataChange(DataSnapshot snapshot) { 
 	    for (DataSnapshot child : snapshot.getChildren()) {
 	      String childEventId = child.getValue(String.class);
 	      String key = child.getKey();
 	      if (childEventId.equals(eventId)) {
-		usersRef.child(EVNTS).child(UNI).child(plusCode).child(category).child(key).removeValueAsync();
+		eventsRef.child(UNI).child(plusCode).child(category).child(key).removeValueAsync();
 	      }
 	    }
 	  }
 	  public void onCancelled(DatabaseError error) {
 	    String errorMessage = error.getMessage();
-	    Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	    Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	    Utility.sendFailure(sessionId, requestId, errorMessage);
 	  }	
 	});
       }
       public void onCancelled(DatabaseError error) {
 	String errorMessage = error.getMessage();
-	Map<String, String> response = Utility.createResponse("failed", errorMessage);
-	Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	Utility.sendFailure(sessionId, requestId, errorMessage);
       }	
     });
   }
 
-  // Creates a new event from the given event info along with the request id
+  // Remove the event info with the given event id
+  private void removeEventFromEvents(String requestId, String eventId) {
+    this.eventsRef.child(EVNTS).child(eventId).removeValue(new DatabaseReference.CompletionListener() {
+      @Override
+      public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+        if (databaseError == null) {
+          Utility.sendSuccess(sessionId, requestId);
+	} else {
+	  String errorMessage = databaseError.getMessage();
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
+	}
+      }
+    });
+  }
+  
+  private void handleUnownedEventActionForRequestID(String sessionId, String requestId) {
+    String errorMessage = "You are not the owner of this event.";
+    Utility.sendFailure(sessionId, requestId, errorMessage);
+  }
+ 
+    // Creates a new event from the given event info along with the request id
   public void createEvent(String requestId, Map<String, String> eventInfo) {
     // Check for minimum requirements for event info
     if (!checkMinimumInfoInput(eventInfo)) {
@@ -284,8 +304,7 @@ public class EventCreationManager {
       System.err.println(errorMessage);
 
       // Write failed response
-      Map<String, String> response = Utility.createResponse("failed", errorMessage);
-      Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+      Utility.sendFailure(sessionId, requestId, errorMessage);
       return;
     }
 
@@ -336,7 +355,7 @@ public class EventCreationManager {
     while(it.hasNext()) {
       Map.Entry<String, String> entry = it.next();
       if (!entry.getKey().equals("imagePaths") && !entry.getKey().equals("organization")) {
-        if (entry.getValue() == null && entry.getValue().isEmpty()) {
+        if (entry.getValue() == null || entry.getValue().isEmpty()) {
 	  System.out.println(entry.getKey());
           return false;
         }
@@ -360,12 +379,11 @@ public class EventCreationManager {
           addAttendeesToDatabase(event.getEventId(), attendees);
 
           // Write success response
-          Map<String, String> response = Utility.createResponse("success", "");
-          Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+          Utility.sendSuccess(sessionId, requestId);
         } else {
           // Write failed response
-          Map<String, String> response = Utility.createResponse("failed", error.getMessage());
-          Utility.sendResponseAndRemoveRequest(sessionId, requestId, response);
+	  String errorMessage = error.getMessage();
+	  Utility.sendFailure(sessionId, requestId, errorMessage);
         }
       }
     });
