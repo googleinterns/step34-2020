@@ -8,22 +8,47 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
+import { changeMapState } from "../actions/index";
+import { connect } from "react-redux";
+
+function mapDispatchToProps(dispatch) {
+  return {
+    changeMapState: mapState => dispatch(changeMapState(mapState))
+  };
+}
+
+const mapStateToProps = state => {
+  return { articles: state.articles };
+}
 
 class Profile extends React.Component {
   constructor(props) {
     super(props);
 
-    const JSONString = props.history.location.state.credentials;
-    const JSONObject = JSON.parse(JSONString);
-    console.log(props)
+    // const JSONString = props.history.location.state.credentials;
+    // const JSONObject = JSON.parse(JSONString);
+    // console.log(props)
 
-    console.log(JSONObject);
+    // console.log(JSONObject);
 
     this.state = {
       profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
-      credentials: JSONObject,
+    //   credentials: JSONObject,
       cards:[],
     };
+
+    if (this.props.articles[0]) {
+      this.state = {
+        loggedIn: this.props.articles[0].loggedIn,
+        credentials: this.props.articles[0].credentials,
+        profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
+        cards: []
+      };
+    } else {
+      window.location = "/";
+    }
+
+    console.log(this.state.credentials);
   }
 
 
@@ -121,16 +146,17 @@ class Profile extends React.Component {
           const mykeys = Object.keys(snapshot.val())
           //retrieve data from database using this reference
           this.getData(mykeys)
-        }
+        }  
       });
     }
 
   }
 
   render() {
+    if (this.props.articles[0]) {
     return (
       <div>
-        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials} plus_code={this.props.history.location.state.plus_code}/>
+        <TopNavbar history={this.props.history}/>
         {/* get user profile picture and user name */}
         <div className="profilepictureContent" 
           style={{borderBottom:"4px solid grey"}}>
@@ -157,7 +183,16 @@ class Profile extends React.Component {
           </div>
       </div>
     )
+    } else {
+      window.location = '/';
+      return null;
+    }
   }
 }
 
-export default Profile;
+const ConnectedProfile = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Profile);
+
+export default ConnectedProfile;

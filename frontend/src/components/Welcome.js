@@ -29,7 +29,6 @@ class Search extends Component {
     this.state = {
       query: null,
       location: null,
-      viewport: null,
       loggedIn: false,
       plusCode: null
     };
@@ -38,7 +37,7 @@ class Search extends Component {
   render() {
     return ( 
       <div className="welcomeContent">
-        <Script url = {url} onLoad = {this.handleScriptLoad}/> 
+        <Script url={url} onLoad={this.handleScriptLoad}/> 
         <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
@@ -79,7 +78,6 @@ class Search extends Component {
         query: addressObject.name,
         location: addressGeometry.location,
         locationObject: addressObject,
-        viewport: addressGeometry.viewport,  
         plusCode: addressObject.plus_code.global_code,
         loggedIn: this.state.loggedIn
       }
@@ -90,7 +88,7 @@ class Search extends Component {
 
   handleButtonClick(event) {
     var mutedText = document.getElementById('text-muted');
-    if (this.state.viewport == null) {
+    if (this.state.query == null) {
       mutedText.innerHTML = 'Please select your university from the drop-down menu.';
       event.preventDefault();
     } else {

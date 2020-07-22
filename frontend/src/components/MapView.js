@@ -18,25 +18,38 @@ const mapStyles = {
 class MapView extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      allEvents: [],
-      location: undefined,
-      plusCode: props.plusCode,
-      showInfoWindows: true
-    };
+
+    if (this.props.articles[0]) {
+      this.state = {
+        allEvents: [],
+        location: this.props.articles[0].location,
+        plusCode: this.props.articles[0].plusCode,
+        showInfoWindows: true
+      };
+    } else {
+      this.state = {
+        allEvents: [],
+        location: null,
+        plusCode: '',
+        showInfoWindows: false
+      }
+    }
+
     var plusCode = this.state.plusCode;
+    console.log(plusCode)
     //console.log(this.state.plusCode);
     //console.log("constr");
     this.queryEventsAndStoreInMemory(plusCode);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    //console.log("componentWillRec");
-    //console.log(nextProps)
+    console.log("componentWillRec");
+    console.log(nextProps)
     this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, () => {
       //console.log(this.state.showInfoWinddows);
       this.queryEventsAndStoreInMemory(nextProps.plusCode);
       this.setState({showInfoWindows: true});
+      console.log(this.state)
     });
   }
   

@@ -8,6 +8,7 @@ const initialState = {
 
 function rootReducer(state = initialState, action) {
   if (action.type === CHANGE_MAP_STATE) {
+    console.log("????");
     var currState = state.articles;
     while (currState.length > 0) {
       currState.pop();

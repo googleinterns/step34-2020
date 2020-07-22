@@ -29,27 +29,26 @@ class MapViewPage extends Component {
 
     this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
     // Declare state
-    this.state = {
-      query: null,
-      location: null,
-      viewport: null,
-      history: props.history,
-      plusCode: props.history.location.state.plus_code,
-      loggedIn: props.location.state.loggedIn
-    };
-     //console.log(this.state.plusCode);
-     console.log(this.props.articles);
 
+    if (this.props.articles[0]) {
+      this.state = {
+        query: this.props.articles[0].query,
+        location: this.props.articles[0].location,
+        loggedIn: this.props.articles[0].loggedIn,
+        plusCode: this.props.articles[0].plusCode
+      };
+    } else {
+      window.location = "/";
+    }
+
+    console.log(this.state)
   }
 
   render() {
-    //console.log(this.props.history.location.state.plus_code);
-    //console.log(this.props.location.state.plus_code);
-    //console.log(this.state.plus_code);
     return (
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
+        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plusCode}/>
         <Form>
           <Form.Group>
           <Form.Label> Enter your university </Form.Label>
@@ -74,18 +73,19 @@ class MapViewPage extends Component {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
+    console.log(addressObject);
 
     if (address) {
       const currentState = {
         query: addressObject.name,
         location: addressGeometry.location,
         locationObject: addressObject,
-        viewport: addressGeometry.viewport,
+        plusCode: addressObject.plus_code.global_code,
+        loggedIn: this.state.loggedIn
       }
-      //console.log(currentState);
+      console.log(currentState);
       this.props.changeMapState(currentState);
 
-      this.setState({plusCode: addressObject.plus_code.global_code});
       this.setState(currentState);
     }
   }
