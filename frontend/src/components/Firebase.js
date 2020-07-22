@@ -24,6 +24,14 @@ const testConfig = {
   measurementId: "G-NSZ58Z15HG"
 };
 
+// Enums for request codes to the back end
+const requestCodes = {
+  CREATE_USER: 1,
+  CREATE_EVENT: 5,
+  UPDATE_EVENT: 6,
+  DELETE_EVENT: 7
+}
+
 class Firebase {
   constructor() {
     // Check if there are existing firebase apps already initialized
@@ -120,13 +128,13 @@ class Firebase {
   requestUserSignUpAndListenForResponse(email, password, name) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
-    // Send a request under the sessionid
-    // Code 1 is to create users
+    
+    // Send a request to create a user under the sessionid
     this.sessionsRef.ref('REQUESTS').child(path).set({
       email: email,
       password: password,
       name: name,
-      code: 1
+      code: requestCodes.CREATE_USER
     });
    
     // Setup deferred
@@ -164,10 +172,9 @@ class Firebase {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     
-    // Send a request under the sessionid
-    // Code 5 is to create events
+    // Send a request to create an event under the sessionid
     this.sessionsRef.ref('REQUESTS').child(path).set({
-      code: 5,
+      code: requestCodes.CREATE_EVENT,
       uid: uid,
       title: title,
       date: date,
@@ -195,10 +202,9 @@ class Firebase {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
 
-    // Send in a request
-    // Code 6 is to update events
+    // Send in a request to update an event
     this.sessionsRef.ref('REQUESTS').child(path).set({
-      code: 6,
+      code: requestCodes.UPDATE_EVENT,
       uid: uid,
       eventId: eventId,
       eventName: eventName,
@@ -224,9 +230,9 @@ class Firebase {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
 
-    // Code 7 is to delete events
+    // Send in a request to delete an event
     this.sessionsRef.ref('REQUESTS').child(path).set({
-      code: 7,
+      code: requestCodes.DELETE_EVENT,
       uid: uid,
       eventId: eventId
     });
@@ -263,11 +269,13 @@ class Firebase {
     });
   }
 
+  // A callback to remove the request and print success
   successCallback(sessionId, requestId) {
-    console.log("failed");
+    console.log("success");
     this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
+  // A callback to remove the request and print failure
   failureCallback(sessionId, requestId) {
     console.log("failed");
     this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
