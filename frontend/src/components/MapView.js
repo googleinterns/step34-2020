@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Card } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
-import '../gm-styles.css'
-import { async } from '@firebase/util';
+import '../gm-styles.css';
+import { Card } from 'react-bootstrap';
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -130,7 +129,7 @@ class MapView extends Component {
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
-    // TODO: Update event info box
+    // Update event info box
     this.state.allEvents.push({
       key: eventId,
       value: event
@@ -169,15 +168,21 @@ class MapView extends Component {
         imageUrl = imageUrl.split(",")[0];
       }
 
+      var key = (String)(Math.round(Math.random(100)));
+
       return(
         <InfoWindow
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
-          <Card border="light">
+          <Card border="light" style={{backgroundColor: 'lightgreen', display: 'flex'}}>
             <Card.Img variant="right" src={imageUrl} />
               <Card.Body>
                 <Card.Title>{event.eventName}</Card.Title>
                 <Card.Text>{event.description}</Card.Text>
+                <Card.Text>{event.locationName}</Card.Text>
+                <Card.Text>{event.startTime}</Card.Text>
+                <Card.Text>{event.endTime}</Card.Text>
+                <Card.Text>{event.date}</Card.Text>
               </Card.Body>
           </Card>
         </InfoWindow>
@@ -205,14 +210,15 @@ class MapView extends Component {
     });
   }
 
-render() {
-    return (
-      <div  className="mapView" id="map-view">
-      </div>
-    )
-  }
+  render() {
+      return (
+        <div  className="mapView" id="map-view">
+        </div>
+      )
+    }
 
 }
+
 
 const ConnectMapViewToStore = connect(mapStateToProps);
 
