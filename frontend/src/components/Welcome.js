@@ -119,7 +119,7 @@ class Search extends Component {
 }
 
 const ConnectedSearch = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Search);
 

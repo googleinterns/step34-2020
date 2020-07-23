@@ -48,6 +48,7 @@ class Events extends Component {
 
     this.unviersityAutocomplete = null;
     this.locationAutocomplete = null;
+    this.hasLocationError = false;
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
@@ -64,7 +65,7 @@ class Events extends Component {
     this.handleLocationChange = this.handleLocationChange.bind(this);
   }
 
-  handleScriptLoad() {
+  handleScriptLoad() {  
     /*global google*/
     const fields = ['name', 'address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
     this.universityAutocomplete = new google.maps.places.Autocomplete(document.getElementById('university-autocomplete'));
@@ -111,12 +112,14 @@ class Events extends Component {
 
     if (typeof universityAddressObject.plus_code != 'undefined') {
       const universityPlusCode = universityAddressObject.plus_code.global_code;
+      this.hasLocationError = false;
       this.setState({
         plusCode: universityPlusCode
       });
       console.log(universityPlusCode);
     } else {
-      alert("choose a correct address.")
+      this.hasLocationError = true;
+      alert("MapIT does not support this location.  Please choose another.")
     }
     
   }
@@ -320,7 +323,7 @@ class Events extends Component {
                   required
                   type="text" 
                   placeholder="Stanford University" />
-                <Form.Text className="text-muted">
+                <Form.Text className="text-muted-university">
                   Tell people what university your event is at!
                 </Form.Text>
               </Form.Group>
@@ -331,7 +334,7 @@ class Events extends Component {
                 required
                 type="text"
                 placeholder="12345 Main St" />
-              <Form.Text className="text-muted">
+              <Form.Text className="text-muted-location">
                 Tell people where your event is at!
               </Form.Text>
               </Form.Group> 
