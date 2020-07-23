@@ -69,22 +69,21 @@ class Search extends Component {
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
-  handlePlaceSelect() {
-    const addressObject = this.autocomplete.getPlace();
-    const address = addressObject.address_components;
+  async handlePlaceSelect() {
+    const addressObject = await this.autocomplete.getPlace();
+    const address = await addressObject.address_components;
     const addressGeometry = addressObject.geometry;
 
-    if (address) {
+    if (address && typeof addressObject.plus_code != 'undefined') {
       const currentState  = {
         query: addressObject.name,
         location: addressGeometry.location,
         locationObject: addressObject,
         viewport: addressGeometry.viewport,  
       }
-      console.log(currentState);
       this.props.changeMapState(currentState);
+
       this.plus_code = addressObject.plus_code.global_code;
-      console.log(addressObject.plus_code.global_code);
 
       this.setState(currentState);
     }

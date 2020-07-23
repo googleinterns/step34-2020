@@ -101,11 +101,17 @@ class Events extends Component {
 
   handlePlusCodeChange() {
     const universityAddressObject = this.universityAutocomplete.getPlace();
-    const universityPlusCode = universityAddressObject.plus_code.global_code;
-    this.setState({
-      plusCode: universityPlusCode
-    });
-    console.log(universityPlusCode);
+
+    if (typeof universityAddressObject.plus_code != 'undefined') {
+      const universityPlusCode = universityAddressObject.plus_code.global_code;
+      this.setState({
+        plusCode: universityPlusCode
+      });
+      console.log(universityPlusCode);
+    } else {
+      alert("choose a correct address.")
+    }
+    
   }
 
   handleLocationChange() {
@@ -113,7 +119,7 @@ class Events extends Component {
     const locationObject = locationAddressObject.geometry.location;
     this.setState({
        location: locationObject.toString(),
-       locationName: locationAddressObject.name
+       locationName: locationAddressObject.name + ", " + locationAddressObject.formatted_address
     });
     console.log(locationAddressObject.name);
     console.log(locationAddressObject.formatted_address);

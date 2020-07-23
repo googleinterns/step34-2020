@@ -37,7 +37,6 @@ class MapViewPage extends Component {
       plusCode: props.history.location.state.plus_code,
       loggedIn: props.location.state.loggedIn
     };
-     console.log(this.state.plusCode);
 
   }
 
@@ -71,7 +70,7 @@ class MapViewPage extends Component {
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
 
-    if (address) {
+    if (address && typeof addressObject.plus_code != 'undefined') {
       const currentState = {
         query: addressObject.name,
         location: addressGeometry.location,
