@@ -4,6 +4,7 @@ import { Form, Button, Jumbotron } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import TopNavbar from './Navbar';
+import 'animate.css';
 import '../App.css';
 
 const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
@@ -40,21 +41,38 @@ class Search extends Component {
       <div className="welcomeContent">
         <Script url = {url} onLoad = {this.handleScriptLoad}/> 
         <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
-        <Jumbotron >
-          <h1> Welcome to MapIT! </h1> 
+        <Jumbotron>
+          <h1 class="title animate__animated animate__fadeInDown">
+	    <span style={{color: "#4486F4"}}>M</span>
+	    <span style={{color: "#0096EF"}}>a</span>
+	    <span style={{color: "#00BDD3"}}>p</span>
+	    <span style={{color: "#04D064"}}>I</span>
+	    <span style={{color: "#1CA45C"}}>T</span>
+      	  </h1>
+          <br/>
           <Form>
             <Form.Group>
-            <Form.Label> <h4>Our Mission</h4> </Form.Label>
-      	    <br/>
-            <Form.Label>The objective of MapIT is to manage and visualize student-created public events, and expose these events to their college community. <br />
-              We are here to help you explore campus events beyond your social circle.</Form.Label> <br/><br/>
-            <Form.Label> Enter your university </Form.Label> 
+      	    <Form.Label class="subtitle">Find an event with a click of <br /> a button</Form.Label>
             <br/>
-            <Form.Control id = "autocomplete" placeholder = "Enter university"/>
+      	    <Form.Label class="subtitle1"> 
+	      <span style={{color: "#0096EF"}}>Find. </span>
+	      <span style={{color: "#EA4335"}}>Create. </span>
+	      <span style={{color: "#1CA45C"}}>Share.</span>
+	    </Form.Label>
+      	    <br/>
+      	    <br/>
+      	    <br/>
+            <Form.Control style={{width: "50%"}} size="lg" id = "autocomplete" placeholder = "Enter university"/>
             <Form.Text id="text-muted"></Form.Text>
             </Form.Group> 
             <br/>
-            <Button variant = "primary" type = "submit" onClick = {this.handleButtonClick}>Find Events</Button>
+      	    <Button 
+      	      variant="primary" 
+              type="submit" 
+      	      className="findeventbutton"
+              onClick={this.handleButtonClick}>
+      		Launch MapIT
+      	    </Button>
           </Form> 
         </Jumbotron>
       </div>

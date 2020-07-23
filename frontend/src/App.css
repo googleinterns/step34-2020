@@ -2,7 +2,6 @@
   text-align: center;
 }
 
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -49,8 +48,8 @@
 }
 
 .welcomeContent {
-  text-align: center;
-  align-items: center;
+  text-align: left;
+  align-items: left;
   justify-content: center;
   flex-direction: column;
 }
@@ -68,5 +67,44 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.title {
+  font-size: 15rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.subtitle {
+  color: #757575;
+  font-size: 4rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.subtitle1 {
+  font-size: 2rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.findeventbutton {
+  background: #5E9EFF!important;
+  border: #5E9EFF!important;
+  font-size:1.2rem!important;
+  font-weight:500!important;
+  border-radius: 15px!important;
+  padding: 1rem!important 1rem!important;
+  height: 3rem!important;
+  width: 10rem!important;
+}
+
+.jumbotron {
+  background-color: #FFFFFF!important;
+}
+
+.animate__animated.animate__fadeInDown {
+  --animate-delay: 4s;
+  --animate-duration: 2s;
 }
 

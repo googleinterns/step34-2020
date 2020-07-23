@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
+import { Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
 import { fb } from '../App';
@@ -170,36 +171,90 @@ class Profile extends React.Component {
     })
   }
 
+  renderProfile() {
+    return (   
+      <div className="profilepictureContent" style={{borderBottom:"4px solid grey"}}>
+        <Container>
+	  <Row>
+	    <Col>
+	      <div className="Profiletitle">
+		<h1 className="subtitle1">Profile</h1>
+	      </div>
+      	    </Col>
+	    <Col md={{ span: 5, offset: 8 }}>
+      	      <h4>John Doe</h4>
+      	    </Col>
+	    <Col md={{ span: 5, offset: 8 }}>
+      	      <h4>John Doe</h4>
+      	    </Col>
+	    <Col md={{ span: 5, offset: 8 }}>
+      	      <h4>John Doe</h4>
+      	    </Col>
+	    <Col md={{ span: 5, offset: 8 }}>
+      	      <h4>John Doe</h4>
+      	    </Col>
+	    <Col md={{ span: 3, offset: 0 }}>
+	      <div className="profilephoto">
+		<img style={{
+		  width:"250px",
+		  height:"250px",
+		  borderRadius:"200px"}}
+		  src={this.state.profilePicture}
+		  alt="" /> 
+		<h4 style={{
+		  marginLeft:"1.8rem",
+		  marginTop:".8rem"}}>
+		    {this.state.username}
+		</h4>
+	      </div>
+	    </Col>
+	  </Row>
+	</Container>
+      </div>
+    );
+  }
 
   render() {
     return (
       <div>
-        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials} plus_code={this.props.history.location.state.plus_code}/>
-        {/* get user profile picture and user name */}
-        <div className="profilepictureContent" 
-          style={{borderBottom:"4px solid grey"}}>
-          <div className="profilephoto">
-            <img style={{
-              width:"180px",
-              height:"180px",
-              borderRadius:"80px"}}
-              src={this.state.profilePicture}
-              alt="" /> 
-            <h4 style={{
-              marginLeft:"1.8rem",
-              marginTop:".8rem"}}>
-                {this.state.username}
-            </h4>
-            </div>
-          </div>
-          <div 
-            id="content"
-            style={{
-            marginLeft:"1.8rem",
-            marginTop:".8rem"}}>
-            <br />
-          </div>
-      </div>
+        <TopNavbar 
+      	  loggedIn={true}
+      	  history={this.props.history} 
+      	  credentials={this.state.credentials} 
+      	  plus_code={this.props.history.location.state.plus_code}/>
+        <Jumbotron>
+	<Tab.Container defaultActiveKey="first">
+	  <Row>
+	    <Col sm={3}>
+	      <Nav variant="pills" className="flex-column">
+		<Nav.Item>
+		  <Nav.Link eventKey="first">Profile</Nav.Link>
+		</Nav.Item>
+		<Nav.Item>
+		  <Nav.Link eventKey="second">Events</Nav.Link>
+		</Nav.Item>
+	      </Nav>
+	    </Col>
+	    <Col sm={9}>
+	      <Tab.Content>
+		<Tab.Pane eventKey="first">
+      		  {this.renderProfile()}
+		</Tab.Pane>
+		<Tab.Pane eventKey="second">
+		  <div 
+		    id="content"
+		    style={{
+		    marginLeft:"1.8rem",
+		    marginTop:".8rem"}}>
+		    <br />
+		  </div>
+		</Tab.Pane>
+	      </Tab.Content>
+	    </Col>
+	  </Row>
+	</Tab.Container>  
+      </Jumbotron>
+      </div> 
     )
   }
 }

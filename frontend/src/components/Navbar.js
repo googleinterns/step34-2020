@@ -157,10 +157,10 @@ function CreateEventButton(props) {
   return (
     <div>
       <Button 
-        style={{marginRight:".8rem"}}
         type="button" 
         variant="primary"
-    	size="sm"
+        style={{marginRight:".8rem"}}
+        className="custom-btn"
         onClick={props.onClick}>
         Create Event
       </Button>
@@ -175,7 +175,6 @@ function LoginButtonNav(props) {
         <Button 
           style={{marginRight:".8rem"}}
           type="button" 
-      	  size="sm"
           variant="outline-primary" 
           onClick={props.onClick}>
           Login

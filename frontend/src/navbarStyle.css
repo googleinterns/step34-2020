@@ -1,0 +1,15 @@
+.navbar-light .navbar-brand {
+  color: rgba(181,181,181,1); 
+}
+
+.custom-btn {
+  background: #5E9EFF;
+  border: #5E9EFF;
+  font-weight:500;
+}
+
+.navbar-inverse .navbar-brand:hover, 
+.navbar-inverse .navbar-brand:focus {
+  background-color: transparent;
+  color: rgba(181,181,181,1);
+}
