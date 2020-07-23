@@ -67,7 +67,7 @@ class Profile extends React.Component {
 
       // Add this card to the list of all cards to be displayed on the profile
       this.state.cards.push(
-	<Col>
+	<Col className="event-col" md="auto">
 	  <Card
 	    className="shadow mb-5 bg-white rounded event-cards"
 	    key={Math.random(1001,5000)} 
@@ -104,8 +104,8 @@ class Profile extends React.Component {
 		</Col>
 	      </Row>
 	      <hr/>
-	      <Card.Text>
-		<h1 className="event-cards-description">About</h1>
+	      <Card.Text className="event-cards-description">
+		About
 	      </Card.Text>
 	      <Card.Text>{event.description}</Card.Text>
 	      <Badge variant="secondary">
@@ -133,8 +133,8 @@ class Profile extends React.Component {
 
 
       this.setState({
-        contents: <Container fluid>
-		    <Row className="flex-row flex-nowrap">
+        contents: <Container className="event-container" fluid>
+		    <Row className="d-flex flex-row flex-nowrap">
                       {this.state.cards.map(element   => element)}
 		    </Row>
                   </Container>

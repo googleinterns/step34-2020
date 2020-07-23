@@ -184,7 +184,7 @@ class Firebase {
       plusCode: plusCode,
       location: location,
       locationName: locationName,
-      imagePaths: files,
+      imageUrls: files,
       category: category,
       organization: organization,
       attendees: invitedAttendees
@@ -198,7 +198,7 @@ class Firebase {
 
   // Request event edit given the parameters. 
   // all parameters are optional except uid and eventId
-  requestEventUpdate(eventId, uid, eventName = null, date = null, startTime = null, endTime = null, description = null, location = null, locationName = null, imagePaths = null, category = null, organization = null) {
+  requestEventUpdate(eventId, uid, eventName = null, date = null, startTime = null, endTime = null, description = null, location = null, locationName = null, imageUrls = null, category = null, organization = null) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
 
@@ -214,7 +214,7 @@ class Firebase {
       description: description,
       location: location,
       locationName: locationName,
-      imagePaths: imagePaths,
+      imageUrls: imageUrls,
       category: category,
       organization: organization,
     });

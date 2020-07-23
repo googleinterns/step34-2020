@@ -129,10 +129,23 @@
   font-family: Roboto;
 }
 
+.event-container {
+  overflow: scroll;
+}
+
+.event-col {
+  margin-right: 2rem!important;
+  max-width: 40rem!important;
+}
+
 .event-cards {
   border-radius: 20px!important;
   border: none!important;
-  max-width: 40rem!important;
+  min-width: 30rem!important;
+}
+
+.event-cards-body {
+  min-width: 40rem!important;
 }
 
 .event-cards-title {

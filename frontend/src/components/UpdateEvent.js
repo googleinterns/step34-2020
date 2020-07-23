@@ -123,7 +123,10 @@ export default class UpdateEvent extends Component {
       innerCols += "<Col xs={6} md={4}><Image src=\"" + url + "\" rounded /></Col>";
     }
     this.setState({
-      files: images
+      files: {
+	status: true,
+	value: images
+      }
     });
     // Get the image row element and place it in the inner html
     var imageRow = document.getElementById("imageRow");
@@ -212,7 +215,6 @@ export default class UpdateEvent extends Component {
         locationName = this.state.locationName.value;
       }
      
-      
       // If there were no images inputted then ignore image upload
       var imageUrls = null; 
       if (files.length > 0) {
