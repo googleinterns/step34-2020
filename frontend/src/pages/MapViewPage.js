@@ -53,6 +53,7 @@ class MapViewPage extends Component {
           <Form.Label> Enter your university </Form.Label>
           <br />
           <Form.Control id = "autocomplete" placeholder = "Enter university"/>
+          <Form.Text id="text-muted"></Form.Text>
           </Form.Group>
         </Form>
         <MapView plusCode={this.state.plusCode}/>
@@ -73,8 +74,10 @@ class MapViewPage extends Component {
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
     console.log(addressObject);
+    var mutedText = document.getElementById('text-muted');
 
     if (address && typeof addressObject.plus_code != 'undefined') {
+      mutedText.innerHTML = '';
       const currentState = {
         query: addressObject.name,
         location: addressGeometry.location,
@@ -83,8 +86,9 @@ class MapViewPage extends Component {
         loggedIn: this.state.loggedIn
       }
       this.props.changeMapState(currentState);
-
       this.setState(currentState);
+    } else {
+      mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
     }
   }
 }
