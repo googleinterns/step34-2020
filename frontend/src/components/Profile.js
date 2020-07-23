@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
-import { CardDeck, Image, Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
+import { Badge, Carousel, CardDeck, Image, Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
 import { fb } from '../App';
@@ -11,6 +11,10 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
 import ConfirmDelete from './ConfirmDelete';
+import moment from 'moment';
+import placeIcon from '../place-24px.svg';
+import timeIcon from '../access_time-24px.svg';
+import groupIcon from '../group-24px.svg';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -36,66 +40,104 @@ class Profile extends React.Component {
   didUpdate(event, parent, ref) {
     if(event !== null) {
       var attendees = ["user1", "user2", "user3"];
-    var len = 0;
-    var imageUrl = "";
-    var card = "";
+      let num = attendees.length;
+      var len = 0;
+      var imageUrl = "";
+      var card = "";
 
-    // Since images are option field, evaluate whether the field isn't null
-    if (event.imagePaths != null) {
-      len = event.imagePaths.length;
-    }
-    // Retrieve image urls only if they were provided. Otherwise set url to default value
-    if(len > 0) {
-      imageUrl = event.imagePaths.slice(1, len - 2);
-      imageUrl = imageUrl.split(",");
+      // Since images are option field, evaluate whether the field isn't null
+      if (event.imageUrls != null) {
+	len = event.imageUrls.length;
+      }
+      // Retrieve image urls only if they were provided. Otherwise set url to default value
+      if(len > 0) {
+	imageUrl = event.imageUrls.slice(1, len - 2);
+	imageUrl = imageUrl.split(",");
+	console.log(imageUrl);
+	// dynamically create a card that contain images for the event
+	card = imageUrl.map(url => 
+	  <Carousel.Item>
+	    <Image className="rounded" fluid src={url} />
+	  </Carousel.Item>);
+      }
+      
+      let startTime = moment(event.startTime, 'HH:mm').format('h:mm a')
+      let endTime = moment(event.endTime, 'HH:mm').format('h:mm a')
+      let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
 
-      // dynamically create a card that contain images for the event
-      card = imageUrl.map(url => <Image fluid src={url} />);
-    }
-
-    // Add this card to the list of all cards to be displayed on the profile
-    this.state.cards.push(
-      <Card
-      	className="shadow p-3 mb-5 bg-white rounded event-cards"
-        key={Math.random(1001,5000)} 
-        text={'light' ? 'dark' : 'white'}>
-        {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
-        <Card.Body>
-          <Card.Title>{event.eventName}</Card.Title>
-          <Card.Text>
-            {event.description}
-          </Card.Text>
-          <Card.Text>{event.locationName}</Card.Text>
-          <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
-      	  <Col className="col align-self-center">
-            {card}
-      	  </Col>
-          <DropdownButton id="dropdown-basic-button" title="Attendees">
-            {attendees.map(attendee => (
-              <Dropdown.Item key={Math.random(1000)} >{attendee}</Dropdown.Item>))}
-          </DropdownButton><br />
-          <ButtonToolBar>
-            <Button 
-            variant="success"
-            style={{ marginRight:".8rem", width:"80px" }}
-            onClick={() => this.handleEdit(ref, event)}>
-              Edit
-            </Button>
-            <Button 
-              variant="danger" 
-              style={{ width:"80px" }}
-              onClick={() => this.showModal(ref)}>
-              Delete
-            </Button>
-          </ButtonToolBar>
-        </Card.Body>
-      </Card>)
+      // Add this card to the list of all cards to be displayed on the profile
+      this.state.cards.push(
+	<Col>
+	  <Card
+	    className="shadow mb-5 bg-white rounded event-cards"
+	    key={Math.random(1001,5000)} 
+	    text={'light' ? 'dark' : 'white'}>
+	    <Carousel className="fill-parent">
+	      {card}
+	    </Carousel>
+	    <Card.Body>
+	      <Card.Title>
+		<h1 className="event-cards-title">{event.eventName}</h1>
+	      </Card.Title>
+	      <Row>
+		<Col md="auto">
+		  <Image md="auto" src={placeIcon}/>
+		</Col>
+		<Col md="auto">	
+		  <Card.Text className="event-text">{event.locationName}</Card.Text>
+		</Col>
+	      </Row>
+	      <Row md="auto">
+		<Col>
+		  <Image md="auto" src={timeIcon}/>
+		</Col>
+		<Col md="auto">	
+		  <Card.Text>{date}, {startTime} - {endTime}</Card.Text>
+		</Col>
+	      </Row>
+	      <Row md="auto">
+		<Col>
+		  <Image md="auto" src={groupIcon}/>
+		</Col>
+		<Col md="auto">	
+		  <Card.Text>{num} attending</Card.Text>
+		</Col>
+	      </Row>
+	      <hr/>
+	      <Card.Text>
+		<h1 className="event-cards-description">About</h1>
+	      </Card.Text>
+	      <Card.Text>{event.description}</Card.Text>
+	      <Badge variant="secondary">
+		{event.category}
+	      </Badge>
+	      <hr/>
+	      <ButtonToolBar className="float-right">
+		<Button 
+		variant="primary"
+		style={{ marginRight:".8rem", width:"80px" }}
+		onClick={() => this.handleEdit(ref, event)}>
+		  Edit
+		</Button>
+		<Button 
+		  variant="danger" 
+		  style={{ width:"80px" }}
+		  onClick={() => this.showModal(ref)}>
+		  Delete
+		</Button>
+	      </ButtonToolBar>
+	    </Card.Body>
+	  </Card>
+	</Col>
+      );
 
 
       this.setState({
-        contents: <CardDeck>
-                    {this.state.cards.map(element   => element)}
-                  </CardDeck>
+        contents: <Container fluid>
+		    <Row className="flex-row flex-nowrap">
+                      {this.state.cards.map(element   => element)}
+		    </Row>
+                  </Container>
       })
     }
     

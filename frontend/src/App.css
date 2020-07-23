@@ -132,6 +132,29 @@
 .event-cards {
   border-radius: 20px!important;
   border: none!important;
+  max-width: 40rem!important;
+}
+
+.event-cards-title {
+  font-size: 2rem;
+  font-weight: 600;
+  font-family: Roboto;
+}
+
+.event-cards-description {
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-family: Roboto;
+}
+
+.fill-parent {
+  background-size: cover!important;
+  background-position: center!important;
+  background-repeat: no-repeat!important;
+}
+
+.event-text {
+  text-align: left!important;
 }
 
 .animate__animated.animate__fadeInDown {
