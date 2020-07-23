@@ -106,8 +106,8 @@ public class ServletManagerServlet extends HttpServlet {
         idRef.child(INBX + "/" + key).child("id").runTransaction(new Transaction.Handler() { 
 	  public Transaction.Result doTransaction(MutableData currentData) {
 
-	    // When the data is empty (which should always be the case), set the session id
-            if (currentData.getValue(String.class).isEmpty()) {
+	    // When the data is null/empty (which should always be the case), set the session id
+            if (currentData == null || currentData.getValue(String.class).isEmpty()) {
 	      // Create a new action manager for the session and add to active sessions
 	      ActionManager actionManager = new ActionManager(sessionId);
 	      activeSessions.put(sessionId, actionManager);

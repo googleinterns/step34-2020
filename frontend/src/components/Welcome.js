@@ -68,12 +68,12 @@ class Search extends Component {
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
-  handlePlaceSelect() {
-    const addressObject = this.autocomplete.getPlace();
-    const address = addressObject.address_components;
+  async handlePlaceSelect() {
+    const addressObject = await this.autocomplete.getPlace();
+    const address = await addressObject.address_components;
     const addressGeometry = addressObject.geometry;
 
-    if (address) {
+    if (address && typeof addressObject.plus_code != 'undefined') {
       const currentState  = {
         query: addressObject.name,
         location: addressGeometry.location,
@@ -96,7 +96,7 @@ class Search extends Component {
       // send login status and plus code status to the redux state
       this.props.history.push({
         pathname: '/map',
-        state: {loggedIn: this.state.loggedIn, plus_code: this.plus_code}
+        state: {loggedIn: this.state.loggedIn, plus_code: this.state.plusCode}
       });
     }
   }

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
 import Button from 'react-bootstrap/Button';
+import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
 import { fb } from '../App';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -10,6 +11,7 @@ import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
+import ConfirmDelete from './ConfirmDelete';
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -25,34 +27,27 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
 
-    // const JSONString = props.history.location.state.credentials;
-    // const JSONObject = JSON.parse(JSONString);
-    // console.log(props)
-
-    // console.log(JSONObject);
-
-    this.state = {
-      profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
-    //   credentials: JSONObject,
-      cards:[],
-    };
-
     if (this.props.articles[0]) {
       this.state = {
         loggedIn: this.props.articles[0].loggedIn,
         credentials: this.props.articles[0].credentials,
         profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
-        cards: []
+        cards: [],
+        showConfirmModal: false,
+        contents: null
       };
     } else {
       window.location = "/";
     }
 
     console.log(this.state.credentials);
+    this.showModal =  this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    
   }
 
-
-  didUpdate(event) {
+  didUpdate(event, parent, ref) {
     if(event !== null) {
       var attendees = ["user1", "user2", "user3"];
     var len = 0;
@@ -74,7 +69,8 @@ class Profile extends React.Component {
 
     // Add this card to the list of all cards to be displayed on the profile
     this.state.cards.push(
-      <Card 
+      <Card
+        key={Math.random(1001,5000)} 
         bg={'light'}
         border="secondary"
         text={'light' ? 'dark' : 'white'}
@@ -87,31 +83,40 @@ class Profile extends React.Component {
           <Card.Text>
             {event.description}
           </Card.Text>
-          <Card.Text>{event.location}</Card.Text>
+          <Card.Text>{event.locationName}</Card.Text>
           <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
           <DropdownButton id="dropdown-basic-button" title="Attendees">
             {attendees.map(attendee => (
-              <Dropdown.Item>{attendee}</Dropdown.Item>))}
+              <Dropdown.Item key={Math.random(1000)} >{attendee}</Dropdown.Item>))}
           </DropdownButton><br />
-          <Button variant="success" style={{ marginRight:".8rem", width:"80px" }}>
-            Edit
-          </Button>
-          <Button variant="danger" style={{ width:"80px" }}>
-            Delete
-          </Button>
+          <ButtonToolBar>
+            <Button 
+            variant="success"
+            style={{ marginRight:".8rem", width:"80px" }}
+            onClick={() => this.handleEdit(ref, event)}>
+              Edit
+            </Button>
+            <Button 
+              variant="danger" 
+              style={{ width:"80px" }}
+              onClick={() => this.showModal(ref)}>
+              Delete
+            </Button>
+          </ButtonToolBar>
         </Card.Body>
       </Card>)
 
-    ReactDOM.render( 
-      <CardColumns>
-        {this.state.cards.map(element   => element)}
-      </CardColumns>,
-      document.getElementById("content"))
+
+      this.setState({
+        contents: <CardColumns>
+                    {this.state.cards.map(element   => element)}
+                  </CardColumns>
+      })
     }
     
   }
 
-  getData(eventKeys){
+  getData(eventKeys) {
 
     // Update the state of cards before retrieving changes from database
     this.setState({
@@ -126,7 +131,7 @@ class Profile extends React.Component {
       if (ref != null) {
         ref.on('value', snapshot => {
           const event = snapshot.val();
-          this.didUpdate(event);
+          this.didUpdate(event, eventKeys, key);
         });
       }
       return null;
@@ -139,18 +144,48 @@ class Profile extends React.Component {
 
     // Shouldn't be null. if it is, do nothing
     if (myEventsRef != null) {
-      myEventsRef.on('value', snapshot => {
-        
-        // Do nothing when it's null
+      myEventsRef.on('value', snapshot => {  
+	// Do nothing when it's null
         if (snapshot.val() != null) {
-          const mykeys = Object.keys(snapshot.val())
+          const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
-          this.getData(mykeys)
+          this.getData(mykeys);
         }  
       });
     }
-
   }
+
+  async showModal (props) {
+    await this.setState({
+      showConfirmModal: true,
+    })
+    ReactDOM.render(
+      <div>
+       <ConfirmDelete 
+        show={this.state.showConfirmModal}
+        onHide={this.hideModal.bind(this)}
+        uid={this.state.credentials.uid}
+        reference={props} />
+      </div>,
+      document.getElementById('modal-wrapper')
+    );
+  }
+
+  async hideModal() {
+    await this.setState({
+      showConfirmModal: false,
+    })
+    const modal = document.getElementById('modal-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
+  }
+
+  handleEdit(key, event) {
+    this.props.history.push({
+      pathname: '/update',
+      state: {eventObject: event, reference: key, loggedIn: true, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
+    })
+  }
+
 
   render() {
     if (this.props.articles[0]) {
@@ -180,6 +215,7 @@ class Profile extends React.Component {
             marginLeft:"1.8rem",
             marginTop:".8rem"}}>
             <br />
+            {this.state.contents}
           </div>
       </div>
     )

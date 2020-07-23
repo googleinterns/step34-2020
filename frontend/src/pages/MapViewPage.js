@@ -28,7 +28,6 @@ class MapViewPage extends Component {
     this.autocomplete = null;
 
     this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
-    // Declare state
 
     if (this.props.articles[0]) {
       this.state = {
@@ -75,7 +74,7 @@ class MapViewPage extends Component {
     const addressGeometry = addressObject.geometry;
     console.log(addressObject);
 
-    if (address) {
+    if (address && typeof addressObject.plus_code != 'undefined') {
       const currentState = {
         query: addressObject.name,
         location: addressGeometry.location,
@@ -83,7 +82,6 @@ class MapViewPage extends Component {
         plusCode: addressObject.plus_code.global_code,
         loggedIn: this.state.loggedIn
       }
-      console.log(currentState);
       this.props.changeMapState(currentState);
 
       this.setState(currentState);

@@ -24,6 +24,14 @@ const testConfig = {
   measurementId: "G-NSZ58Z15HG"
 };
 
+// Enums for request codes to the back end
+const requestCodes = {
+  CREATE_USER: 1,
+  CREATE_EVENT: 5,
+  UPDATE_EVENT: 6,
+  DELETE_EVENT: 7
+}
+
 class Firebase {
   constructor() {
     // Check if there are existing firebase apps already initialized
@@ -120,12 +128,13 @@ class Firebase {
   requestUserSignUpAndListenForResponse(email, password, name) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
-    // Send a request under the sessionid
+    
+    // Send a request to create a user under the sessionid
     this.sessionsRef.ref('REQUESTS').child(path).set({
       email: email,
       password: password,
       name: name,
-      code: 1
+      code: requestCodes.CREATE_USER
     });
    
     // Setup deferred
@@ -163,9 +172,9 @@ class Firebase {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
     
-    // Send a request under the sessionid
+    // Send a request to create an event under the sessionid
     this.sessionsRef.ref('REQUESTS').child(path).set({
-      code: 5,
+      code: requestCodes.CREATE_EVENT,
       uid: uid,
       title: title,
       date: date,
@@ -187,11 +196,56 @@ class Firebase {
     return deferred.promise;
   }
 
-  handleResponses(requestId, deferred, successCallback = this.defaultSuccessCallback, failureCallback = this.defaultFailureCallback) {
+  // Request event edit given the parameters. 
+  // all parameters are optional except uid and eventId
+  requestEventUpdate(eventId, uid, eventName = null, date = null, startTime = null, endTime = null, description = null, location = null, locationName = null, imagePaths = null, category = null, organization = null) {
+    var requestId = this.generateRequestId();
+    var path = this.sessionId + "/" + requestId;
 
+    // Send in a request to update an event
+    this.sessionsRef.ref('REQUESTS').child(path).set({
+      code: requestCodes.UPDATE_EVENT,
+      uid: uid,
+      eventId: eventId,
+      eventName: eventName,
+      date: date,
+      startTime: startTime,
+      endTime: endTime,
+      description: description,
+      location: location,
+      locationName: locationName,
+      imagePaths: imagePaths,
+      category: category,
+      organization: organization,
+    });
+
+    // Handle the response
+    const deferred = new Deferred();
+    this.handleResponses(requestId, deferred);
+    return deferred.promise;
+  }
+
+  // Requests event deletion with the given event id and the uid
+  requestEventDeletion(eventId, uid) {
+    var requestId = this.generateRequestId();
+    var path = this.sessionId + "/" + requestId;
+
+    // Send in a request to delete an event
+    this.sessionsRef.ref('REQUESTS').child(path).set({
+      code: requestCodes.DELETE_EVENT,
+      uid: uid,
+      eventId: eventId
+    });
+
+    const deferred = new Deferred();
+    this.handleResponses(requestId, deferred);
+    return deferred.promise;
+  }
+
+  // Handles the response by passing the deferred promise and request id 
+  handleResponses(requestId, deferred) {
     var ref = this.sessionsRef;
     var sessionId = this.sessionId;
-
 
     // Listen for responses under the RESPONSES path
     var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', function(snapshot) {
@@ -202,11 +256,11 @@ class Firebase {
         console.log(status);
         // When the status is "success" make deferred promise true
         if (status === "success") {
-          successCallback();
+          this.successCallback();
           deferred.resolve(true);
         // When the status is "failed" show error message and deferred promise as false
         } else { 
-          failureCallback();
+          this.failureCallback();
           deferred.resolve(false);
         }
       }
@@ -215,12 +269,16 @@ class Firebase {
     });
   }
 
-  defaultSuccessCallback() {
+  // A callback to remove the request and print success
+  successCallback(sessionId, requestId) {
     console.log("success");
+    this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
-  defaultFailureCallback() {
+  // A callback to remove the request and print failure
+  failureCallback(sessionId, requestId) {
     console.log("failed");
+    this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
   // Generates a unique 16 digit id which is mainly used for requests
