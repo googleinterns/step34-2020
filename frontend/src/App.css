@@ -31,11 +31,10 @@
 }
 
 .footer-content {
-  flex: 1;
+  flex: 1 auto;
   padding-top: 1rem;
   padding-bottom: 1rem;
   background-color: #323436;
-
   color: rgb(211, 209, 209);
 }
 
@@ -101,6 +100,38 @@
 
 .jumbotron {
   background-color: #FFFFFF!important;
+}
+
+.vertical-line {
+  border-left:1px solid #C7C2C2;
+  height:100%;
+}
+
+.profile-name {
+  font-size: 2rem;
+  font-weight: 400;
+  text-align: center;
+  font-family: Roboto;
+}
+
+.profile-email {
+  color: #757575;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.profile-university {
+  font-size: 2rem;
+  font-weight: 400;
+  text-align: center;
+  font-family: Roboto;
+}
+
+.event-cards {
+  border-radius: 20px!important;
+  border: none!important;
 }
 
 .animate__animated.animate__fadeInDown {

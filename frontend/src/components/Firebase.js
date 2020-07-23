@@ -243,7 +243,7 @@ class Firebase {
   }
 
   // Handles the response by passing the deferred promise and request id 
-  handleResponses(requestId, deferred) {
+  handleResponses(requestId, deferred, successCallback = this.successCallback, failureCallback = this.failureCallback) {
     var ref = this.sessionsRef;
     var sessionId = this.sessionId;
 
@@ -256,11 +256,11 @@ class Firebase {
         console.log(status);
         // When the status is "success" make deferred promise true
         if (status === "success") {
-          this.successCallback();
+          successCallback(sessionId, requestId, ref);
           deferred.resolve(true);
         // When the status is "failed" show error message and deferred promise as false
         } else { 
-          this.failureCallback();
+          failureCallback(sessionId, requestId, ref);
           deferred.resolve(false);
         }
       }
@@ -270,15 +270,15 @@ class Firebase {
   }
 
   // A callback to remove the request and print success
-  successCallback(sessionId, requestId) {
+  successCallback(sessionId, requestId, ref) {
     console.log("success");
-    this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
+    ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
   // A callback to remove the request and print failure
-  failureCallback(sessionId, requestId) {
+  failureCallback(sessionId, requestId, ref) {
     console.log("failed");
-    this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
+    ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
   // Generates a unique 16 digit id which is mainly used for requests

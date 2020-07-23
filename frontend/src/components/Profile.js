@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
-import { Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
+import { CardDeck, Image, Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
 import { fb } from '../App';
@@ -24,6 +24,7 @@ class Profile extends React.Component {
       credentials: JSONObject,
       cards:[],
       showConfirmModal: false,
+      contents: null,
     };
 
     this.showModal =  this.showModal.bind(this);
@@ -49,19 +50,15 @@ class Profile extends React.Component {
       imageUrl = imageUrl.split(",");
 
       // dynamically create a card that contain images for the event
-      card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
+      card = imageUrl.map(url => <Image fluid src={url} />);
     }
 
     // Add this card to the list of all cards to be displayed on the profile
     this.state.cards.push(
       <Card
+      	className="shadow p-3 mb-5 bg-white rounded event-cards"
         key={Math.random(1001,5000)} 
-        bg={'light'}
-        border="secondary"
-        text={'light' ? 'dark' : 'white'}
-        style={{ width: '18rem' }}
-        className="mb-2">
-        {card}
+        text={'light' ? 'dark' : 'white'}>
         {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
         <Card.Body>
           <Card.Title>{event.eventName}</Card.Title>
@@ -70,6 +67,9 @@ class Profile extends React.Component {
           </Card.Text>
           <Card.Text>{event.locationName}</Card.Text>
           <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
+      	  <Col className="col align-self-center">
+            {card}
+      	  </Col>
           <DropdownButton id="dropdown-basic-button" title="Attendees">
             {attendees.map(attendee => (
               <Dropdown.Item key={Math.random(1000)} >{attendee}</Dropdown.Item>))}
@@ -91,11 +91,12 @@ class Profile extends React.Component {
         </Card.Body>
       </Card>)
 
-    ReactDOM.render( 
-      <CardColumns>
-        {this.state.cards.map(element   => element)}
-      </CardColumns>,
-      document.getElementById("content"))
+
+      this.setState({
+        contents: <CardDeck>
+                    {this.state.cards.map(element   => element)}
+                  </CardDeck>
+      })
     }
     
   }
@@ -131,8 +132,7 @@ class Profile extends React.Component {
       myEventsRef.on('value', snapshot => {  
 	// Do nothing when it's null
         if (snapshot.val() != null) {
-          const mykeys = Object.values(snapshot.val());
-	  console.log(mykeys);
+          const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
           this.getData(mykeys);
         }
@@ -161,7 +161,7 @@ class Profile extends React.Component {
       showConfirmModal: false,
     })
     const modal = document.getElementById('modal-wrapper');
-    let response = ReactDOM.unmountComponentAtNode(modal);
+    ReactDOM.unmountComponentAtNode(modal);
   }
 
   handleEdit(key, event) {
@@ -173,43 +173,60 @@ class Profile extends React.Component {
 
   renderProfile() {
     return (   
-      <div className="profilepictureContent" style={{borderBottom:"4px solid grey"}}>
-        <Container>
-	  <Row>
-	    <Col>
-	      <div className="Profiletitle">
-		<h1 className="subtitle1">Profile</h1>
-	      </div>
-      	    </Col>
-	    <Col md={{ span: 5, offset: 8 }}>
-      	      <h4>John Doe</h4>
-      	    </Col>
-	    <Col md={{ span: 5, offset: 8 }}>
-      	      <h4>John Doe</h4>
-      	    </Col>
-	    <Col md={{ span: 5, offset: 8 }}>
-      	      <h4>John Doe</h4>
-      	    </Col>
-	    <Col md={{ span: 5, offset: 8 }}>
-      	      <h4>John Doe</h4>
-      	    </Col>
-	    <Col md={{ span: 3, offset: 0 }}>
-	      <div className="profilephoto">
-		<img style={{
-		  width:"250px",
-		  height:"250px",
-		  borderRadius:"200px"}}
-		  src={this.state.profilePicture}
-		  alt="" /> 
-		<h4 style={{
-		  marginLeft:"1.8rem",
-		  marginTop:".8rem"}}>
-		    {this.state.username}
-		</h4>
-	      </div>
-	    </Col>
-	  </Row>
-	</Container>
+      <div className="profileContent">
+	<Row>
+	  <Col>
+	    <h1 className="subtitle1">Profile</h1>
+	  </Col>
+	</Row>
+        <hr/>
+        <Row> 
+	  <Col md={{ span: 4, offset: 4 }} >
+	    <div className="profilephoto">
+	      <Image
+      		style={{
+		  width: "300px",
+		  height: "300px",
+		  display: "block",
+		  margin: "auto",
+		}}
+      		roundedCircle
+      		src={this.state.profilePicture}
+		alt="" /> 
+	    </div>
+	  </Col>
+      	</Row>
+        <br/>
+	<Row> 
+	  <Col md={{ span: 4, offset: 4 }}>
+	    <h1 className="profile-name">John Doe</h1>
+	    <br />
+      	    <h1 className="profile-email">jdoe@osu.edu</h1>
+      	    <br />
+	    <h1 className="profile-university">The Ohio State University</h1>
+	  </Col>
+	</Row>
+      </div>
+    );
+  }
+
+  renderEvents() {
+    return ( 
+      <div>
+	<Row>
+	  <Col>
+	    <h1 className="subtitle1">Events</h1>
+	  </Col>
+	</Row>
+        <hr/>
+	<div 
+	  id="content"
+	  style={{
+	    marginLeft:"1.8rem",
+	    marginTop:".8rem"}}>
+	  <br />
+      	  {this.state.contents}
+	</div>
       </div>
     );
   }
@@ -223,37 +240,9 @@ class Profile extends React.Component {
       	  credentials={this.state.credentials} 
       	  plus_code={this.props.history.location.state.plus_code}/>
         <Jumbotron>
-	<Tab.Container defaultActiveKey="first">
-	  <Row>
-	    <Col sm={3}>
-	      <Nav variant="pills" className="flex-column">
-		<Nav.Item>
-		  <Nav.Link eventKey="first">Profile</Nav.Link>
-		</Nav.Item>
-		<Nav.Item>
-		  <Nav.Link eventKey="second">Events</Nav.Link>
-		</Nav.Item>
-	      </Nav>
-	    </Col>
-	    <Col sm={9}>
-	      <Tab.Content>
-		<Tab.Pane eventKey="first">
-      		  {this.renderProfile()}
-		</Tab.Pane>
-		<Tab.Pane eventKey="second">
-		  <div 
-		    id="content"
-		    style={{
-		    marginLeft:"1.8rem",
-		    marginTop:".8rem"}}>
-		    <br />
-		  </div>
-		</Tab.Pane>
-	      </Tab.Content>
-	    </Col>
-	  </Row>
-	</Tab.Container>  
-      </Jumbotron>
+      	  {this.renderProfile()}
+          {this.renderEvents()}
+	</Jumbotron>
       </div> 
     )
   }

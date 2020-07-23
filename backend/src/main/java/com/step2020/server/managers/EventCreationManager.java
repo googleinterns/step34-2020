@@ -166,7 +166,7 @@ public class EventCreationManager {
   }
 
   private boolean checkRequestInfoForRequiredKeys(Map<String, String> info) {
-    return !requestInfo.containsKey(UID) && !requestInfo.containsKey(EVENTID);  
+    return !info.containsKey(UID) && !info.containsKey(EVENTID);  
   }
 
   // Removes the requested event id and send a response of success or failure
