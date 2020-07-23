@@ -3,7 +3,10 @@ import ReactModalLogin from 'react-modal-login';
 import ReactDOM from 'react-dom';
 import { fb } from '../App';
 import firebase from 'firebase';
+import tldjs from 'tldjs';
+import zxcvbn from 'zxcvbn';
 
+const { tldExists, getDomain, getPublicSuffix } = tldjs
 
 export default class LogInAndSignUp extends Component {
   constructor(props) {
@@ -47,18 +50,29 @@ export default class LogInAndSignUp extends Component {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
+    const domain = getDomain(email);
+    const suffix = getPublicSuffix(domain);
+    const passIsValid = this.passwordStrength(password);
+    console.log(passIsValid)
 
-    if (confirmpassword === password){
-      // Create user account, sign them in, then retrieve credentials
-      let response = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
-      if (response != null) {
-        this.setState({credentials: response.user, loggedIn: true})
-        this.onLoginSuccess()
+    if (passIsValid) {
+      if (confirmpassword === password && suffix === 'edu'){
+        // Create user account, sign them in, then retrieve credentials
+        let response = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+        if (response != null) {
+          this.setState({credentials: response.user, loggedIn: true})
+          this.onLoginSuccess()
+        }
+      } else if (suffix !== 'edu'){
+        alert("email should have .edu as it's domain")
+      } else {
+        alert("password don't match. Please try again")
       }
     } else {
-      alert("password don't match. Please try again")
+      alert ("Password is short or weak")
     }
 
+    
   }
 
   async onRecoverPassword() {
@@ -125,8 +139,18 @@ export default class LogInAndSignUp extends Component {
     ReactDOM.unmountComponentAtNode(modal);
   }
 
+  // Evaluates the strength of the password user provided
+  passwordStrength(password) {
+    const strength = zxcvbn(password).score;
+    const len = password.length;
+
+    if (strength >= 3 && len >= 16) {
+      return true;
+    } 
+    return false;
+  }
+
   render() {
-    console.log(this.props.plus_code)
     if (this.state.loggedIn) {
       if (this.state.credentials) {
         this.props.history.push({
@@ -160,6 +184,12 @@ export default class LogInAndSignUp extends Component {
             onLogin: this.onLogin.bind(this),
             onRegister: this.onRegister.bind(this),
             onRecoverPassword: this.onRecoverPassword.bind(this),
+
+            passStrength: this.state.showPasswordStrength 
+            ?  {
+              label: "Password is weak",
+            }
+            : null,
 
             recoverPasswordSuccessLabel: this.state.recoverPasswordSuccess
               ? {
@@ -219,7 +249,7 @@ export default class LogInAndSignUp extends Component {
               },
               {
                 containerClass: 'RML-form-group',
-                label: 'Password',
+                label: 'Password, Note: it should be at least 16 characters/A mixture of both uppercase and lowercase letters/has numbers/special character e.g., ! @ # ?',
                 type: 'password',
                 inputClass: 'RML-form-control',
                 id: 'password',
