@@ -318,7 +318,7 @@ public class EventCreationManager {
     String plusCode = eventInfo.get("plusCode");
     String location = eventInfo.get("location");
     String locationName = eventInfo.get("locationName");
-    String imageUrls = eventInfo.get("imageUrls");
+    String imageUrls = eventInfo.get("imagePaths");
     String category = eventInfo.get("category");
     String organization = eventInfo.get("organization");
     String attendees = eventInfo.get("attendees");
