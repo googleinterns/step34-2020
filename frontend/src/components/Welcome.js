@@ -14,6 +14,10 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const mapStateToProps = state => {
+  return { articles : state.articles }
+}
+
 class Search extends Component {
   // Define Constructor.
   constructor(props) {
@@ -73,23 +77,35 @@ class Search extends Component {
     const address = await addressObject.address_components;
     const addressGeometry = addressObject.geometry;
 
-    if (address && typeof addressObject.plus_code != 'undefined') {
-      const currentState  = {
+    var currentState = {};
+    if (address && addressObject.plus_code) {
+      currentState  = {
         query: addressObject.name,
         location: addressGeometry.location,
         locationObject: addressObject,
         plusCode: addressObject.plus_code.global_code,
         loggedIn: this.state.loggedIn
-      }
-      this.props.changeMapState(currentState);
-      this.setState(currentState);
+      } 
+    } else {
+      currentState  = {
+        query: addressObject.name,
+        location: addressGeometry.location,
+        locationObject: addressObject,
+        plusCode: undefined,
+        loggedIn: this.state.loggedIn
+      }    
     }
+    this.props.changeMapState(currentState);
+    this.setState(currentState);
   }
 
   handleButtonClick(event) {
     var mutedText = document.getElementById('text-muted');
     if (this.state.query == null) {
       mutedText.innerHTML = 'Please select your university from the drop-down menu.';
+      event.preventDefault();
+    } else if (this.state.plusCode == null) {
+      mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
       event.preventDefault();
     } else {
       event.preventDefault();
