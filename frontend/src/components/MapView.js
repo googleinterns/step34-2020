@@ -19,19 +19,34 @@ const mapStyles = {
 class MapView extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      allEvents: [],
-      location: undefined,
-      plusCode: props.plusCode,
-      showInfoWindows: true,
-      contents: null,
-      resizeState: false,
-      maxWidth: 100,
-      filter_choice: props.filter_choice,
-    };
+
+    if (this.props.articles[0]) {
+      this.state = {
+        allEvents: [],
+        location: this.props.articles[0].location,
+        lat: this.props.articles[0].lat,
+        lng: this.props.articles[0].lng,
+        plusCode: this.props.articles[0].plusCode,
+        showInfoWindows: true,
+        contents: null,
+        resizeState: false,
+        maxWidth: 100,
+        filter_choice: props.filter_choice,
+      };
+    } else {
+      this.state = {
+        allEvents: [],
+        location: undefined,
+        plusCode: '',
+        showInfoWindows: false,
+        contents: null,
+        resizeState: false,
+        maxWith: 100,
+        filter_choice: props.filter_choice,
+      };
+    }
 
     document.addEventListener('domready', () => {
-      console.log("asdas");
       document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
     });
 
@@ -65,17 +80,17 @@ class MapView extends Component {
   async renderInfo () {
     var listEvents = [];
 
-    if (this.props.filter_choice === null) {
+    if (this.props.filter_choice === "" || this.props.articles[0].filter_choice !== 'undefined') {
       listEvents = this.state.allEvents;
     } else {
       console.log("changed filter")
       listEvents = await this.state.allEvents.filter((event) => {
         console.log(event.category)
-        return event.category.toLowerCase() === (this.props.filter_choice).toLowerCase();
+        return event.category.toLowerCase() === (this.props.articles[0].filter_choice).toLowerCase();
       });
     }
     console.log(listEvents)
-    console.log(this.props.filter_choice)
+    console.log(this.props.articles[0].filter_choice)
 
     ReactDOM.render(
     this.props.articles.map(article => {
@@ -86,18 +101,18 @@ class MapView extends Component {
           google={this.props.google}
           zoom={17}
           onReady={this.onReady}
-          style={mapStyles}
-          initialCenter={{
-            lat: article.location.lat(),
-            lng: article.location.lng()
-          }}
-          center={{
-            lat: article.location.lat(),
-            lng: article.location.lng()
-          }}
-          zoomControl={true}
-        >
-        {listEvents.map((element, index) => {
+            style={mapStyles}
+            initialCenter={{
+              lat: article.lat,
+              lng: article.lng
+            }}
+            center={{
+              lat: article.lat,
+              lng: article.lng
+            }}
+            zoomControl={true}
+          >
+        {this.state.allEvents.map((element, index) => {
           return (this.getInfoBox(element, index));
         })}
       </Map>
@@ -153,7 +168,6 @@ class MapView extends Component {
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
-    // Update event info box
     this.state.allEvents.push({
       key: eventId,
       value: event
@@ -233,7 +247,7 @@ class MapView extends Component {
     var coords = "";
     var length = 0;
     if (location != null) {
-     length = location.length;
+      length = location.length;
     }
     if (length > 0) {
       coords = location.slice(1, length-2);

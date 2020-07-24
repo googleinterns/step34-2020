@@ -6,13 +6,28 @@ import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 import Script from 'react-load-script';
 import { connect } from "react-redux";
+import { changeMapState } from "../actions/index";
 
+function mapDispatchToProps(dispatch) {
+  return {
+    changeMapState: mapState => dispatch(changeMapState(mapState))
+  };
+}
+
+const mapStateToProps = state => {
+  return { articles: state.articles };
+}
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
 const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places"; 
-export default class UpdateEvent extends Component {
+class UpdateEvent extends Component {
   constructor(props) {
     super(props);
+
+    if (!this.props.articles[0] || !this.props.articles[0].loggedIn) {
+      window.location = "/";
+    }
+
     bsCustomFileInput.init();
     this.state = {
       title: {status: false, value: ""},
@@ -97,17 +112,17 @@ export default class UpdateEvent extends Component {
     const locationAddressObject = this.locationAutocomplete.getPlace();
     const locationObject = locationAddressObject.geometry.location;
     this.setState({
-       location: {
+      location: {
         status: true,
-        value: locationObject.toString()},
+        value: locationObject.toString()
+      },
 
         
-       locationName: {
+      locationName: {
         status: true,
-        value: locationAddressObject.name}
+        value: locationAddressObject.name
+      }
     });
-    console.log(locationAddressObject.name);
-    console.log(locationAddressObject.formatted_address);
   }
   
   // When the image is inputted, display the image
@@ -132,9 +147,10 @@ export default class UpdateEvent extends Component {
  
   handleCategoryChange(input) {
     this.setState({
-       category: {
+      category: {
         status: true,
-        value: input.target.value}
+        value: input.target.value
+      }
     });
   }
 
@@ -220,15 +236,14 @@ export default class UpdateEvent extends Component {
         imageUrls = this.changeListToString(await this.uploadImages(files));
       }
 
-      var uid = this.props.history.location.state.credentials.uid;
-      var eventId = this.props.history.location.state.reference;
+      var uid = this.props.articles[0].credentials.uid;
+      var eventId = this.props.articles[0].reference;
       // The respone acquired from the server
       let response = await fb.requestEventUpdate(eventId, uid, title, date, startTime, endTime, description, location, locationName, imageUrls, category, organization);
       if (response) {
-        console.log(this.props.location.state.plus_code);
+        console.log(this.props.articles[0].plus_code);
         this.props.history.push({
           pathname: '/map/',
-          state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
         })
       } 
     }
@@ -263,14 +278,14 @@ export default class UpdateEvent extends Component {
     return (
       <div>
         <Script url={url} onLoad = {this.handleScriptLoad}/>
-        <TopNavbar history={this.props.history} loggedIn={this.props.history.location.state.loggedIn} plus_code={this.props.history.location.state.plus_code}/>
+        <TopNavbar history={this.props.history}/>
         <Jumbotron >
           <h1>Edit Your Event</h1>
           <Form noValidate validated={this.validated} onSubmit={this.handleSubmit}>
             <Form.Group>
               <Form.Label>Event title</Form.Label>
               <Form.Control
-                defaultValue={this.props.history.location.state.eventObject.eventName}
+                defaultValue={this.props.articles[0].eventObject.eventName}
                 required
                 onChange={this.handleTitleChange}
                 type="text" 
@@ -284,7 +299,7 @@ export default class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Date</Form.Label>
               <Form.Control
-                defaultValue={this.props.history.location.state.eventObject.date}
+                defaultValue={this.props.articles[0].eventObject.date}
                 required
                 onChange={this.handleDateChange}
                 type="date"/>
@@ -295,7 +310,7 @@ export default class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Start Time</Form.Label>
               <Form.Control 
-                defaultValue={this.props.history.location.state.eventObject.startTime}	
+                defaultValue={this.props.articles[0].eventObject.startTime}	
                 onChange={this.handleStartTimeChange}
                 required
                 type="time"/>
@@ -306,7 +321,7 @@ export default class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>End Time</Form.Label>
               <Form.Control
-                defaultValue={this.props.history.location.state.eventObject.endTime} 
+                defaultValue={this.props.articles[0].eventObject.endTime} 
                 onChange={this.handleEndTimeChange}
                 required
                 type="time"/>
@@ -317,7 +332,7 @@ export default class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Description of your event</Form.Label>
               <Form.Control
-                defaultValue={this.props.history.location.state.eventObject.description}
+                defaultValue={this.props.articles[0].eventObject.description}
                 onChange={this.handleDescriptionChange}
                 required
                 as="textarea" 
@@ -331,7 +346,7 @@ export default class UpdateEvent extends Component {
               <Form.Group as={Col}>
                 <Form.Label>Location</Form.Label>
                 <Form.Control
-                  defaultValue={this.props.history.location.state.eventObject.locationName} 
+                  defaultValue={this.props.articles[0].eventObject.locationName} 
                   id="location-autocomplete"	
                   required
                   type="text"
@@ -389,7 +404,7 @@ export default class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Organization</Form.Label>
               <Form.Control
-                defaultValue={this.props.history.location.state.eventObject.organization} 
+                defaultValue={this.props.articles[0].eventObject.organization} 
                 onChange={this.handleOrganizationChange}
                 type="text" 
                 placeholder="Your organization" />
@@ -416,3 +431,10 @@ export default class UpdateEvent extends Component {
     )
   }
 }
+
+const ConnectedUpdateEvent = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UpdateEvent);
+
+export default ConnectedUpdateEvent;

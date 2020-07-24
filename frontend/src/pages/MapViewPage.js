@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form, Col } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { GoogleApiWrapper } from 'google-maps-react';
@@ -29,25 +29,30 @@ class MapViewPage extends Component {
     this.autocomplete = null;
 
     this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
-    // Declare state
-    this.state = {
-      query: null,
-      location: null,
-      viewport: null,
-      history: props.history,
-      plusCode: props.history.location.state.plus_code,
-      loggedIn: props.location.state.loggedIn,
-      filter_choice: null,
-    };
 
+    if (this.props.articles[0]) {
+      this.state = {
+        location: this.props.articles[0].location,
+        lat: this.props.articles[0].lat,
+        lng: this.props.articles[0].lng,
+        loggedIn: this.props.articles[0].loggedIn,
+        plusCode: this.props.articles[0].plusCode,
+        credentials: this.props.articles[0].credentials,
+        filter_choice: "",
+      };
+    } else {
+      window.location = "/";
+    }
+
+    console.log(this.state)
   }
 
   render() {
     return (
       <div>
-        <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
-          <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
+        <Script url={this.url} onLoad={this.handleScriptLoad}/> 
+        <TopNavbar history={this.props.history}/>
+        <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
             <Form.Row>
               <Form.Group as={Col}>
                 <Form.Label> Enter your university</Form.Label>
@@ -69,7 +74,7 @@ class MapViewPage extends Component {
               </Form.Group>
             </Form.Row>
           </Form>
-        <MapView plusCode={this.state.plusCode} filter_choice={this.state.filter_choice} />
+        <MapView plusCode={this.state.plusCode}/>
       </div>
     );
   }
@@ -116,18 +121,24 @@ class MapViewPage extends Component {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
+    console.log(addressObject);
+    var mutedText = document.getElementById('text-muted');
 
     if (address && typeof addressObject.plus_code != 'undefined') {
+      mutedText.innerHTML = '';
       const currentState = {
-        query: addressObject.name,
         location: addressGeometry.location,
+        lat: addressGeometry.location.lat(),
+        lng: addressGeometry.location.lng(),
         locationObject: addressObject,
-        viewport: addressGeometry.viewport,
+        plusCode: addressObject.plus_code.global_code,
+        loggedIn: this.state.loggedIn,
+        credentials: this.state.credentials
       }
       this.props.changeMapState(currentState);
-
-      this.setState({plusCode: addressObject.plus_code.global_code});
       this.setState(currentState);
+    } else {
+      mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
     }
   }
 }
