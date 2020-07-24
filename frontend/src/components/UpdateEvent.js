@@ -107,17 +107,17 @@ class UpdateEvent extends Component {
     const locationAddressObject = this.locationAutocomplete.getPlace();
     const locationObject = locationAddressObject.geometry.location;
     this.setState({
-       location: {
+      location: {
         status: true,
-        value: locationObject.toString()},
+        value: locationObject.toString()
+      },
 
         
-       locationName: {
+      locationName: {
         status: true,
-        value: locationAddressObject.name}
+        value: locationAddressObject.name
+      }
     });
-    console.log(locationAddressObject.name);
-    console.log(locationAddressObject.formatted_address);
   }
   
   // When the image is inputted, display the image
@@ -142,9 +142,10 @@ class UpdateEvent extends Component {
  
   handleCategoryChange(input) {
     this.setState({
-       category: {
+      category: {
         status: true,
-        value: input.target.value}
+        value: input.target.value
+      }
     });
   }
 
@@ -238,7 +239,6 @@ class UpdateEvent extends Component {
         console.log(this.props.articles[0].plus_code);
         this.props.history.push({
           pathname: '/map/',
-        //   state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
         })
       } 
     }

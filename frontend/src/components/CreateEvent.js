@@ -209,10 +209,8 @@ class Events extends Component {
       // The respone acquired from the server
       let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.articles[0].credentials.uid);
       if (response) {
-        // console.log(this.props.location.state.plus_code);
         this.props.history.push({
           pathname: '/map/',
-        //   state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
         })
       } 
     }
@@ -241,15 +239,6 @@ class Events extends Component {
       }
     }
     return "[" + string + "]";
-  }
-
-  defaultValue(universityName) {
-      console.log("here");
-      if (universityName) {
-        return universityName;
-      } else {
-        return "MapIt University";
-      }
   }
 
   render() { 
