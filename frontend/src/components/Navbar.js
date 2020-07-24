@@ -43,7 +43,6 @@ class TopNavbar extends React.Component {
     }
     this.props.changeMapState(currentState); 
     this.setState(currentState);
-    console.log('redux updated')
   }
 
   handleLoginButtonClick() {
@@ -62,7 +61,7 @@ class TopNavbar extends React.Component {
       ReactDOM.render(
         <Provider store={store}>
           <div id="modal">
-            <Modal history={this.props.history} plus_code={this.props.plus_code}/>
+            <Modal history={this.props.history}/>
           </div>
         </Provider>,
         document.getElementById('modal-wrapper')
@@ -70,7 +69,6 @@ class TopNavbar extends React.Component {
     } else {
       this.props.history.push({
         pathname: '/map/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       });
     }
   }
@@ -83,13 +81,12 @@ class TopNavbar extends React.Component {
     //   console.log(this.props.plus_code)
       this.props.history.push({
         pathname: '/profile/',
-        state: {loggedIn: this.props.loggedIn, credentials: JSON.stringify(this.credentials), plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
         <Provider store={store}>
           <div id="modal">
-            <Modal history={this.props.history} plus_code={this.props.plus_code}/>
+            <Modal history={this.props.history}/>
           </div>
         </Provider>,
         document.getElementById('modal-wrapper')
@@ -114,13 +111,12 @@ class TopNavbar extends React.Component {
     if (this.state.loggedIn) {
       this.props.history.push({
         pathname: '/create/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
         <Provider store={store}>
           <div id="modal">
-            <Modal history={this.props.history} plus_code={this.props.plus_code}/>
+            <Modal history={this.props.history}/>
           </div>
         </Provider>,
         document.getElementById('modal-wrapper')

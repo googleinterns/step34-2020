@@ -122,10 +122,8 @@ class Search extends Component {
       event.preventDefault();
     } else {
       event.preventDefault();
-      // send login status and plus code status to the redux state
       this.props.history.push({
         pathname: '/map',
-        state: {loggedIn: this.state.loggedIn, plus_code: this.state.plusCode}
       });
     }
   }
