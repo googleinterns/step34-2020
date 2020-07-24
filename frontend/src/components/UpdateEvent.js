@@ -23,6 +23,11 @@ const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP
 class UpdateEvent extends Component {
   constructor(props) {
     super(props);
+
+    if (!this.props.articles[0] || !this.props.articles[0].loggedIn) {
+      window.location = "/";
+    }
+
     bsCustomFileInput.init();
     this.state = {
       title: {status: false, value: ""},
