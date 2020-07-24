@@ -5,6 +5,7 @@ import '../App.css';
 import { Badge, Carousel, CardDeck, Image, Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
+import Firebase from 'firebase';
 import { fb } from '../App';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -284,6 +285,7 @@ class Profile extends React.Component {
         <Jumbotron>
       	  {this.renderProfile()}
           {this.renderEvents()}
+      	  
 	</Jumbotron>
       </div> 
     )

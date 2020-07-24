@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
-import { Navbar, Nav, Button } from 'react-bootstrap'
+import { Dropdown, Image, Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import Firebase from 'firebase';
@@ -27,6 +27,15 @@ export default class TopNavbar extends React.Component {
     }
   }
 
+  handleLogoutButton() {
+    //sign out the user
+    Firebase.auth().signOut();
+
+    this.props.history.push({
+      pathname:'/',
+    })
+  }
+  
   handleLoginButtonClick() {
     ReactDOM.render(
       <div id="modal">
@@ -77,15 +86,6 @@ export default class TopNavbar extends React.Component {
     }
   }
 
-  handleLogoutButton() {
-    //sign out the user
-    Firebase.auth().signOut();
-
-    this.props.history.push({
-      pathname:'/',
-    })
-  }
-
   handleCreateButton() {
     if (this.props.loggedIn) {
       this.props.history.push({
@@ -112,7 +112,7 @@ export default class TopNavbar extends React.Component {
           <Nav className="mr-auto"></Nav>
           <Nav>
             <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.props.loggedIn} />
-            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.props.loggedIn} credentials={this.props.credentials} />
+            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} onLogout={this.handleLogoutButton.bind(this)} loggedIn={this.props.loggedIn} credentials={this.props.credentials} />
             <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
           </Nav>
         </Navbar.Collapse>
@@ -135,31 +135,13 @@ function MapViewButton(props) {
   )
 }
 
-function LogOutButton(props) {
-  if (props.loggedIn) {
-    return (
-      <div>
-        <Button 
-          style={{marginRight:".8rem"}}
-          type="button" 
-          variant="primary"
-          onClick={props.onClick}>
-          Logout
-        </Button>
-      </div>
-    )
-  } else {
-    return null;
-  }
-}
-
 function CreateEventButton(props) {
   return (
     <div>
       <Button 
         type="button" 
         variant="primary"
-        style={{marginRight:".8rem"}}
+        style={{marginRight:".8rem", marginTop: ".3rem"}}
         className="custom-btn"
         onClick={props.onClick}>
         Create Event
@@ -172,8 +154,8 @@ function LoginButtonNav(props) {
   if (!props.loggedIn){
     return (
       <div>
-        <Button 
-          style={{marginRight:".8rem"}}
+        <Button inline 
+          style={{marginRight:".8rem", marginTop: ".3rem"}}
           type="button" 
           variant="outline-primary" 
           onClick={props.onClick}>
@@ -190,13 +172,19 @@ function ProfileButtonNav(props) {
   if (props.loggedIn) {
     return (
       <div>
-	<Button 
-	  style={{marginRight:".8rem"}}
-	  type="button" 
-	  variant="primary" 
-	  onClick={props.onClick}>
-	  Profile
-	</Button>
+	<Dropdown alignRight>
+	  <Dropdown.Toggle  as={Image} style={{border: "2px solid #1A73E8", maxWidth: "3rem", maxHeight: "3rem", marginRight:".8rem", margin:"auto"}}
+	      type="button" 
+	      variant="primary" 
+	      roundedCircle
+	     src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
+	  </Dropdown.Toggle>
+
+	  <Dropdown.Menu>
+	    <Dropdown.Item as={Button} onClick={props.onClick}>Profile</Dropdown.Item>
+	    <Dropdown.Item as={Button} onClick={props.onLogout}>Logout</Dropdown.Item>
+	  </Dropdown.Menu>
+	</Dropdown>
       </div>
     );
   } else {
