@@ -35,6 +35,8 @@ class LogInAndSignUp extends Component {
     // update redux
     const currentState = {
       location: this.props.articles[0].location,
+      lat: this.props.articles[0].lat,
+      lng: this.props.articles[0].lng,
       locationObject: this.props.articles[0].locationObject,
       plusCode: this.props.articles[0].plusCode,
       loggedIn: userLoggedIn,
