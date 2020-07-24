@@ -31,7 +31,6 @@ class MapViewPage extends Component {
 
     if (this.props.articles[0]) {
       this.state = {
-        query: this.props.articles[0].query,
         location: this.props.articles[0].location,
         loggedIn: this.props.articles[0].loggedIn,
         plusCode: this.props.articles[0].plusCode
@@ -79,7 +78,6 @@ class MapViewPage extends Component {
     if (address && typeof addressObject.plus_code != 'undefined') {
       mutedText.innerHTML = '';
       const currentState = {
-        query: addressObject.name,
         location: addressGeometry.location,
         locationObject: addressObject,
         plusCode: addressObject.plus_code.global_code,

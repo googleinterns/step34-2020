@@ -23,21 +23,6 @@ class TopNavbar extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.state= {
-    //   loggedIn: props.loggedIn,
-    //   history: props.history,
-    // }
-
-    // var credentials;
-
-    // if (props.credentials) {
-    //   this.credentials = props.credentials;
-    // } else if (props.history.location.state){
-    //   if (props.history.location.state.credentials) {
-    //     this.credentials = props.history.location.state.credentials;
-    //   }
-    // }
-
     if (this.props.articles[0]) {
       this.state = {
         loggedIn: this.props.articles[0].loggedIn,
@@ -54,7 +39,6 @@ class TopNavbar extends React.Component {
   updateReduxWhenLoggingOut() {
     // update redux
     const currentState = {
-    //   query: this.props.articles[0].query,
     //   location: this.props.articles[0].location,
     //   locationObject: this.props.articles[0].locationObject,
     //   viewport: this.props.articles[0].viewport,

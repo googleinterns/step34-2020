@@ -29,7 +29,6 @@ class Search extends Component {
     this.autocomplete = null;
 
     this.state = {
-      query: "California Polytechnic State University",
       location: null,
       loggedIn: false,
       plusCode: '847X884Q+22'
@@ -91,7 +90,6 @@ class Search extends Component {
     var currentState = {};
     if (address && addressObject.plus_code) {
       currentState  = {
-        query: addressObject.name,
         location: addressGeometry.location,
         lat: addressGeometry.location.lat(),
         lng: addressGeometry.location.lng(),
@@ -101,7 +99,6 @@ class Search extends Component {
       } 
     } else {
       currentState  = {
-        query: addressObject.name,
         location: addressGeometry.location,
         lat: addressGeometry.location.lat(),
         lng: addressGeometry.location.lng(),

@@ -34,7 +34,6 @@ class LogInAndSignUp extends Component {
   updateRedux(userCredentials, userLoggedIn) {
     // update redux
     const currentState = {
-      query: this.props.articles[0].query,
       location: this.props.articles[0].location,
       locationObject: this.props.articles[0].locationObject,
       plusCode: this.props.articles[0].plusCode,
