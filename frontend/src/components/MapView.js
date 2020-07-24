@@ -88,12 +88,12 @@ class MapView extends Component {
           onReady={this.onReady}
             style={mapStyles}
             initialCenter={{
-              lat: article.location.lat(),
-              lng: article.location.lng()
+              lat: article.lat,
+              lng: article.lng
             }}
             center={{
-              lat: article.location.lat(),
-              lng: article.location.lng()
+              lat: article.lat,
+              lng: article.lng
             }}
             zoomControl={true}
           >
