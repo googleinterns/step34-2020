@@ -34,6 +34,7 @@ const requestCodes = {
 
 class Firebase {
   constructor() {
+    this.successCallback = this.successCallback.bind(this);
     // Check if there are existing firebase apps already initialized
     if (!firebase.apps.length) {
       // Check if we are running on development or production

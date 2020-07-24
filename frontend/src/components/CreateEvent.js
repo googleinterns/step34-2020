@@ -204,15 +204,15 @@ class Events extends Component {
 
       // Assign creator as attendee
       var attendees = []
-      attendees.push(this.props.history.location.state.credentials.uid)
+      attendees.push(this.props.articles[0].credentials.uid)
 
       // The respone acquired from the server
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.history.location.state.credentials.uid);
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.articles[0].credentials.uid);
       if (response) {
-        console.log(this.props.location.state.plus_code);
+        // console.log(this.props.location.state.plus_code);
         this.props.history.push({
           pathname: '/map/',
-          state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
+        //   state: {loggedIn: this.props.location.state.loggedIn, credentials: this.props.location.state.credentials, plus_code: this.props.location.state.plus_code}
         })
       } 
     }
