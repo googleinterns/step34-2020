@@ -256,7 +256,7 @@ class Events extends Component {
     return (
       <div>
         <Script url={url} onLoad = {this.handleScriptLoad}/>
-        <TopNavbar history={this.props.history} loggedIn={this.props.location.state.loggedIn} plus_code={this.props.location.state.plus_code}/>
+        <TopNavbar history={this.props.history}/>
         <Jumbotron >
           <h1>Create Your Event</h1>
           <Form noValidate validated={this.validated} onSubmit={this.handleSubmit}>

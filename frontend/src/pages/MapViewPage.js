@@ -35,7 +35,8 @@ class MapViewPage extends Component {
         lat: this.props.articles[0].lat,
         lng: this.props.articles[0].lng,
         loggedIn: this.props.articles[0].loggedIn,
-        plusCode: this.props.articles[0].plusCode
+        plusCode: this.props.articles[0].plusCode,
+        credentials: this.props.articles[0].credentials
       };
     } else {
       window.location = "/";
@@ -85,7 +86,8 @@ class MapViewPage extends Component {
         lng: addressGeometry.location.lng(),
         locationObject: addressObject,
         plusCode: addressObject.plus_code.global_code,
-        loggedIn: this.state.loggedIn
+        loggedIn: this.state.loggedIn,
+        credentials: this.state.credentials
       }
       this.props.changeMapState(currentState);
       this.setState(currentState);

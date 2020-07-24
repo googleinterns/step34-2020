@@ -76,9 +76,7 @@ class TopNavbar extends React.Component {
   handleProfileButtonClick() {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
-    // if (this.props.loggedIn) {
     if (this.state.loggedIn) {
-    //   console.log(this.props.plus_code)
       this.props.history.push({
         pathname: '/profile/',
       })
@@ -107,7 +105,6 @@ class TopNavbar extends React.Component {
   }
 
   handleCreateButton() {
-    // if (this.props.loggedIn) {
     if (this.state.loggedIn) {
       this.props.history.push({
         pathname: '/create/',
