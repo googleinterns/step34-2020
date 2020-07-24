@@ -24,9 +24,7 @@ class Events extends Component {
   constructor(props) {
     super(props);
 
-    if (!this.props.articles[0]) {
-      window.location = "/";
-    } else if (!this.props.articles[0].loggedIn) {
+    if (!this.props.articles[0] || !this.props.articles[0].loggedIn) {
       window.location = "/";
     }
 
