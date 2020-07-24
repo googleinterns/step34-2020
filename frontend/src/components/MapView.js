@@ -24,6 +24,8 @@ class MapView extends Component {
       this.state = {
         allEvents: [],
         location: this.props.articles[0].location,
+        lat: this.props.articles[0].lat,
+        lng: this.props.articles[0].lng,
         plusCode: this.props.articles[0].plusCode,
         showInfoWindows: true,
         contents: null,

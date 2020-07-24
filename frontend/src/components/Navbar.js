@@ -39,10 +39,6 @@ class TopNavbar extends React.Component {
   updateReduxWhenLoggingOut() {
     // update redux
     const currentState = {
-    //   location: this.props.articles[0].location,
-    //   locationObject: this.props.articles[0].locationObject,
-    //   viewport: this.props.articles[0].viewport,
-    //   plusCode: this.props.articles[0].plusCode,
       loggedIn: false,
     }
     this.props.changeMapState(currentState); 
@@ -62,7 +58,6 @@ class TopNavbar extends React.Component {
   }
 
   handleMapViewonClick() {
-    // if (!this.props.loggedIn) {
     if (!this.state.loggedIn) {
       ReactDOM.render(
         <Provider store={store}>

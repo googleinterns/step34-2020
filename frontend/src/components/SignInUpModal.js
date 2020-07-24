@@ -43,7 +43,6 @@ class LogInAndSignUp extends Component {
       credentials: userCredentials
     }
     this.props.changeMapState(currentState);  
-    console.log('redux updated')
   }
 
   onLogin() {
@@ -56,7 +55,6 @@ class LogInAndSignUp extends Component {
       .then (response => {
         this.setState({credentials: response.user, loggedIn: true})
         this.updateRedux(response.user, true);
-        console.log('login success!');
         this.onLoginSuccess()})
       .catch(function(error) {
         // Handle Errors here.
@@ -86,7 +84,7 @@ class LogInAndSignUp extends Component {
         this.onLoginSuccess()
       }
     } else {
-      alert("password don't match. Please try again")
+      alert("Passwords don't match. Please try again")
     }
   }
 
@@ -110,7 +108,6 @@ class LogInAndSignUp extends Component {
       loggedIn: true,
     })
 
-    // test
     if (this.props.articles) {
       if (this.props.articles[0]) {
         if (this.state.loggedIn && this.props.articles[0].credentials) {
@@ -166,36 +163,6 @@ class LogInAndSignUp extends Component {
   }
 
   render() {
-    // if (this.state.loggedIn) {
-    //   if (this.state.credentials) {
-    //     this.props.history.push({
-    //       pathname: '/profile',
-    //       state: {credentials: JSON.stringify(this.state.credentials), plus_code: this.props.plus_code}
-    //     })
-    //   } else if (this.props.credentials) {
-    //     this.props.history.push({
-    //       pathname: '/profile',
-    //       state: {credentials: JSON.stringify(this.props.credentials), plus_code: this.props.plus_code}
-    //     })
-    //   }
-    // }
-
-    // console.log("the current state");
-    // console.log(this.state);
-    // console.log(this.state.credentials);
-    // console.log("the current redux state");
-    // console.log(this.props.articles);
-    // if (this.state.loggedIn) {
-    //   if (this.state.credentials) {
-    //     console.log('line 174, loggedIn and credentials are true')
-    //     // this.updateRedux(this.state.credentials, this.state.loggedIn)
-    //     this.props.history.push({
-    //       pathname: '/profile',
-    //     //   state: {credentials: JSON.stringify(this.state.credentials), plus_code: this.props.plus_code}
-    //     })
-    //   }
-    // }
-        
     const isLoading = this.state.loading;
     return (
       <div>
