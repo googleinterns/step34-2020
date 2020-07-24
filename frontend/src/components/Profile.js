@@ -180,9 +180,23 @@ class Profile extends React.Component {
   }
 
   handleEdit(key, event) {
+    // add event and key to redux store
+    const currentState = {
+      location: this.props.articles[0].location,
+      lat: this.props.articles[0].lat,
+      lng: this.props.articles[0].lng,
+      locationObject: this.props.articles[0].locationObject,
+      plusCode: this.props.articles[0].plusCode,
+      loggedIn: this.props.articles[0].loggedIn,
+      credentials: this.props.articles[0].credentials,
+      eventObject: event,
+      reference: key
+    }
+    this.props.changeMapState(currentState);
+
     this.props.history.push({
       pathname: '/update',
-      state: {eventObject: event, reference: key, loggedIn: true, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
+    //   state: {eventObject: event, reference: key, loggedIn: true, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
     })
   }
 
