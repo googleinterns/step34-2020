@@ -81,32 +81,37 @@ class MapViewPage extends Component {
 
   handleFilter(input) {
     // Set filter category
+    let filter_choice = null;
     switch (input.target.value) {
       case "0":
-        this.setState({
-          filter_choice: "Social Gathering",
-        })
-        console.log("social gathering")
+        filter_choice = "Social Gathering";
         break;
 
       case "1":
-        this.setState({
-          filter_choice: "Volunteer Event",
-        })
-        console.log("volunteer")
+        filter_choice = "Volunteer Event";
         break;
 
       case "2":
-        this.setState({
-          filter_choice: "Student Organization Event",
-        })
-        console.log("student")
+        filter_choice = "Student Organization Event";
         break;
 
       default:
         break;
     }
+
+    const currentState = {
+      location: this.state.location,
+      lat: this.state.lat,
+      lng: this.state.lng,
+      locationObject:this.state.locationObject,
+      plusCode: this.state.plusCode,
+      loggedIn: this.state.loggedIn,
+      credentials: this.state.credentials,
+      filter_choice: filter_choice,
+    }
     
+    this.props.changeMapState(currentState);
+    this.setState(currentState);
   }
 
   handleScriptLoad() {
@@ -122,10 +127,11 @@ class MapViewPage extends Component {
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
     console.log(addressObject);
-    var mutedText = document.getElementById('text-muted');
+    // var mutedText = document.getElementById('text-muted');
+    console.log(this.state.filter_choice)
 
     if (address && typeof addressObject.plus_code != 'undefined') {
-      mutedText.innerHTML = '';
+      //mutedText.innerHTML = '';
       const currentState = {
         location: addressGeometry.location,
         lat: addressGeometry.location.lat(),
@@ -133,12 +139,15 @@ class MapViewPage extends Component {
         locationObject: addressObject,
         plusCode: addressObject.plus_code.global_code,
         loggedIn: this.state.loggedIn,
-        credentials: this.state.credentials
+        credentials: this.state.credentials,
+        filter_choice: this.state.filter_choice,
+        
       }
       this.props.changeMapState(currentState);
       this.setState(currentState);
     } else {
-      mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
+      // mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
+      alert("MapIT does not support this location.  Please choose another.")
     }
   }
 }

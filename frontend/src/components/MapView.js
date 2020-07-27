@@ -31,7 +31,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         maxWidth: 100,
-        filter_choice: props.filter_choice,
+        filter_choice: props.articles[0].filter_choice,
       };
     } else {
       this.state = {
@@ -42,7 +42,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         maxWith: 100,
-        filter_choice: props.filter_choice,
+        filter_choice: props.articles[0].filter_choice,
       };
     }
 
@@ -79,18 +79,19 @@ class MapView extends Component {
 
   async renderInfo () {
     var listEvents = [];
+    const filter_choice =  this.props.articles[0].filter_choice;
 
-    if (this.props.filter_choice === "" || this.props.articles[0].filter_choice !== 'undefined') {
+    if (filter_choice === null || typeof filter_choice === 'undefined') {
       listEvents = this.state.allEvents;
     } else {
       console.log("changed filter")
       listEvents = await this.state.allEvents.filter((event) => {
         console.log(event.category)
-        return event.category.toLowerCase() === (this.props.articles[0].filter_choice).toLowerCase();
+        return event.category.toLowerCase() === (filter_choice).toLowerCase();
       });
     }
     console.log(listEvents)
-    console.log(this.props.articles[0].filter_choice)
+    console.log(filter_choice)
 
     ReactDOM.render(
     this.props.articles.map(article => {
@@ -112,7 +113,8 @@ class MapView extends Component {
             }}
             zoomControl={true}
           >
-        {this.state.allEvents.map((element, index) => {
+        {listEvents.map((element, index) => {
+          console.log(element)
           return (this.getInfoBox(element, index));
         })}
       </Map>
