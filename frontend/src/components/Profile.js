@@ -27,10 +27,10 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
 
-    if (this.props.articles[0]) {
+    if (this.reduxState) {
       this.state = {
-        loggedIn: this.props.articles[0].loggedIn,
-        credentials: this.props.articles[0].credentials,
+        loggedIn: this.reduxState.loggedIn,
+        credentials: this.reduxState.credentials,
         profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
         cards: [],
         showConfirmModal: false,
@@ -182,13 +182,13 @@ class Profile extends React.Component {
   handleEdit(key, event) {
     // add event and key to redux store
     const currentState = {
-      location: this.props.articles[0].location,
-      lat: this.props.articles[0].lat,
-      lng: this.props.articles[0].lng,
-      locationObject: this.props.articles[0].locationObject,
-      plusCode: this.props.articles[0].plusCode,
-      loggedIn: this.props.articles[0].loggedIn,
-      credentials: this.props.articles[0].credentials,
+      location: this.reduxState.location,
+      lat: this.reduxState.lat,
+      lng: this.reduxState.lng,
+      locationObject: this.reduxState.locationObject,
+      plusCode: this.reduxState.plusCode,
+      loggedIn: this.reduxState.loggedIn,
+      credentials: this.reduxState.credentials,
       eventObject: event,
       reference: key
     }
@@ -196,13 +196,12 @@ class Profile extends React.Component {
 
     this.props.history.push({
       pathname: '/update',
-    //   state: {eventObject: event, reference: key, loggedIn: true, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
     })
   }
 
 
   render() {
-    if (this.props.articles[0]) {
+    if (this.reduxState) {
     return (
       <div>
         <TopNavbar history={this.props.history}/>

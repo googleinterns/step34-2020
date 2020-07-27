@@ -22,12 +22,14 @@ const mapStateToProps = state => {
 class TopNavbar extends React.Component {
   constructor(props) {
     super(props);
+    
+    this.reduxState = this.props.articles[0];
 
-    if (this.props.articles[0]) {
+    if (this.reduxState) {
       this.state = {
-        loggedIn: this.props.articles[0].loggedIn,
-        plusCode: this.props.articles[0].plusCode,
-        credentials: this.props.articles[0].credentials
+        loggedIn: this.reduxState.loggedIn,
+        plusCode: this.reduxState.plusCode,
+        credentials: this.reduxState.credentials
       }
     } else {
       this.state = {
@@ -36,7 +38,7 @@ class TopNavbar extends React.Component {
     }
   }
 
-  updateReduxWhenLoggingOut() {
+  logOutAndUpdateRedux() {
     // update redux
     const currentState = {
       loggedIn: false,
@@ -97,7 +99,7 @@ class TopNavbar extends React.Component {
     Firebase.auth().signOut();
 
     // change the state to logged out
-    this.updateReduxWhenLoggingOut();
+    this.logOutAndUpdateRedux();
 
     this.props.history.push({
       pathname:'/',
