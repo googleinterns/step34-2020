@@ -95,34 +95,35 @@ class MapView extends Component {
     }
     console.log(listEvents)
     console.log(filter_choice)
+    let article = this.props.articles[0];
+    let container = document.getElementById('map-view')
+
+    console.log(container)
 
     ReactDOM.render(
-    this.props.articles.map(article => {
-      return (
-        <Map
-          id="map"
-          key={article.toString()}
-          google={this.props.google}
-          zoom={17}
-          onReady={this.onReady}
-            style={mapStyles}
-            initialCenter={{
-              lat: article.lat,
-              lng: article.lng
-            }}
-            center={{
-              lat: article.lat,
-              lng: article.lng
-            }}
-            zoomControl={true}
-          >
-        {listEvents.map((element, index) => {
-          console.log(element)
-          return (this.getInfoBox(element, index));
-        })}
-      </Map>
-      )
-    }), document.getElementById('map-view'))
+      <Map
+        id="map"
+        key={article.toString()}
+        google={this.props.google}
+        zoom={17}
+        onReady={this.onReady}
+        style={mapStyles}
+        initialCenter={{
+          lat: article.lat,
+          lng: article.lng
+        }}
+        center={{
+          lat: article.lat,
+          lng: article.lng
+        }}
+        zoomControl={true}
+      >
+      {listEvents.map((element, index) => {
+        console.log(element)
+        return (this.getInfoBox(element, index));
+      })}
+    </Map>
+    , container)
   }
 
   // Queries all events with a given university plus code
@@ -269,6 +270,7 @@ class MapView extends Component {
   }
 
   render() {
+    console.log("hello")
     return (
       <div className="mapView" id="map-view">
       </div>
