@@ -28,6 +28,7 @@ class Profile extends React.Component {
     super(props);
 
     this.reduxState = this.props.articles[0];
+    console.log(this.reduxState);
 
     if (this.reduxState) {
       this.state = {
