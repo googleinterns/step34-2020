@@ -9,23 +9,38 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import CardColumns from 'react-bootstrap/CardColumns';
+import { changeMapState } from "../actions/index";
+import { connect } from "react-redux";
 import ConfirmDelete from './ConfirmDelete';
+
+function mapDispatchToProps(dispatch) {
+  return {
+    changeMapState: mapState => dispatch(changeMapState(mapState))
+  };
+}
+
+const mapStateToProps = state => {
+  return { articles: state.articles };
+}
 
 class Profile extends React.Component {
   constructor(props) {
     super(props);
 
-    const JSONString = props.history.location.state.credentials;
-    const JSONObject = JSON.parse(JSONString);
+    if (this.reduxState) {
+      this.state = {
+        loggedIn: this.reduxState.loggedIn,
+        credentials: this.reduxState.credentials,
+        profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
+        cards: [],
+        showConfirmModal: false,
+        contents: null
+      };
+    } else {
+      window.location = "/";
+    }
 
-    this.state = {
-      profilePicture: "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg",
-      credentials: JSONObject,
-      cards:[],
-      showConfirmModal: false,
-      contents: null,
-    };
-
+    console.log(this.state.credentials);
     this.showModal =  this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -101,7 +116,7 @@ class Profile extends React.Component {
     
   }
 
-  getData(eventKeys){
+  getData(eventKeys) {
 
     // Update the state of cards before retrieving changes from database
     this.setState({
@@ -135,7 +150,7 @@ class Profile extends React.Component {
           const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
           this.getData(mykeys);
-        }
+        }  
       });
     }
   }
@@ -165,17 +180,31 @@ class Profile extends React.Component {
   }
 
   handleEdit(key, event) {
+    // add event and key to redux store
+    const currentState = {
+      location: this.reduxState.location,
+      lat: this.reduxState.lat,
+      lng: this.reduxState.lng,
+      locationObject: this.reduxState.locationObject,
+      plusCode: this.reduxState.plusCode,
+      loggedIn: this.reduxState.loggedIn,
+      credentials: this.reduxState.credentials,
+      eventObject: event,
+      reference: key
+    }
+    this.props.changeMapState(currentState);
+
     this.props.history.push({
       pathname: '/update',
-      state: {eventObject: event, reference: key, loggedIn: true, credentials: this.state.credentials, plus_code: this.props.history.location.state.plus_code}
     })
   }
 
 
   render() {
+    if (this.reduxState) {
     return (
       <div>
-        <TopNavbar loggedIn={true} history={this.props.history} credentials={this.state.credentials} plus_code={this.props.history.location.state.plus_code}/>
+        <TopNavbar history={this.props.history}/>
         {/* get user profile picture and user name */}
         <div className="profilepictureContent" 
           style={{borderBottom:"4px solid grey"}}>
@@ -203,7 +232,16 @@ class Profile extends React.Component {
           </div>
       </div>
     )
+    } else {
+      window.location = '/';
+      return null;
+    }
   }
 }
 
-export default Profile;
+const ConnectedProfile = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Profile);
+
+export default ConnectedProfile;

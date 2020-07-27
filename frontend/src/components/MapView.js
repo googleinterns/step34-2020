@@ -19,22 +19,39 @@ const mapStyles = {
 class MapView extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      allEvents: [],
-      location: undefined,
-      plusCode: props.plusCode,
-      showInfoWindows: true,
-      contents: null,
-      resizeState: false,
-      maxWidth: 100
-    };
+
+    this.reduxState = this.props.articles[0];
+
+    if (this.reduxState) {
+      this.state = {
+        allEvents: [],
+        location: this.reduxState.location,
+        lat: this.reduxState.lat,
+        lng: this.reduxState.lng,
+        plusCode: this.reduxState.plusCode,
+        showInfoWindows: true,
+        contents: null,
+        resizeState: false,
+        maxWidth: 100
+      };
+    } else {
+      this.state = {
+        allEvents: [],
+        location: undefined,
+        plusCode: '',
+        showInfoWindows: false,
+        contents: null,
+        resizeState: false,
+        maxWith: 100
+      };
+    }
+
+    var plusCode = this.state.plusCode;
 
     document.addEventListener('domready', () => {
-      console.log("asdas");
       document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
     });
 
-    var plusCode = this.state.plusCode;
     this.queryEventsAndStoreInMemory(plusCode);
     this.renderInfo = this.renderInfo.bind(this);
   }
@@ -73,12 +90,12 @@ class MapView extends Component {
           onReady={this.onReady}
             style={mapStyles}
             initialCenter={{
-              lat: article.location.lat(),
-              lng: article.location.lng()
+              lat: article.lat,
+              lng: article.lng
             }}
             center={{
-              lat: article.location.lat(),
-              lng: article.location.lng()
+              lat: article.lat,
+              lng: article.lng
             }}
             zoomControl={true}
           >
@@ -138,7 +155,6 @@ class MapView extends Component {
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
-    // Update event info box
     this.state.allEvents.push({
       key: eventId,
       value: event
@@ -218,7 +234,7 @@ class MapView extends Component {
     var coords = "";
     var length = 0;
     if (location != null) {
-     length = location.length;
+      length = location.length;
     }
     if (length > 0) {
       coords = location.slice(1, length-2);

@@ -256,11 +256,12 @@ class Firebase {
         console.log(status);
         // When the status is "success" make deferred promise true
         if (status === "success") {
-          this.successCallback();
+          // alert(this)
+          // this.successCallback(sessionId, requestId);
           deferred.resolve(true);
         // When the status is "failed" show error message and deferred promise as false
         } else { 
-          this.failureCallback();
+          // this.failureCallback(sessionId, requestId);
           deferred.resolve(false);
         }
       }

@@ -4,48 +4,73 @@ import { Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import Firebase from 'firebase';
+import { changeMapState } from "../actions/index";
+import { connect } from "react-redux";
+import store from "../store/index";
+import { Provider } from "react-redux";
 
-export default class TopNavbar extends React.Component {
+function mapDispatchToProps(dispatch) {
+  return {
+    changeMapState: mapState => dispatch(changeMapState(mapState))
+  };
+}
+
+const mapStateToProps = state => {
+  return { articles: state.articles };
+}
+
+class TopNavbar extends React.Component {
   constructor(props) {
     super(props);
+    
+    this.reduxState = this.props.articles[0];
 
-    this.state= {
-      loggedIn: props.loggedIn,
-      history: props.history,
-    }
-
-    var credentials;
-
-    if (props.credentials) {
-      this.credentials = props.credentials;
-    } else if (props.history.location.state){
-      if (props.history.location.state.credentials) {
-        this.credentials = props.history.location.state.credentials;
+    if (this.reduxState) {
+      this.state = {
+        loggedIn: this.reduxState.loggedIn,
+        plusCode: this.reduxState.plusCode,
+        credentials: this.reduxState.credentials
+      }
+    } else {
+      this.state = {
+        loggedIn: false,
       }
     }
   }
 
+  logOutAndUpdateRedux() {
+    // update redux
+    const currentState = {
+      loggedIn: false,
+    }
+    this.props.changeMapState(currentState); 
+    this.setState(currentState);
+  }
+
   handleLoginButtonClick() {
     ReactDOM.render(
-      <div id="modal">
-        <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-      </div>,
+      <Provider store={store}>
+        <div id="modal">
+          <Modal history={this.props.history}/>
+        </div>
+      </Provider>,
       document.getElementById('modal-wrapper')
     );
   }
 
   handleMapViewonClick() {
-    if (!this.props.loggedIn) {
+    if (!this.state.loggedIn) {
       ReactDOM.render(
-        <div id="modal">
-          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-        </div>,
+        <Provider store={store}>
+          <div id="modal">
+            <Modal history={this.props.history}/>
+          </div>
+        </Provider>,
         document.getElementById('modal-wrapper')
       );
     } else {
       this.props.history.push({
         pathname: '/map/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       });
     }
   }
@@ -53,17 +78,17 @@ export default class TopNavbar extends React.Component {
   handleProfileButtonClick() {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
-    if (this.props.loggedIn) {
-        console.log(this.props.plus_code)
+    if (this.state.loggedIn) {
       this.props.history.push({
         pathname: '/profile/',
-        state: {loggedIn: this.props.loggedIn, credentials: JSON.stringify(this.credentials), plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
-        <div id="modal">
-          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-        </div>,
+        <Provider store={store}>
+          <div id="modal">
+            <Modal history={this.props.history}/>
+          </div>
+        </Provider>,
         document.getElementById('modal-wrapper')
       );
     }
@@ -73,22 +98,26 @@ export default class TopNavbar extends React.Component {
     //sign out the user
     Firebase.auth().signOut();
 
+    // change the state to logged out
+    this.logOutAndUpdateRedux();
+
     this.props.history.push({
       pathname:'/',
     })
   }
 
   handleCreateButton() {
-    if (this.props.loggedIn) {
+    if (this.state.loggedIn) {
       this.props.history.push({
         pathname: '/create/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
-        <div id="modal">
-          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-        </div>,
+        <Provider store={store}>
+          <div id="modal">
+            <Modal history={this.props.history}/>
+          </div>
+        </Provider>,
         document.getElementById('modal-wrapper')
       );
     }
@@ -102,11 +131,11 @@ export default class TopNavbar extends React.Component {
         <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
           <Nav>
-            <MapViewButton onClick={this.handleMapViewonClick.bind(this)} loggedIn={this.props.loggedIn} />
-            <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.props.loggedIn} />
-            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.props.loggedIn} credentials={this.props.credentials} />
-            <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
-            <LogOutButton onClick={this.handleLogoutButton.bind(this)} loggedIn={this.props.loggedIn} />
+            <MapViewButton onClick={this.handleMapViewonClick.bind(this)} loggedIn={this.state.loggedIn} />
+            <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.state.loggedIn} />
+            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.state.loggedIn} credentials={this.props.credentials} />
+            <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.state.loggedIn} />
+            <LogOutButton onClick={this.handleLogoutButton.bind(this)} loggedIn={this.state.loggedIn} />
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -191,3 +220,10 @@ function ProfileButtonNav(props) {
     </div>
   );
 }
+
+const ConnectedTopNavbar = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TopNavbar);
+
+export default ConnectedTopNavbar;

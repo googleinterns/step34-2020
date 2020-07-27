@@ -20,6 +20,9 @@ const mapStateToProps = state => {
 class MapViewPage extends Component {
   constructor(props) {
     super(props);
+
+    this.reduxState = this.props.articles[0];
+
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.inputRef = React.createRef();
@@ -28,28 +31,34 @@ class MapViewPage extends Component {
     this.autocomplete = null;
 
     this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
-    // Declare state
-    this.state = {
-      query: null,
-      location: null,
-      viewport: null,
-      history: props.history,
-      plusCode: props.history.location.state.plus_code,
-      loggedIn: props.location.state.loggedIn
-    };
 
+    if (this.reduxState) {
+      this.state = {
+        location: this.reduxState.location,
+        lat: this.reduxState.lat,
+        lng: this.reduxState.lng,
+        loggedIn: this.reduxState.loggedIn,
+        plusCode: this.reduxState.plusCode,
+        credentials: this.reduxState.credentials
+      };
+    } else {
+      window.location = "/";
+    }
+
+    console.log(this.state)
   }
 
   render() {
     return (
       <div>
-        <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
-        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
+        <Script url={this.url} onLoad={this.handleScriptLoad}/> 
+        <TopNavbar history={this.props.history}/>
         <Form>
           <Form.Group>
           <Form.Label> Enter your university </Form.Label>
           <br />
           <Form.Control id = "autocomplete" placeholder = "Enter university"/>
+          <Form.Text id="text-muted"></Form.Text>
           </Form.Group>
         </Form>
         <MapView plusCode={this.state.plusCode}/>
@@ -69,18 +78,24 @@ class MapViewPage extends Component {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
+    console.log(addressObject);
+    var mutedText = document.getElementById('text-muted');
 
     if (address && typeof addressObject.plus_code != 'undefined') {
+      mutedText.innerHTML = '';
       const currentState = {
-        query: addressObject.name,
         location: addressGeometry.location,
+        lat: addressGeometry.location.lat(),
+        lng: addressGeometry.location.lng(),
         locationObject: addressObject,
-        viewport: addressGeometry.viewport,
+        plusCode: addressObject.plus_code.global_code,
+        loggedIn: this.state.loggedIn,
+        credentials: this.state.credentials
       }
       this.props.changeMapState(currentState);
-
-      this.setState({plusCode: addressObject.plus_code.global_code});
       this.setState(currentState);
+    } else {
+      mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
     }
   }
 }
