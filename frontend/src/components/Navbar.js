@@ -44,6 +44,7 @@ class TopNavbar extends React.Component {
       loggedIn: false,
     }
     this.props.changeMapState(currentState); 
+    this.reduxState = this.props.articles[0];
     this.setState(currentState);
   }
 

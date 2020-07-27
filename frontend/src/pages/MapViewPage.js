@@ -113,6 +113,7 @@ class MapViewPage extends Component {
     }
     
     this.props.changeMapState(currentState);
+    this.reduxState = this.props.articles[0];
     this.setState(currentState);
   }
 
@@ -146,6 +147,7 @@ class MapViewPage extends Component {
         
       }
       this.props.changeMapState(currentState);
+      this.reduxState = this.props.articles[0];
       this.setState(currentState);
     } else {
       // mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';

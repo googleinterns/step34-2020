@@ -196,6 +196,7 @@ class Profile extends React.Component {
       reference: key
     }
     this.props.changeMapState(currentState);
+    this.reduxState = this.props.articles[0];
 
     this.props.history.push({
       pathname: '/update',

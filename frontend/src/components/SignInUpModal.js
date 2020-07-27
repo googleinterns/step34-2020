@@ -34,6 +34,8 @@ class LogInAndSignUp extends Component {
   }
 
   updateRedux(userCredentials, userLoggedIn) {
+    console.log('updating redux')
+    console.log(this.reduxState)
     // update redux
     const currentState = {
       location: this.reduxState.location,
@@ -44,7 +46,9 @@ class LogInAndSignUp extends Component {
       loggedIn: userLoggedIn,
       credentials: userCredentials
     }
+    console.log(currentState)
     this.props.changeMapState(currentState);  
+    this.reduxState = this.props.articles[0];
   }
 
   onLogin() {
@@ -54,9 +58,9 @@ class LogInAndSignUp extends Component {
 
     //sign in the user
     firebase.auth().signInWithEmailAndPassword(email, password)
-      .then (response => {
+      .then (async response => {
         this.setState({credentials: response.user, loggedIn: true})
-        this.updateRedux(response.user, true);
+        await this.updateRedux(response.user, true);
         this.onLoginSuccess()})
       .catch(function(error) {
         // Handle Errors here.
@@ -110,9 +114,11 @@ class LogInAndSignUp extends Component {
       loggedIn: true,
     })
 
+    console.log(this.reduxState)
     if (this.props.articles) {
       if (this.reduxState) {
         if (this.state.loggedIn && this.reduxState.credentials) {
+          console.log('here');
           this.props.history.push({
             pathname: '/profile'
           })
