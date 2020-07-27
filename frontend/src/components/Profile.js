@@ -27,6 +27,8 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
 
+    this.reduxState = this.props.articles[0];
+
     if (this.reduxState) {
       this.state = {
         loggedIn: this.reduxState.loggedIn,
