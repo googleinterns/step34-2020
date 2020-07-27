@@ -68,6 +68,26 @@
   min-height: 100vh;
 }
 
+.backgroundToLight {
+  animation: darkLight 1s;
+  animation-fill-mode: forwards;
+}
+
+.backgroundToDark {
+  animation: lightDark 1s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes darkLight {
+  from {background-color: #202124;}
+  to {background-color: white;}
+}
+
+@keyframes lightDark {
+  from {background-color: white;}
+  to {background-color: #202124;}
+}
+
 .title {
   font-size: 15rem;
   font-weight: 400;
@@ -87,7 +107,31 @@
   font-family: Roboto;
 }
 
+.find {
+  animation-delay: 1s;
+  animation-duration: 1s;
+}
+
+.create {
+  animation-delay: 2s;
+  animation-duration: 1s;
+}
+
+.share {
+  animation-delay: 3s;
+  animation-duration: 1s;
+}
+
+.inputUni {
+  margin: auto;
+  width: 75%;
+  animation-delay: 5s;
+  animation-duration: 1s;
+}
+
 .findeventbutton {
+  animation-delay: 5s;
+  animation-duration: 1s;
   background: #5E9EFF!important;
   border: #5E9EFF!important;
   font-size:1.2rem!important;
@@ -98,8 +142,34 @@
   width: 10rem!important;
 }
 
+.exploreTitle {
+  color: white;
+  font-size: 3rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.collapseTitle {
+  color: white;
+  cursor: pointer;
+  font-size: 2rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.collapseText {
+  color: white;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.collapseLine {
+  background-color: white;
+}
+
 .jumbotron {
-  background-color: #FFFFFF!important;
+  background-color: transparent!important;
 }
 
 .vertical-line {
@@ -171,7 +241,17 @@
 }
 
 .animate__animated.animate__fadeInDown {
-  --animate-delay: 4s;
-  --animate-duration: 2s;
+  animation-delay: 4s;
+  animation-duration: 1.5s;
 }
 
+.gm-style-iw {
+  padding: 0!important;
+  max-width: 3.5%!important;
+  font-weight: normal!important;
+  font-size: .7rem!important;
+}
+
+.gm-style-iw-d {
+  overflow: hidden!important;
+}

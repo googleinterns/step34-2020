@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Card } from 'react-bootstrap';
+import { ButtonToolbar, Badge, Button, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
 import EventInfoWindow from "./EventInfoWindow";
-import '../gm-styles.css'
+import '../gm-styles.css';
+import '../App.css';
+import moment from 'moment';
+import PlaceIcon from '@material-ui/icons/Place';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import GroupIcon from '@material-ui/icons/Group';
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -21,18 +26,17 @@ class MapView extends Component {
     super(props);
     this.state = {
       allEvents: [],
+      renderedEvents: [],
       location: undefined,
       plusCode: props.plusCode,
       showInfoWindows: true,
       contents: null,
       resizeState: false,
-      maxWidth: 100
+      centerLat: "",
+      centerLng: ""
     };
 
-    document.addEventListener('domready', () => {
-      console.log("asdas");
-      document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
-    });
+    this.mapRef = React.createRef();
 
     var plusCode = this.state.plusCode;
     this.queryEventsAndStoreInMemory(plusCode);
@@ -48,7 +52,7 @@ class MapView extends Component {
 
   // Whenever component is updated, we need to re-render again
   componentDidUpdate() {
-    this.renderInfo()
+    this.renderInfo();
   }
 
   handleShowWindow() {
@@ -62,32 +66,38 @@ class MapView extends Component {
   }
 
   renderInfo () {
-    ReactDOM.render(
+    var map = "";
     this.props.articles.map(article => {
-      return (
-        <Map
-          id="map"
-            key={article.toString()}
-            google={this.props.google}
-            zoom={17}
-          onReady={this.onReady}
-            style={mapStyles}
-            initialCenter={{
-              lat: article.location.lat(),
-              lng: article.location.lng()
-            }}
-            center={{
-              lat: article.location.lat(),
-              lng: article.location.lng()
-            }}
-            zoomControl={true}
-          >
-        {this.state.allEvents.map((element, index) => {
-          return (this.getInfoBox(element, index));
-        })}
-      </Map>
-      )
-    }), document.getElementById('map-view') )
+      this.state.centerLat = article.location.lat();
+      this.state.centerLng = article.location.lng();
+      map = (
+	<Map
+	  ref={this.mapRef}
+	  id="map"
+	  key={article.toString()}
+	  google={this.props.google}
+	  zoom={17}
+	  onReady={this.onReady}
+	  style={mapStyles}
+	  initialCenter={{
+	    lat: this.state.centerLat,
+	    lng: this.state.centerLng
+	  }}
+	  center={{
+	    lat: this.state.centerLat,
+	    lng: this.state.centerLng
+	  }}
+	  zoomControl={true}>
+	  {this.state.allEvents.map((element, index) => {
+	    return (this.getInfoBox(element, index));
+	  })}
+	</Map>
+      );
+    })
+
+    ReactDOM.render(
+      map, document.getElementById("map-view")
+    );
   }
 
   // Queries all events with a given university plus code
@@ -165,51 +175,61 @@ class MapView extends Component {
       var lat = parseFloat(location[0]);
       var lng = parseFloat(location[1]);
 
+      var images = "";
       var length = 0;
       var imageUrl = "";
-      if (event.imagePaths != null) {
-        length = event.imagePaths.length;
+      if (event.imageUrls !== undefined) {
+        length = event.imageUrls.length;
       }
 
       if (length > 0) {
-        imageUrl = event.imagePaths.slice(1, length - 2);
-        imageUrl = imageUrl.split(",")[0];
+        imageUrl = event.imageUrls.slice(1, length - 2);
+        imageUrl = imageUrl.split(","); 
+	images = imageUrl.map(url =>
+            <Carousel.Item>
+              <Image className="rounded" fluid src={url} />
+            </Carousel.Item>);
       }
 
-      return(
+      let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
+      let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
+      let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
+
+      var eventInfoWindow = (
         <EventInfoWindow
           key={index}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
-          <Card border="light" tag="a" onClick={this.printSomething.bind(this)} style={{minWidth: this.state.maxWidth, backgroundColor: 'lightgreen', display: 'flex', cursor: 'pointer'}}>
-            <Card.Img variant="right" src={imageUrl} />
-              <Card.Body>
-                <Card.Title>{event.eventName}</Card.Title>
-                <Card.Text>{event.description}</Card.Text>
-                <Card.Text>{event.locationName}</Card.Text>
-                <Card.Text>{event.startTime}</Card.Text>
-                <Card.Text>{event.endTime}</Card.Text>
-                <Card.Text>{event.date}</Card.Text>
-              </Card.Body>
+          <Card
+	    border="light"
+	    tag="a"
+	    onClick={this.infoWindowOnClick.bind(this, index)}
+	    style={{cursor: 'pointer'}}>
+	    <Card.Body>
+	      <Card.Title>{event.eventName}</Card.Title>
+	      <hr/>
+	      <Card.Text> 
+		<PlaceIcon/>
+		{event.locationName}
+	      </Card.Text> 
+	      <Card.Text> 
+		<AccessTimeIcon/>
+		{date}, {startTime} - {endTime}
+	      </Card.Text>
+	      <Badge variant="secondary">
+		{event.category}
+	      </Badge>
+	      <hr/>
+	    </Card.Body>
           </Card>
         </EventInfoWindow>
       );
-    }
-  }
 
-  printSomething() {
-    if (!this.state.resizeState) {
-      this.setState({
-        maxWidth: 600,
-        resizeState: true,
-      })
-      console.log("true");
-    } else {
-      this.setState({
-        maxWidth: 240,
-        resizeState: false,
-      })
-      console.log("false");
+      this.state.renderedEvents.push({
+	key: index,
+	value: eventInfoWindow, 
+      });
+      return eventInfoWindow;
     }
   }
 
@@ -227,6 +247,14 @@ class MapView extends Component {
     return coords;
   }
 
+  infoWindowOnClick(index) {
+    let event = this.state.allEvents[index];
+    let coords = this.getCoords(event.location);
+    this.setState({
+      centerLat: coords[0],
+      centerLng: coords[1]
+    });
+  }
 
   onReady = () => {
     this.setState({

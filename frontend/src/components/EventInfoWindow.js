@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { InfoWindow } from "google-maps-react";
+import '../App.css';
 
 class EventInfoWindow extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class EventInfoWindow extends Component {
 
   render() {
     return (
-      <InfoWindow 
+      <InfoWindow
         ref={this.infoWindowRef} {...this.props} />
     );
   }

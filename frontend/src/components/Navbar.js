@@ -50,21 +50,6 @@ export default class TopNavbar extends React.Component {
       pathname: '/map/',
       state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
     });
-    /*
-    if (!this.props.loggedIn) {
-      ReactDOM.render(
-        <div id="modal">
-          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-        </div>,
-        document.getElementById('modal-wrapper')
-      );
-    } else {
-      this.props.history.push({
-        pathname: '/map/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
-      });
-    }
-    */
   }
 
   handleProfileButtonClick() {
@@ -154,7 +139,7 @@ function LoginButtonNav(props) {
   if (!props.loggedIn){
     return (
       <div>
-        <Button inline 
+        <Button inline="true" 
           style={{marginRight:".8rem", marginTop: ".3rem"}}
           type="button" 
           variant="outline-primary" 
@@ -179,7 +164,6 @@ function ProfileButtonNav(props) {
 	      roundedCircle
 	     src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
 	  </Dropdown.Toggle>
-
 	  <Dropdown.Menu>
 	    <Dropdown.Item as={Button} onClick={props.onClick}>Profile</Dropdown.Item>
 	    <Dropdown.Item as={Button} onClick={props.onLogout}>Logout</Dropdown.Item>

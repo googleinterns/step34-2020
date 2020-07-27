@@ -62,8 +62,8 @@ class Profile extends React.Component {
 	  </Carousel.Item>);
       }
       
-      let startTime = moment(event.startTime, 'HH:mm').format('h:mm a')
-      let endTime = moment(event.endTime, 'HH:mm').format('h:mm a')
+      let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
+      let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
       let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
 
       // Add this card to the list of all cards to be displayed on the profile
