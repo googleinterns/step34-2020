@@ -24,7 +24,7 @@ class Events extends Component {
   constructor(props) {
     super(props);
 
-    if (!this.props.articles[0] || !this.props.articles[0].loggedIn) {
+    if (!this.reduxState || !this.reduxState.loggedIn) {
       window.location = "/";
     }
 
@@ -43,6 +43,8 @@ class Events extends Component {
       validated: false,
       locationName: "",
     };
+
+    this.reduxState = this.props.articles[0];
 
     this.unviersityAutocomplete = null;
     this.locationAutocomplete = null;
@@ -202,10 +204,10 @@ class Events extends Component {
 
       // Assign creator as attendee
       var attendees = []
-      attendees.push(this.props.articles[0].credentials.uid)
+      attendees.push(this.reduxState.credentials.uid)
 
       // The respone acquired from the server
-      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.props.articles[0].credentials.uid);
+      let response = await fb.requestEventCreation(title, date, startTime, endTime, description, plusCode, location, locationName, imageUrls, category, organization,  this.changeListToString(attendees), this.reduxState.credentials.uid);
       if (response) {
         this.props.history.push({
           pathname: '/map/',

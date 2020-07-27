@@ -21,6 +21,7 @@ const mapStateToProps = state => {
 class Search extends Component {
   constructor(props) {
     super(props);
+
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -40,7 +41,7 @@ class Search extends Component {
     return ( 
       <div className="welcomeContent">
         <Script url={url} onLoad={this.handleScriptLoad}/> 
-        <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
+        <TopNavbar history={this.props.history}/>
         <Jumbotron >
           <h1> Welcome to MapIT! </h1> 
           <Form>

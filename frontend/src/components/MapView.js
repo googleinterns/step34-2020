@@ -20,13 +20,15 @@ class MapView extends Component {
   constructor(props) {
     super(props);
 
-    if (this.props.articles[0]) {
+    this.reduxState = this.props.articles[0];
+
+    if (this.reduxState) {
       this.state = {
         allEvents: [],
-        location: this.props.articles[0].location,
-        lat: this.props.articles[0].lat,
-        lng: this.props.articles[0].lng,
-        plusCode: this.props.articles[0].plusCode,
+        location: this.reduxState.location,
+        lat: this.reduxState.lat,
+        lng: this.reduxState.lng,
+        plusCode: this.reduxState.plusCode,
         showInfoWindows: true,
         contents: null,
         resizeState: false,
@@ -46,11 +48,12 @@ class MapView extends Component {
       };
     }
 
+    var plusCode = this.state.plusCode;
+
     document.addEventListener('domready', () => {
       document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
     });
 
-    var plusCode = this.state.plusCode;
     this.queryEventsAndStoreInMemory(plusCode);
     this.renderInfo = this.renderInfo.bind(this);
   }

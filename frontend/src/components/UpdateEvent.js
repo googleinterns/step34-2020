@@ -24,7 +24,9 @@ class UpdateEvent extends Component {
   constructor(props) {
     super(props);
 
-    if (!this.props.articles[0] || !this.props.articles[0].loggedIn) {
+    this.reduxState = this.props.articles[0];
+
+    if (!this.reduxState || !this.reduxState.loggedIn) {
       window.location = "/";
     }
 
@@ -236,12 +238,12 @@ class UpdateEvent extends Component {
         imageUrls = this.changeListToString(await this.uploadImages(files));
       }
 
-      var uid = this.props.articles[0].credentials.uid;
-      var eventId = this.props.articles[0].reference;
+      var uid = this.reduxState.credentials.uid;
+      var eventId = this.reduxState.reference;
       // The respone acquired from the server
       let response = await fb.requestEventUpdate(eventId, uid, title, date, startTime, endTime, description, location, locationName, imageUrls, category, organization);
       if (response) {
-        console.log(this.props.articles[0].plus_code);
+        console.log(this.reduxState.plus_code);
         this.props.history.push({
           pathname: '/map/',
         })
@@ -285,7 +287,7 @@ class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Event title</Form.Label>
               <Form.Control
-                defaultValue={this.props.articles[0].eventObject.eventName}
+                defaultValue={this.reduxState.eventObject.eventName}
                 required
                 onChange={this.handleTitleChange}
                 type="text" 
@@ -299,7 +301,7 @@ class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Date</Form.Label>
               <Form.Control
-                defaultValue={this.props.articles[0].eventObject.date}
+                defaultValue={this.reduxState.eventObject.date}
                 required
                 onChange={this.handleDateChange}
                 type="date"/>
@@ -310,7 +312,7 @@ class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Start Time</Form.Label>
               <Form.Control 
-                defaultValue={this.props.articles[0].eventObject.startTime}	
+                defaultValue={this.reduxState.eventObject.startTime}	
                 onChange={this.handleStartTimeChange}
                 required
                 type="time"/>
@@ -321,7 +323,7 @@ class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>End Time</Form.Label>
               <Form.Control
-                defaultValue={this.props.articles[0].eventObject.endTime} 
+                defaultValue={this.reduxState.eventObject.endTime} 
                 onChange={this.handleEndTimeChange}
                 required
                 type="time"/>
@@ -332,7 +334,7 @@ class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Description of your event</Form.Label>
               <Form.Control
-                defaultValue={this.props.articles[0].eventObject.description}
+                defaultValue={this.reduxState.eventObject.description}
                 onChange={this.handleDescriptionChange}
                 required
                 as="textarea" 
@@ -346,7 +348,7 @@ class UpdateEvent extends Component {
               <Form.Group as={Col}>
                 <Form.Label>Location</Form.Label>
                 <Form.Control
-                  defaultValue={this.props.articles[0].eventObject.locationName} 
+                  defaultValue={this.reduxState.eventObject.locationName} 
                   id="location-autocomplete"	
                   required
                   type="text"
@@ -404,7 +406,7 @@ class UpdateEvent extends Component {
             <Form.Group>
               <Form.Label>Organization</Form.Label>
               <Form.Control
-                defaultValue={this.props.articles[0].eventObject.organization} 
+                defaultValue={this.reduxState.eventObject.organization} 
                 onChange={this.handleOrganizationChange}
                 type="text" 
                 placeholder="Your organization" />

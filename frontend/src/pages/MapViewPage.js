@@ -20,6 +20,9 @@ const mapStateToProps = state => {
 class MapViewPage extends Component {
   constructor(props) {
     super(props);
+
+    this.reduxState = this.props.articles[0];
+
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
@@ -30,15 +33,14 @@ class MapViewPage extends Component {
 
     this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 
-    if (this.props.articles[0]) {
+    if (this.reduxState) {
       this.state = {
-        location: this.props.articles[0].location,
-        lat: this.props.articles[0].lat,
-        lng: this.props.articles[0].lng,
-        loggedIn: this.props.articles[0].loggedIn,
-        plusCode: this.props.articles[0].plusCode,
-        credentials: this.props.articles[0].credentials,
-        filter_choice: "",
+        location: this.reduxState.location,
+        lat: this.reduxState.lat,
+        lng: this.reduxState.lng,
+        loggedIn: this.reduxState.loggedIn,
+        plusCode: this.reduxState.plusCode,
+        credentials: this.reduxState.credentials
       };
     } else {
       window.location = "/";

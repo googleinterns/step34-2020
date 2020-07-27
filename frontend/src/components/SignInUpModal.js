@@ -20,6 +20,8 @@ class LogInAndSignUp extends Component {
   constructor(props) {
     super(props);
 
+    this.reduxState = this.props.articles[0];
+
     this.state = {
       loggedIn: false,
       showModal: true,
@@ -34,11 +36,11 @@ class LogInAndSignUp extends Component {
   updateRedux(userCredentials, userLoggedIn) {
     // update redux
     const currentState = {
-      location: this.props.articles[0].location,
-      lat: this.props.articles[0].lat,
-      lng: this.props.articles[0].lng,
-      locationObject: this.props.articles[0].locationObject,
-      plusCode: this.props.articles[0].plusCode,
+      location: this.reduxState.location,
+      lat: this.reduxState.lat,
+      lng: this.reduxState.lng,
+      locationObject: this.reduxState.locationObject,
+      plusCode: this.reduxState.plusCode,
       loggedIn: userLoggedIn,
       credentials: userCredentials
     }
@@ -109,8 +111,8 @@ class LogInAndSignUp extends Component {
     })
 
     if (this.props.articles) {
-      if (this.props.articles[0]) {
-        if (this.state.loggedIn && this.props.articles[0].credentials) {
+      if (this.reduxState) {
+        if (this.state.loggedIn && this.reduxState.credentials) {
           this.props.history.push({
             pathname: '/profile'
           })
