@@ -54,7 +54,7 @@ class MapView extends Component {
       document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
     });
 
-    this.queryEventsAndStoreInMemory(plusCode);
+    //this.queryEventsAndStoreInMemory(plusCode);
     this.renderInfo = this.renderInfo.bind(this);
   }
 
@@ -87,9 +87,9 @@ class MapView extends Component {
     if (filter_choice === null || typeof filter_choice === 'undefined') {
       listEvents = this.state.allEvents;
     } else {
-      console.log("changed filter")
+      //console.log("changed filter")
       listEvents = await this.state.allEvents.filter((event) => {
-        console.log(event.category)
+        //console.log(event.category)
         return event.category.toLowerCase() === (filter_choice).toLowerCase();
       });
     }
@@ -98,7 +98,7 @@ class MapView extends Component {
     let article = this.props.articles[0];
     let container = document.getElementById('map-view')
 
-    console.log(container)
+    //console.log(container)
 
     ReactDOM.render(
       <Map
@@ -119,7 +119,7 @@ class MapView extends Component {
         zoomControl={true}
       >
       {listEvents.map((element, index) => {
-        console.log(element)
+        //console.log(element)
         return (this.getInfoBox(element, index));
       })}
     </Map>
@@ -134,6 +134,7 @@ class MapView extends Component {
         if (dataSnapshot.numChildren() !== 0) {
           var events = Object.values(dataSnapshot.val());
           for (var i = 0; i < events.length; i++) {
+            console.log(events[i]);
             this.updateEventIdsAndLoadEvent(events[i]);
           }
         }
@@ -174,6 +175,11 @@ class MapView extends Component {
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
+    function findEvent(currEvent) {
+      return currEvent.key === eventId;
+    }
+    const removeEvent = this.state.allEvents.find(findEvent);
+    this.state.allEvents.splice(this.state.allEvents.indexOf(removeEvent), 1);
     this.state.allEvents.push({
       key: eventId,
       value: event
@@ -181,6 +187,8 @@ class MapView extends Component {
     this.setState({
       allEvents: this.state.allEvents,
     });
+    console.log("allEvents:")
+    console.log(this.state.allEvents);
   }
 
   loadArticle(article) {
@@ -238,13 +246,13 @@ class MapView extends Component {
         maxWidth: 600,
         resizeState: true,
       })
-      console.log("true");
+      //console.log("true");
     } else {
       this.setState({
         maxWidth: 240,
         resizeState: false,
       })
-      console.log("false");
+      //console.log("false");
     }
   }
 
@@ -270,7 +278,7 @@ class MapView extends Component {
   }
 
   render() {
-    console.log("hello")
+    //console.log("hello")
     return (
       <div className="mapView" id="map-view">
       </div>
