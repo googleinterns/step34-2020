@@ -130,19 +130,6 @@ class TopNavbar extends React.Component {
   }
 }
 
-function MapViewButton(props) {
-  return (
-    <div>
-      <Button 
-        style={{marginRight:".8rem"}}
-        type="button" 
-        variant="primary"
-        onClick={props.onClick}>
-        View events
-      </Button>
-    </div>
-  )
-}
 
 function CreateEventButton(props) {
   return (
@@ -181,18 +168,18 @@ function ProfileButtonNav(props) {
   if (props.loggedIn) {
     return (
       <div>
-	<Dropdown alignRight>
-	  <Dropdown.Toggle  as={Image} style={{border: "2px solid #1A73E8", maxWidth: "3rem", maxHeight: "3rem", marginRight:".8rem", margin:"auto"}}
-	      type="button" 
-	      variant="primary" 
-	      roundedCircle
-	     src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
-	  </Dropdown.Toggle>
-	  <Dropdown.Menu>
-	    <Dropdown.Item as={Button} onClick={props.onClick}>Profile</Dropdown.Item>
-	    <Dropdown.Item as={Button} onClick={props.onLogout}>Logout</Dropdown.Item>
-	  </Dropdown.Menu>
-	</Dropdown>
+  <Dropdown alignRight>
+    <Dropdown.Toggle  as={Image} style={{border: "2px solid #1A73E8", maxWidth: "3rem", maxHeight: "3rem", marginRight:".8rem", margin:"auto"}}
+        type="button" 
+        variant="primary" 
+        roundedCircle
+       src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item as={Button} onClick={props.onClick}>Profile</Dropdown.Item>
+      <Dropdown.Item as={Button} onClick={props.onLogout}>Logout</Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
       </div>
     );
   } else {

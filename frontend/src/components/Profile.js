@@ -2,15 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
-import { Badge, Carousel, CardDeck, Image, Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
+import { Badge, Carousel, Image, Container, Jumbotron, Row, Col } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
-import Firebase from 'firebase';
 import { fb } from '../App';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
-import CardColumns from 'react-bootstrap/CardColumns';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import ConfirmDelete from './ConfirmDelete';
@@ -53,13 +49,15 @@ class Profile extends React.Component {
     this.showModal =  this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
-    
+
   }
 
   didUpdate(event, parent, ref) {
     if(event !== null) {
       var attendees = event.attendees.slice(1, event.attendees.length -1).split(",");
-      var namesOfAttendees = this.getNamesOfAttendees (attendees);
+
+      // NOTE: We left list of attendees out for now.
+      //var namesOfAttendees = this.getNamesOfAttendees (attendees);
       let num = attendees.length;
       var len = 0;
       var imageUrl = "";
@@ -67,99 +65,100 @@ class Profile extends React.Component {
 
       // Since images are option field, evaluate whether the field isn't null
       if (event.imageUrls !== undefined) {
-	len = event.imageUrls.length;
-      }
-      // Retrieve image urls only if they were provided. Otherwise set url to default value
-      if(len > 0) {
-	imageUrl = event.imageUrls.slice(1, len - 2);
-	imageUrl = imageUrl.split(",");
-	console.log(imageUrl);
-	// dynamically create a card that contain images for the event
-	card = imageUrl.map(url => 
-	  <Carousel.Item>
-	    <Image className="rounded" fluid src={url} />
-	  </Carousel.Item>);
-      }
-      
-      let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
-      let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
-      let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
+        len = event.imageUrls.length;
+            }
+            // Retrieve image urls only if they were provided. Otherwise set url to default value
+            if(len > 0) {
+        imageUrl = event.imageUrls.slice(1, len - 2);
+        imageUrl = imageUrl.split(",");
+        console.log(imageUrl);
+        // dynamically create a card that contain images for the event
+        card = imageUrl.map(url =>
+          <Carousel.Item>
+            <Image className="rounded" fluid src={url} />
+          </Carousel.Item>);
+            }
 
-      // Add this card to the list of all cards to be displayed on the profile
-      this.state.cards.push(
-	<Col className="event-col" md="auto">
-	  <Card
-	    className="shadow mb-5 bg-white rounded event-cards"
-	    key={Math.random(1001,5000)} 
-	    text={'light' ? 'dark' : 'white'}>
-	    <Carousel className="fill-parent">
-	      {card}
-	    </Carousel>
-	    <Card.Body>
-	      <Card.Title>
-		<h1 className="event-cards-title">{event.eventName}</h1>
-	      </Card.Title>
-	      <Row>
-		<Col md="auto">
-		  <Image md="auto" src={placeIcon}/>
-		</Col>
-		<Col md="auto">	
-		  <Card.Text className="event-text">{event.locationName}</Card.Text>
-		</Col>
-	      </Row>
-	      <Row md="auto">
-		<Col>
-		  <Image md="auto" src={timeIcon}/>
-		</Col>
-		<Col md="auto">	
-		  <Card.Text>{date}, {startTime} - {endTime}</Card.Text>
-		</Col>
-	      </Row>
-	      <Row md="auto">
-		<Col>
-		  <Image md="auto" src={groupIcon}/>
-		</Col>
-		<Col md="auto">	
-		  <Card.Text>{num} attending</Card.Text>
-		</Col>
-	      </Row>
-	      <hr/>
-	      <Card.Text className="event-cards-description">
-		About
-	      </Card.Text>
-	      <Card.Text>{event.description}</Card.Text>
-	      <Badge variant="secondary">
-		{event.category}
-	      </Badge>
-	      <hr/>
-	      <ButtonToolBar className="float-right">
-		<Button 
-		variant="primary"
-		style={{ marginRight:".8rem", width:"80px" }}
-		onClick={() => this.handleEdit(ref, event)}>
-		  Edit
-		</Button>
-		<Button 
-		  variant="danger" 
-		  style={{ width:"80px" }}
-		  onClick={() => this.showModal(ref)}>
-		  Delete
-		</Button>
-	      </ButtonToolBar>
-	    </Card.Body>
-	  </Card>
-	</Col>
+            let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
+            let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
+            let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
+
+            // Add this card to the list of all cards to be displayed on the profile
+            this.state.cards.push(
+          <Col className="event-col" md="auto">
+          <Card
+            className="shadow mb-5 bg-white rounded event-cards"
+            key={Math.random(1001,5000)}
+            text={'light' ? 'dark' : 'white'}>
+            <Carousel className="fill-parent">
+              {card}
+            </Carousel>
+            <Card.Body>
+              <Card.Title>
+                <h1 className="event-cards-title">{event.eventName}</h1>
+              </Card.Title>
+              <Row>
+                <Col md="auto">
+                  <Image md="auto" src={placeIcon}/>
+                </Col>
+                <Col md="auto">
+                  <Card.Text className="event-text">{event.locationName}</Card.Text>
+                </Col>
+              </Row>
+              <Row md="auto">
+                <Col>
+                  <Image md="auto" src={timeIcon}/>
+                </Col>
+                <Col md="auto">
+                  <Card.Text>{date}, {startTime} - {endTime}</Card.Text>
+                </Col>
+              </Row>
+              <Row md="auto">
+                <Col>
+                  <Image md="auto" src={groupIcon}/>
+                </Col>
+                <Col md="auto">
+                  <Card.Text>{num} attending</Card.Text>
+                </Col>
+              </Row>
+              <hr/>
+              <Card.Text className="event-cards-description">
+                  About
+              </Card.Text>
+              <Card.Text>{event.description}</Card.Text>
+              <Badge variant="secondary">
+                {event.category}
+              </Badge>
+              <hr/>
+              <ButtonToolBar className="float-right">
+                <Button
+                variant="primary"
+                style={{ marginRight:".8rem", width:"80px" }}
+                onClick={() => this.handleEdit(ref, event)}>
+                  Edit
+                </Button>
+                <Button
+                  variant="danger"
+                  style={{ width:"80px" }}
+                  onClick={() => this.showModal(ref)}>
+                  Delete
+                </Button>
+              </ButtonToolBar>
+            </Card.Body>
+          </Card>
+        </Col>
       );
 
       this.setState({
-        contents: <Container className="event-container" fluid>
-		    <Row className="d-flex flex-row flex-nowrap">
-                      {this.state.cards.map(element   => element)}
-		    </Row>
-                  </Container>
+        contents:
+          <Container className="event-container" fluid>
+            <Row className="d-flex flex-row flex-nowrap">
+                          {this.state.cards.map(element   => element)}
+            </Row>
+          </Container>
       })
     }
-    
+
   }
 
   getNamesOfAttendees(refAttendees) {
@@ -206,13 +205,13 @@ class Profile extends React.Component {
 
     // Shouldn't be null. if it is, do nothing
     if (myEventsRef != null) {
-      myEventsRef.on('value', snapshot => {  
-	// Do nothing when it's null
+      myEventsRef.on('value', snapshot => {
+        // Do nothing when it's null
         if (snapshot.val() != null) {
           const mykeys = Object.values(snapshot.val())
           //retrieve data from database using this reference
           this.getData(mykeys);
-        }  
+          }
       });
     }
   }
@@ -223,7 +222,7 @@ class Profile extends React.Component {
     })
     ReactDOM.render(
       <div>
-       <ConfirmDelete 
+       <ConfirmDelete
         show={this.state.showConfirmModal}
         onHide={this.hideModal.bind(this)}
         uid={this.state.credentials.uid}
@@ -263,61 +262,60 @@ class Profile extends React.Component {
   }
 
   renderProfile() {
-    return (   
+    return (
       <div className="profileContent">
-	<Row>
-	  <Col>
-	    <h1 className="subtitle1">Profile</h1>
-	  </Col>
-	</Row>
+        <Row>
+          <Col>
+            <h1 className="subtitle1">Profile</h1>
+          </Col>
+        </Row>
         <hr/>
-        <Row> 
-	  <Col md={{ span: 4, offset: 4 }} >
-	    <div className="profilephoto">
-	      <Image
-      		style={{
-		  width: "300px",
-		  height: "300px",
-		  display: "block",
-		  margin: "auto",
-		}}
-      		roundedCircle
-      		src={this.state.profilePicture}
-		alt="" /> 
-	    </div>
-	  </Col>
-      	</Row>
+        <Row>
+          <Col md={{ span: 4, offset: 4 }} >
+            <div className="profilephoto">
+              <Image
+                style={{
+                width: "300px",
+                height: "300px",
+                display: "block",
+                margin: "auto",}}
+                roundedCircle
+                src={this.state.profilePicture}
+              alt="" />
+            </div>
+          </Col>
+        </Row>
         <br/>
-	<Row> 
-	  <Col md={{ span: 4, offset: 4 }}>
-	    <h1 className="profile-name">John Doe</h1>
-	    <br />
-      	    <h1 className="profile-email">jdoe@osu.edu</h1>
-      	    <br />
-	    <h1 className="profile-university">The Ohio State University</h1>
-	  </Col>
-	</Row>
+        <Row>
+          <Col md={{ span: 4, offset: 4 }}>
+            <h1 className="profile-name">John Doe</h1>
+            <br />
+                  <h1 className="profile-email">jdoe@osu.edu</h1>
+                  <br />
+            <h1 className="profile-university">The Ohio State University</h1>
+          </Col>
+        </Row>
       </div>
     );
   }
 
   renderEvents() {
-    return ( 
+    return (
       <div>
-	<Row>
-	  <Col>
-	    <h1 className="subtitle1">Events</h1>
-	  </Col>
-	</Row>
+        <Row>
+          <Col>
+            <h1 className="subtitle1">Events</h1>
+          </Col>
+        </Row>
         <hr/>
-	<div 
-	  id="content"
-	  style={{
-	    marginLeft:"1.8rem",
-	    marginTop:".8rem"}}>
-	  <br />
-      	  {this.state.contents}
-	</div>
+        <div
+          id="content"
+          style={{
+            marginLeft:"1.8rem",
+            marginTop:".8rem"}}>
+          <br />
+                {this.state.contents}
+        </div>
       </div>
     );
   }
@@ -325,16 +323,16 @@ class Profile extends React.Component {
   render() {
     if (this.reduxState) {
       return (
-	<div>
-	  <TopNavbar 
-	    loggedIn={true}
-	    history={this.props.history} 
-	    credentials={this.state.credentials} />
-	  <Jumbotron>
-	    {this.renderProfile()}
-	    {this.renderEvents()}
-	  </Jumbotron>
-	</div> 
+  <div>
+    <TopNavbar
+      loggedIn={true}
+      history={this.props.history}
+      credentials={this.state.credentials} />
+    <Jumbotron>
+      {this.renderProfile()}
+      {this.renderEvents()}
+    </Jumbotron>
+  </div>
       )
     } else {
       window.location = '/';

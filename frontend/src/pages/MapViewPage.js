@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
-import { Toast, Form, Col, Container } from 'react-bootstrap';
+import { Toast, Form, Col } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { GoogleApiWrapper } from 'google-maps-react';
@@ -54,7 +54,7 @@ class MapViewPage extends Component {
   render() {
     return (
       <div>
-        <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
+        <Script url = {this.url} onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
         <Toast style={{position: "absolute", zIndex: 2, padding: "0rem", minWidth: "40rem", float: "right", margin: "1rem"}}>
         <Toast.Body>	
@@ -126,7 +126,7 @@ class MapViewPage extends Component {
       credentials: this.state.credentials,
       filter_choice: filter_choice,
     }
-    
+
     this.props.changeMapState(newState);
     this.setState(newState);
   }
@@ -156,7 +156,7 @@ class MapViewPage extends Component {
         loggedIn: this.state.loggedIn,
         credentials: this.state.credentials,
         filter_choice: this.state.filter_choice,
-        
+
       }
       this.props.changeMapState(newState);
       this.reduxState = this.props.articles[0];
