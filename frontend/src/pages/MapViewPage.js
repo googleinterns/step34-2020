@@ -74,6 +74,9 @@ class MapViewPage extends Component {
                 <option value="2">Student Organization Event</option>
               </Form.Control>
             </Form.Group>
+            <Form.Group>
+              <Form.Check type="checkbox" label="Show today's events"/>
+            </Form.Group>
           </Col>
           </Form>
         </Toast.Body>
