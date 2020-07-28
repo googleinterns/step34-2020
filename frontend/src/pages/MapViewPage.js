@@ -101,7 +101,7 @@ class MapViewPage extends Component {
         break;
     }
 
-    const currentState = {
+    const newState = {
       location: this.state.location,
       lat: this.state.lat,
       lng: this.state.lng,
@@ -112,9 +112,8 @@ class MapViewPage extends Component {
       filter_choice: filter_choice,
     }
     
-    this.props.changeMapState(currentState);
-    this.reduxState = this.props.articles[0];
-    this.setState(currentState);
+    this.props.changeMapState(newState);
+    this.setState(newState);
   }
 
   handleScriptLoad() {
@@ -135,7 +134,7 @@ class MapViewPage extends Component {
 
     if (address && typeof addressObject.plus_code != 'undefined') {
       //mutedText.innerHTML = '';
-      const currentState = {
+      const newState = {
         location: addressGeometry.location,
         lat: addressGeometry.location.lat(),
         lng: addressGeometry.location.lng(),
@@ -146,9 +145,9 @@ class MapViewPage extends Component {
         filter_choice: this.state.filter_choice,
         
       }
-      this.props.changeMapState(currentState);
+      this.props.changeMapState(newState);
       this.reduxState = this.props.articles[0];
-      this.setState(currentState);
+      this.setState(newState);
     } else {
       // mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
       alert("MapIT does not support this location.  Please choose another.")

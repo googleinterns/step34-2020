@@ -5,7 +5,9 @@ import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
 import EventInfoWindow from "./EventInfoWindow";
-import '../gm-styles.css'
+import '../gm-styles.css';
+
+
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -47,15 +49,9 @@ class MapView extends Component {
         filter_choice: props.articles[0].filter_choice,
       };
     }
-
-    // var plusCode = this.state.plusCode;
-
-    // document.addEventListener('domready', () => {
-    //   document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
-    // });
-
-    // this.queryEventsAndStoreInMemory(plusCode);
-    // this.renderInfo = this.renderInfo.bind(this);
+    
+    this.renderInfo = this.renderInfo.bind(this);
+    this.infoWindows = [];
   }
 
   async UNSAFE_componentWillReceiveProps(nextProps) {
@@ -80,50 +76,51 @@ class MapView extends Component {
     await this.renderInfo()
   }
 
-  async renderInfo () {
+
+  renderInfo () {
     var listEvents = [];
+
     const filter_choice =  this.props.articles[0].filter_choice;
 
     if (filter_choice === null || typeof filter_choice === 'undefined') {
       listEvents = this.state.allEvents;
     } else {
       console.log("changed filter")
-      listEvents = await this.state.allEvents.filter((event) => {
-        console.log(event.category)
+      listEvents = this.state.allEvents.filter((event) => {
         return event.category.toLowerCase() === (filter_choice).toLowerCase();
       });
     }
-    console.log(listEvents)
-    console.log(filter_choice)
+
     let article = this.props.articles[0];
     let container = document.getElementById('map-view')
+    
+    //unmount the component so that we can render new data
+    ReactDOM.unmountComponentAtNode(container)
 
-    console.log(container)
-    var ourId = "map" + (String) (Math.floor(Math.random()));
 
     ReactDOM.render(
       <Map
-        id={ourId}
-        key={ Math.floor(Math.random())}
-        google={this.props.google}
-        zoom={17}
-        onReady={this.onReady}
-        style={mapStyles}
-        initialCenter={{
-          lat: article.lat,
-          lng: article.lng
-        }}
-        center={{
-          lat: article.lat,
-          lng: article.lng
-        }}
-        zoomControl={true}
-      >
-      {listEvents.map((element, index) => {
-        console.log(element)
-        return (this.getInfoBox(element, index));
-      })}
-    </Map>
+          id="map"
+          key={ Math.floor(Math.random())}
+          google={this.props.google}
+          zoom={17}
+          onReady={this.onReady}
+          style={mapStyles}
+          initialCenter={{
+            lat: article.lat,
+            lng: article.lng
+          }}
+          center={{
+            lat: article.lat,
+            lng: article.lng
+          }}
+          zoomControl={true}
+        >
+        {listEvents.map((element, index) => {
+          console.log(element)
+          return this.getInfoBox(element, index);
+        })}
+      </Map>
     , container)
   }
 
@@ -191,10 +188,6 @@ class MapView extends Component {
     }
   }
 
-  addInfoBoxEvent(event) {
-    return this.getInfoBox(event);
-  }
-
   getInfoBox(event, index) {
     if(event != null) {
       var location = this.getCoords(event.location);
@@ -212,8 +205,11 @@ class MapView extends Component {
         imageUrl = imageUrl.split(",")[0];
       }
 
+
       return(
         <EventInfoWindow
+          onOpen={this.windowHasOpened}
+          onclose={this.windowHasClosed}
           key={index}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
@@ -232,6 +228,7 @@ class MapView extends Component {
       );
     }
   }
+
 
   printSomething() {
     if (!this.state.resizeState) {
@@ -272,7 +269,6 @@ class MapView extends Component {
   }
 
   render() {
-    console.log("hello")
     return (
       <div className="mapView" id="map-view">
       </div>
