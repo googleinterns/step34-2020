@@ -33,6 +33,9 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
 
+    this.reduxState = this.props.articles[0];
+    console.log(this.reduxState);
+
     if (this.reduxState) {
       this.state = {
         loggedIn: this.reduxState.loggedIn,
@@ -55,14 +58,15 @@ class Profile extends React.Component {
 
   didUpdate(event, parent, ref) {
     if(event !== null) {
-      var attendees = ["user1", "user2", "user3"];
+      var attendees = event.attendees.slice(1, event.attendees.length -1).split(",");
+      var namesOfAttendees = this.getNamesOfAttendees (attendees);
       let num = attendees.length;
       var len = 0;
       var imageUrl = "";
       var card = "";
 
       // Since images are option field, evaluate whether the field isn't null
-      if (event.imageUrls != null) {
+      if (event.imageUrls !== undefined) {
 	len = event.imageUrls.length;
       }
       // Retrieve image urls only if they were provided. Otherwise set url to default value
@@ -147,7 +151,6 @@ class Profile extends React.Component {
 	</Col>
       );
 
-
       this.setState({
         contents: <Container className="event-container" fluid>
 		    <Row className="d-flex flex-row flex-nowrap">
@@ -157,6 +160,22 @@ class Profile extends React.Component {
       })
     }
     
+  }
+
+  getNamesOfAttendees(refAttendees) {
+    var names = []
+    var len = refAttendees.length;
+    var ref = fb.userRef.child('users');
+
+    for (var i = 0; i < len; i++) {
+      var current_attendee = ref.child(refAttendees[i]).child('name');
+
+      current_attendee.on('value', snapshot => {
+        let name = snapshot.val();
+        names.push(name);
+      })
+    }
+    return names;
   }
 
   getData(eventKeys) {
@@ -236,6 +255,7 @@ class Profile extends React.Component {
       reference: key
     }
     this.props.changeMapState(currentState);
+    this.reduxState = this.props.articles[0];
 
     this.props.history.push({
       pathname: '/update',

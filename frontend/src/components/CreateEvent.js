@@ -24,6 +24,8 @@ class Events extends Component {
   constructor(props) {
     super(props);
 
+    this.reduxState = this.props.articles[0];
+
     if (!this.reduxState || !this.reduxState.loggedIn) {
       window.location = "/";
     }

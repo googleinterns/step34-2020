@@ -39,6 +39,7 @@ class MapView extends Component {
         showInfoWindows: true,
         contents: null,
         resizeState: false,
+        filter_choice: props.articles[0].filter_choice,
       };
     } else {
       this.state = {
@@ -49,6 +50,7 @@ class MapView extends Component {
         showInfoWindows: false,
         contents: null,
         resizeState: false,
+        filter_choice: props.articles[0].filter_choice,
       };
     }
 
@@ -84,8 +86,27 @@ class MapView extends Component {
     await this.handleShowWindow()
     await this.renderInfo()
   }
-  
+
   renderInfo () {
+    var listEvents = [];
+
+    const filter_choice =  this.props.articles[0].filter_choice;
+
+    if (filter_choice === null || typeof filter_choice === 'undefined') {
+      listEvents = this.state.allEvents;
+    } else {
+      console.log("changed filter")
+      listEvents = this.state.allEvents.filter((event) => {
+        return event.category.toLowerCase() === (filter_choice).toLowerCase();
+      });
+    }
+
+    let article = this.props.articles[0];
+    let container = document.getElementById('map-view')
+    
+    //unmount the component so that we can render new data
+    ReactDOM.unmountComponentAtNode(container)
+
     var map = (
       <Map
 	ref={this.mapRef}
@@ -110,10 +131,8 @@ class MapView extends Component {
 	})}
       </Map>
     );
-    
-    ReactDOM.render(
-      map, document.getElementById("map-view")
-    );
+
+    ReactDOM.render(map, container);
   }
 
   // Queries all events with a given university plus code
@@ -180,10 +199,6 @@ class MapView extends Component {
     }
   }
 
-  addInfoBoxEvent(event) {
-    return this.getInfoBox(event);
-  }
-
   getInfoBox(event, index) {
     if(event != null) {
       var location = this.getCoords(event.location);
@@ -192,11 +207,14 @@ class MapView extends Component {
 
       var images = "";
       var length = 0;
+
+      // Check image urls are not undefined
       var imageUrl = "";
       if (event.imageUrls !== undefined) {
         length = event.imageUrls.length;
       }
 
+      // Convert each image into a carousel item
       if (length > 0) {
         imageUrl = event.imageUrls.slice(1, length - 2);
         imageUrl = imageUrl.split(","); 
@@ -206,12 +224,15 @@ class MapView extends Component {
             </Carousel.Item>);
       }
 
+      // Format time and dates to a more comfortable format
       let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
       let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
       let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
 
       var eventInfoWindow = (
         <EventInfoWindow
+          onOpen={this.windowHasOpened}
+          onclose={this.windowHasClosed}
           key={index}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
@@ -262,6 +283,7 @@ class MapView extends Component {
     return coords;
   }
 
+  // Handle when an info window is clicked
   infoWindowOnClick(index) {
     let renderedEvent = this.state.renderedEvents[index];
     let event = this.state.allEvents[index];
@@ -270,13 +292,6 @@ class MapView extends Component {
       lat: coords[0],
       lng: coords[1]
     });
-    this.showSidePanelWithProps(event);
-  }
-
-  showSidePanelWithProps(event) {
-    ReactDOM.render(
-      this.renderSidePanel(event), document.getElementById("side-panel-col")
-    );
   }
 
   renderSidePanel(event) {
@@ -331,6 +346,7 @@ class MapView extends Component {
   }
 
   onReady = () => {
+    console.log('ready')
     this.setState({
       showInfoWindows: true
     });
