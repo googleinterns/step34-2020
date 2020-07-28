@@ -4,7 +4,6 @@ import { Dropdown, Image, Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import Firebase from 'firebase';
-import logo from '../IT.png';
 import '../navbarStyle.css';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
