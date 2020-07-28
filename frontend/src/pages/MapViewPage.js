@@ -59,20 +59,20 @@ class MapViewPage extends Component {
           <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
           <Col xs="auto">
             <Form.Group>
-            <Form.Control id = "autocomplete" placeholder = "Enter university"/>
+              <Form.Control id = "autocomplete" placeholder = "Enter university"/>
             </Form.Group>
             <Form.Group>
-            <Form.Control
-              onChange={this.handleFilter}
-              as="select"
-              className="my-1 mr-sm-2"
-              id="categoriesSelect"
-              custom="true">
-              <option value="">Filter</option>
-              <option value="0">Social Gathering</option>
-              <option value="1">Volunteer Event</option>
-              <option value="2">Student Organization Event</option>
-            </Form.Control>
+              <Form.Control
+                onChange={this.handleFilter}
+                as="select"
+                className="my-1 mr-sm-2"
+                id="categoriesSelect"
+                custom="true">
+                <option value="">Filter</option>
+                <option value="0">Social Gathering</option>
+                <option value="1">Volunteer Event</option>
+                <option value="2">Student Organization Event</option>
+              </Form.Control>
             </Form.Group>
           </Col>
           </Form>
