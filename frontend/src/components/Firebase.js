@@ -184,7 +184,7 @@ class Firebase {
       plusCode: plusCode,
       location: location,
       locationName: locationName,
-      imagePaths: files,
+      imageUrls: files,
       category: category,
       organization: organization,
       attendees: invitedAttendees
@@ -198,7 +198,7 @@ class Firebase {
 
   // Request event edit given the parameters. 
   // all parameters are optional except uid and eventId
-  requestEventUpdate(eventId, uid, eventName = null, date = null, startTime = null, endTime = null, description = null, location = null, locationName = null, imagePaths = null, category = null, organization = null) {
+  requestEventUpdate(eventId, uid, eventName = null, date = null, startTime = null, endTime = null, description = null, location = null, locationName = null, imageUrls = null, category = null, organization = null) {
     var requestId = this.generateRequestId();
     var path = this.sessionId + "/" + requestId;
 
@@ -214,7 +214,7 @@ class Firebase {
       description: description,
       location: location,
       locationName: locationName,
-      imagePaths: imagePaths,
+      imageUrls: imageUrls,
       category: category,
       organization: organization,
     });
@@ -243,7 +243,7 @@ class Firebase {
   }
 
   // Handles the response by passing the deferred promise and request id 
-  handleResponses(requestId, deferred) {
+  handleResponses(requestId, deferred, successCallback = this.successCallback, failureCallback = this.failureCallback) {
     var ref = this.sessionsRef;
     var sessionId = this.sessionId;
 
@@ -256,14 +256,16 @@ class Firebase {
         console.log(status);
         // When the status is "success" make deferred promise true
         if (status === "success") {
+          successCallback(sessionId, requestId, ref);
+          deferred.resolve(true);
+        // When the status is "failed" show error message and deferred promise as false
+        } else { 
+          failureCallback(sessionId, requestId, ref);
           // alert(this)
           // this.successCallback(sessionId, requestId);
           deferred.resolve(true);
         // When the status is "failed" show error message and deferred promise as false
-        } else { 
-          // this.failureCallback(sessionId, requestId);
-          deferred.resolve(false);
-        }
+        } 
       }
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);
@@ -271,15 +273,15 @@ class Firebase {
   }
 
   // A callback to remove the request and print success
-  successCallback(sessionId, requestId) {
+  successCallback(sessionId, requestId, ref) {
     console.log("success");
-    this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
+    ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
   // A callback to remove the request and print failure
-  failureCallback(sessionId, requestId) {
+  failureCallback(sessionId, requestId, ref) {
     console.log("failed");
-    this.sessionsRef.ref('REQUESTS').child(sessionId).child(requestId).remove();
+    ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
   // Generates a unique 16 digit id which is mainly used for requests

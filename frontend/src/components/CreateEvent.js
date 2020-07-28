@@ -264,36 +264,40 @@ class Events extends Component {
                   Let's add a title to make your event shine!
               </Form.Text>
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Date</Form.Label>
-              <Form.Control
-                required
-                onChange={this.handleDateChange}
-                type="date"/>
-              <Form.Text className="text-muted">
-                Tell people which your event is on!
-              </Form.Text>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Start Time</Form.Label>
-              <Form.Control 	
-                onChange={this.handleStartTimeChange}
-                required
-                type="time"/>
-              <Form.Text className="text-muted">
-                Tell people when your event starts!
-              </Form.Text>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>End Time</Form.Label>
-              <Form.Control 
-                onChange={this.handleEndTimeChange}
-                required
-                type="time"/>
-              <Form.Text className="text-muted">
-                Tell people when your event ends!
-              </Form.Text>
-            </Form.Group>
+      	    <Form.Row>
+	      <Form.Group xs="auto">
+		<Form.Label>Date</Form.Label>
+		<Form.Control
+		  required
+		  onChange={this.handleDateChange}
+		  type="date"/>
+		<Form.Text className="text-muted">
+		  Tell people which your event is on!
+		</Form.Text>
+	      </Form.Group>
+      	    </Form.Row>
+      	    <Form.Row>
+	      <Form.Group as={Col} xs="auto">
+		<Form.Label>Start Time</Form.Label>
+		<Form.Control
+		  onChange={this.handleStartTimeChange}
+		  required
+		  type="time"/>
+		<Form.Text className="text-muted">
+		  Tell people when your event starts!
+		</Form.Text>
+	      </Form.Group>
+	      <Form.Group as={Col} xs="auto">
+		<Form.Label>End Time</Form.Label>
+		<Form.Control 
+		  onChange={this.handleEndTimeChange}
+		  required
+		  type="time"/>
+		<Form.Text className="text-muted">
+		  Tell people when your event ends!
+		</Form.Text>
+	      </Form.Group>
+      	    </Form.Row>
             <Form.Group>
               <Form.Label>Description of your event</Form.Label>
               <Form.Control
@@ -307,7 +311,7 @@ class Events extends Component {
               </Form.Text>
             </Form.Group>
             <Form.Row>
-              <Form.Group as={Col}>
+              <Form.Group xs="auto" as={Col}>
                 <Form.Label>University</Form.Label>
                 <Form.Control
                   id="university-autocomplete"
@@ -318,7 +322,7 @@ class Events extends Component {
                   Tell people what university your event is at!
                 </Form.Text>
               </Form.Group>
-              <Form.Group as={Col}>
+              <Form.Group as={Col} xs="auto">
               <Form.Label>Location</Form.Label>
               <Form.Control 
                     id="location-autocomplete"	
@@ -330,47 +334,51 @@ class Events extends Component {
               </Form.Text>
               </Form.Group> 
             </Form.Row>
-            <Form.Group>
-              <Form.Label>Categories</Form.Label>
-              <Form.Control	
-                onChange={this.handleCategoryChange}
-                as="select"
-                className="my-1 mr-sm-2"
-                id="categoriesSelect"
-                required
-                custom="true">
-                <option value="">Choose...</option>
-                <option value="0">Social Gathering</option>
-                <option value="1">Volunteer Event</option>
-                <option value="2">Student Organization Event</option>
-              </Form.Control>
-              <Form.Text className="text-muted">
-                Add some categories so people can find your event easier! 
-              </Form.Text>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Images</Form.Label>
-              <Form.File 
-                id="eventImages" 
-                custom="true" >
-              <Form.File.Input
-                id="inputGroup"
-                type="image" 
-                multiple
-                accept=".jpg, .png"
-                className="custom-file-input" 
-                onChange={this.handleImageInput}/>
-              <Form.File.Label 
-                data-browse="Browse"
-                htmlFor="inputGroup"
-                className="custom-file-label" >
-                Click me to browse for images!
-              </Form.File.Label>
-              </Form.File>
-              <Form.Text className="text-muted">
-                Add some pictures to show what your event is all about!
-              </Form.Text>
-            </Form.Group>
+      	    <Form.Row>
+	      <Form.Group>
+		<Form.Label>Categories</Form.Label>
+		<Form.Control	
+		  onChange={this.handleCategoryChange}
+		  as="select"
+		  className="my-1 mr-sm-2"
+		  id="categoriesSelect"
+		  required
+		  custom="true">
+		  <option value="">Choose...</option>
+		  <option value="0">Social Gathering</option>
+		  <option value="1">Volunteer Event</option>
+		  <option value="2">Student Organization Event</option>
+		</Form.Control>
+		<Form.Text className="text-muted">
+		  Add some categories so people can find your event easier! 
+		</Form.Text>
+	      </Form.Group>
+      	    </Form.Row>
+      	    <Form.Row>
+	      <Form.Group>
+		<Form.Label>Images</Form.Label>
+		<Form.File 
+		  id="eventImages" 
+		  custom="true" >
+		<Form.File.Input
+		  id="inputGroup"
+		  type="image" 
+		  multiple
+		  accept=".jpg, .png"
+		  className="custom-file-input" 
+		  onChange={this.handleImageInput}/>
+		<Form.File.Label 
+		  data-browse="Browse"
+		  htmlFor="inputGroup"
+		  className="custom-file-label" >
+		  Click me to browse for images!
+		</Form.File.Label>
+		</Form.File>
+		<Form.Text className="text-muted">
+		  Add some pictures to show what your event is all about!
+		</Form.Text>
+	      </Form.Group>
+      	    </Form.Row>
             <Container>
               <Row id="imageRow">
               </Row>

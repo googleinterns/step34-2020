@@ -37,16 +37,14 @@ export default class ConfirmDelete extends Component {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Please confirm you want to delete this event.<br />
-            All data associated with this event will be delete.<br />
-            <br />
+          <p>This event will be permenantly deleted and all user going to this event will be removed from the event list.
           </p>
           <h5>Note:</h5>
-          <p>You cannot undo the changes after you select confirm</p>
+          <p>You cannot undo the changes after you confirm</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" onClick={this.handleDelete.bind(this)}>Confirm</Button>
-          <Button variant="danger" onClick={this.props.onHide}>Cancel</Button>
+          <Button variant="danger" onClick={this.handleDelete.bind(this)}>Delete Event</Button>
+          <Button variant="outline-secondary" onClick={this.props.onHide}>Cancel</Button>
         </Modal.Footer>
       </Modal>
     )

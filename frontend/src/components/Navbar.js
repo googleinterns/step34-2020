@@ -1,9 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
-import { Navbar, Nav, Button } from 'react-bootstrap'
+import { Dropdown, Image, Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import Firebase from 'firebase';
+import logo from '../IT.png';
+import '../navbarStyle.css';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import store from "../store/index";
@@ -48,6 +50,15 @@ class TopNavbar extends React.Component {
     this.setState(currentState);
   }
 
+  handleLogoutButton() {
+    //sign out the user
+    Firebase.auth().signOut();
+
+    this.props.history.push({
+      pathname:'/',
+    })
+  }
+  
   handleLoginButtonClick() {
     ReactDOM.render(
       <Provider store={store}>
@@ -60,20 +71,9 @@ class TopNavbar extends React.Component {
   }
 
   handleMapViewonClick() {
-    if (!this.state.loggedIn) {
-      ReactDOM.render(
-        <Provider store={store}>
-          <div id="modal">
-            <Modal history={this.props.history}/>
-          </div>
-        </Provider>,
-        document.getElementById('modal-wrapper')
-      );
-    } else {
-      this.props.history.push({
-        pathname: '/map/',
-      });
-    }
+    this.props.history.push({
+      pathname: '/map/',
+    });
   }
 
   handleProfileButtonClick() {
@@ -95,18 +95,6 @@ class TopNavbar extends React.Component {
     }
   }
 
-  handleLogoutButton() {
-    //sign out the user
-    Firebase.auth().signOut();
-
-    // change the state to logged out
-    this.logOutAndUpdateRedux();
-
-    this.props.history.push({
-      pathname:'/',
-    })
-  }
-
   handleCreateButton() {
     if (this.state.loggedIn) {
       this.props.history.push({
@@ -126,17 +114,16 @@ class TopNavbar extends React.Component {
   
   render() {
     return(
-      <Navbar bg="dark" expand="lg" style={style}>
-        <Navbar.Brand>MapIT</Navbar.Brand>
+      <Navbar bg="light" expand="lg" style={style}>
+        <Navbar.Brand href="/">IT</Navbar.Brand>
+        <Navbar.Brand onClick={this.handleMapViewonClick.bind(this)}>Map</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
           <Nav>
-            <MapViewButton onClick={this.handleMapViewonClick.bind(this)} loggedIn={this.state.loggedIn} />
-            <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.state.loggedIn} />
-            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} loggedIn={this.state.loggedIn} credentials={this.props.credentials} />
-            <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.state.loggedIn} />
-            <LogOutButton onClick={this.handleLogoutButton.bind(this)} loggedIn={this.state.loggedIn} />
+            <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.props.loggedIn} />
+            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} onLogout={this.handleLogoutButton.bind(this)} loggedIn={this.props.loggedIn} credentials={this.props.credentials} />
+            <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -158,31 +145,14 @@ function MapViewButton(props) {
   )
 }
 
-function LogOutButton(props) {
-  if (props.loggedIn) {
-    return (
-      <div>
-        <Button 
-          style={{marginRight:".8rem"}}
-          type="button" 
-          variant="primary"
-          onClick={props.onClick}>
-          Logout
-        </Button>
-      </div>
-    )
-  } else {
-    return null;
-  }
-}
-
 function CreateEventButton(props) {
   return (
     <div>
       <Button 
-        style={{marginRight:".8rem"}}
         type="button" 
         variant="primary"
+        style={{marginRight:".8rem", marginTop: ".3rem"}}
+        className="custom-btn"
         onClick={props.onClick}>
         Create Event
       </Button>
@@ -194,10 +164,10 @@ function LoginButtonNav(props) {
   if (!props.loggedIn){
     return (
       <div>
-        <Button 
-          style={{marginRight:".8rem"}}
+        <Button inline="true" 
+          style={{marginRight:".8rem", marginTop: ".3rem"}}
           type="button" 
-          variant="primary" 
+          variant="outline-primary" 
           onClick={props.onClick}>
           Login
         </Button>
@@ -209,17 +179,26 @@ function LoginButtonNav(props) {
 }
 
 function ProfileButtonNav(props) {
-  return (
-    <div>
-      <Button 
-        style={{marginRight:".8rem"}}
-        type="button" 
-        variant="primary" 
-        onClick={props.onClick}>
-        Profile
-      </Button>
-    </div>
-  );
+  if (props.loggedIn) {
+    return (
+      <div>
+	<Dropdown alignRight>
+	  <Dropdown.Toggle  as={Image} style={{border: "2px solid #1A73E8", maxWidth: "3rem", maxHeight: "3rem", marginRight:".8rem", margin:"auto"}}
+	      type="button" 
+	      variant="primary" 
+	      roundedCircle
+	     src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
+	  </Dropdown.Toggle>
+	  <Dropdown.Menu>
+	    <Dropdown.Item as={Button} onClick={props.onClick}>Profile</Dropdown.Item>
+	    <Dropdown.Item as={Button} onClick={props.onLogout}>Logout</Dropdown.Item>
+	  </Dropdown.Menu>
+	</Dropdown>
+      </div>
+    );
+  } else {
+    return null;
+  }
 }
 
 const ConnectedTopNavbar = connect(

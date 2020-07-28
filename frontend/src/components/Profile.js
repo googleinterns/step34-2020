@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TopNavbar from './Navbar';
 import '../App.css';
+import { Badge, Carousel, CardDeck, Image, Container, Jumbotron, Nav, Tab, Row, Col } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
+import Firebase from 'firebase';
 import { fb } from '../App';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -12,6 +14,10 @@ import CardColumns from 'react-bootstrap/CardColumns';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import ConfirmDelete from './ConfirmDelete';
+import moment from 'moment';
+import placeIcon from '../place-24px.svg';
+import timeIcon from '../access_time-24px.svg';
+import groupIcon from '../group-24px.svg';
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -54,67 +60,103 @@ class Profile extends React.Component {
     if(event !== null) {
       var attendees = event.attendees.slice(1, event.attendees.length -1).split(",");
       var namesOfAttendees = this.getNamesOfAttendees (attendees);
+      let num = attendees.length;
       var len = 0;
       var imageUrl = "";
       var card = "";
 
       // Since images are option field, evaluate whether the field isn't null
-      if (event.imagePaths != null) {
-        len = event.imagePaths.length;
+      if (event.imageUrls !== undefined) {
+	len = event.imageUrls.length;
       }
       // Retrieve image urls only if they were provided. Otherwise set url to default value
       if(len > 0) {
-        imageUrl = event.imagePaths.slice(1, len - 2);
-        imageUrl = imageUrl.split(",");
-
-        // dynamically create a card that contain images for the event
-        card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
+	imageUrl = event.imageUrls.slice(1, len - 2);
+	imageUrl = imageUrl.split(",");
+	console.log(imageUrl);
+	// dynamically create a card that contain images for the event
+	card = imageUrl.map(url => 
+	  <Carousel.Item>
+	    <Image className="rounded" fluid src={url} />
+	  </Carousel.Item>);
       }
+      
+      let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
+      let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
+      let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
 
       // Add this card to the list of all cards to be displayed on the profile
       this.state.cards.push(
-        <Card
-          key={Math.random(1001,5000)} 
-          bg={'light'}
-          border="secondary"
-          text={'light' ? 'dark' : 'white'}
-          style={{ width: '18rem' }}
-          className="mb-2">
-          {card}
-          {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
-          <Card.Body>
-            <Card.Title>{event.eventName}</Card.Title>
-            <Card.Text>
-              {event.description}
-            </Card.Text>
-            <Card.Text>{event.locationName}</Card.Text>
-            <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
-            <DropdownButton id="dropdown-basic-button" title="Attendees">
-              {namesOfAttendees.map(attendee => (
-                <Dropdown.Item key={Math.random(1000)} >{attendee}</Dropdown.Item>))}
-            </DropdownButton><br />
-            <ButtonToolBar>
-              <Button 
-              variant="success"
-              style={{ marginRight:".8rem", width:"80px" }}
-              onClick={() => this.handleEdit(ref, event)}>
-                Edit
-              </Button>
-              <Button 
-                variant="danger" 
-                style={{ width:"80px" }}
-                onClick={() => this.showModal(ref)}>
-                Delete
-              </Button>
-            </ButtonToolBar>
-          </Card.Body>
-        </Card>)
-
+	<Col className="event-col" md="auto">
+	  <Card
+	    className="shadow mb-5 bg-white rounded event-cards"
+	    key={Math.random(1001,5000)} 
+	    text={'light' ? 'dark' : 'white'}>
+	    <Carousel className="fill-parent">
+	      {card}
+	    </Carousel>
+	    <Card.Body>
+	      <Card.Title>
+		<h1 className="event-cards-title">{event.eventName}</h1>
+	      </Card.Title>
+	      <Row>
+		<Col md="auto">
+		  <Image md="auto" src={placeIcon}/>
+		</Col>
+		<Col md="auto">	
+		  <Card.Text className="event-text">{event.locationName}</Card.Text>
+		</Col>
+	      </Row>
+	      <Row md="auto">
+		<Col>
+		  <Image md="auto" src={timeIcon}/>
+		</Col>
+		<Col md="auto">	
+		  <Card.Text>{date}, {startTime} - {endTime}</Card.Text>
+		</Col>
+	      </Row>
+	      <Row md="auto">
+		<Col>
+		  <Image md="auto" src={groupIcon}/>
+		</Col>
+		<Col md="auto">	
+		  <Card.Text>{num} attending</Card.Text>
+		</Col>
+	      </Row>
+	      <hr/>
+	      <Card.Text className="event-cards-description">
+		About
+	      </Card.Text>
+	      <Card.Text>{event.description}</Card.Text>
+	      <Badge variant="secondary">
+		{event.category}
+	      </Badge>
+	      <hr/>
+	      <ButtonToolBar className="float-right">
+		<Button 
+		variant="primary"
+		style={{ marginRight:".8rem", width:"80px" }}
+		onClick={() => this.handleEdit(ref, event)}>
+		  Edit
+		</Button>
+		<Button 
+		  variant="danger" 
+		  style={{ width:"80px" }}
+		  onClick={() => this.showModal(ref)}>
+		  Delete
+		</Button>
+	      </ButtonToolBar>
+	    </Card.Body>
+	  </Card>
+	</Col>
+      );
 
       this.setState({
-        contents: <CardColumns>
-                    {this.state.cards.map(element   => element)}
-                  </CardColumns>
+        contents: <Container className="event-container" fluid>
+		    <Row className="d-flex flex-row flex-nowrap">
+                      {this.state.cards.map(element   => element)}
+		    </Row>
+                  </Container>
       })
     }
     
@@ -220,39 +262,80 @@ class Profile extends React.Component {
     })
   }
 
+  renderProfile() {
+    return (   
+      <div className="profileContent">
+	<Row>
+	  <Col>
+	    <h1 className="subtitle1">Profile</h1>
+	  </Col>
+	</Row>
+        <hr/>
+        <Row> 
+	  <Col md={{ span: 4, offset: 4 }} >
+	    <div className="profilephoto">
+	      <Image
+      		style={{
+		  width: "300px",
+		  height: "300px",
+		  display: "block",
+		  margin: "auto",
+		}}
+      		roundedCircle
+      		src={this.state.profilePicture}
+		alt="" /> 
+	    </div>
+	  </Col>
+      	</Row>
+        <br/>
+	<Row> 
+	  <Col md={{ span: 4, offset: 4 }}>
+	    <h1 className="profile-name">John Doe</h1>
+	    <br />
+      	    <h1 className="profile-email">jdoe@osu.edu</h1>
+      	    <br />
+	    <h1 className="profile-university">The Ohio State University</h1>
+	  </Col>
+	</Row>
+      </div>
+    );
+  }
+
+  renderEvents() {
+    return ( 
+      <div>
+	<Row>
+	  <Col>
+	    <h1 className="subtitle1">Events</h1>
+	  </Col>
+	</Row>
+        <hr/>
+	<div 
+	  id="content"
+	  style={{
+	    marginLeft:"1.8rem",
+	    marginTop:".8rem"}}>
+	  <br />
+      	  {this.state.contents}
+	</div>
+      </div>
+    );
+  }
 
   render() {
     if (this.reduxState) {
-    return (
-      <div>
-        <TopNavbar history={this.props.history}/>
-        {/* get user profile picture and user name */}
-        <div className="profilepictureContent" 
-          style={{borderBottom:"4px solid grey"}}>
-          <div className="profilephoto">
-            <img style={{
-              width:"180px",
-              height:"180px",
-              borderRadius:"80px"}}
-              src={this.state.profilePicture}
-              alt="" /> 
-            <h4 style={{
-              marginLeft:"1.8rem",
-              marginTop:".8rem"}}>
-                {this.state.username}
-            </h4>
-            </div>
-          </div>
-          <div 
-            id="content"
-            style={{
-            marginLeft:"1.8rem",
-            marginTop:".8rem"}}>
-            <br />
-            {this.state.contents}
-          </div>
-      </div>
-    )
+      return (
+	<div>
+	  <TopNavbar 
+	    loggedIn={true}
+	    history={this.props.history} 
+	    credentials={this.state.credentials} />
+	  <Jumbotron>
+	    {this.renderProfile()}
+	    {this.renderEvents()}
+	  </Jumbotron>
+	</div> 
+      )
     } else {
       window.location = '/';
       return null;
