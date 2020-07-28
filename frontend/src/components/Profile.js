@@ -27,6 +27,9 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
 
+    this.reduxState = this.props.articles[0];
+    console.log(this.reduxState);
+
     if (this.reduxState) {
       this.state = {
         loggedIn: this.reduxState.loggedIn,
@@ -49,62 +52,63 @@ class Profile extends React.Component {
 
   didUpdate(event, parent, ref) {
     if(event !== null) {
-      var attendees = ["user1", "user2", "user3"];
-    var len = 0;
-    var imageUrl = "";
-    var card = "";
+      var attendees = event.attendees.slice(1, event.attendees.length -1).split(",");
+      var namesOfAttendees = this.getNamesOfAttendees (attendees);
+      var len = 0;
+      var imageUrl = "";
+      var card = "";
 
-    // Since images are option field, evaluate whether the field isn't null
-    if (event.imagePaths != null) {
-      len = event.imagePaths.length;
-    }
-    // Retrieve image urls only if they were provided. Otherwise set url to default value
-    if(len > 0) {
-      imageUrl = event.imagePaths.slice(1, len - 2);
-      imageUrl = imageUrl.split(",");
+      // Since images are option field, evaluate whether the field isn't null
+      if (event.imagePaths != null) {
+        len = event.imagePaths.length;
+      }
+      // Retrieve image urls only if they were provided. Otherwise set url to default value
+      if(len > 0) {
+        imageUrl = event.imagePaths.slice(1, len - 2);
+        imageUrl = imageUrl.split(",");
 
-      // dynamically create a card that contain images for the event
-      card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
-    }
+        // dynamically create a card that contain images for the event
+        card = imageUrl.map(url => <Card.Img variant="top" src={url} />);
+      }
 
-    // Add this card to the list of all cards to be displayed on the profile
-    this.state.cards.push(
-      <Card
-        key={Math.random(1001,5000)} 
-        bg={'light'}
-        border="secondary"
-        text={'light' ? 'dark' : 'white'}
-        style={{ width: '18rem' }}
-        className="mb-2">
-        {card}
-        {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
-        <Card.Body>
-          <Card.Title>{event.eventName}</Card.Title>
-          <Card.Text>
-            {event.description}
-          </Card.Text>
-          <Card.Text>{event.locationName}</Card.Text>
-          <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
-          <DropdownButton id="dropdown-basic-button" title="Attendees">
-            {attendees.map(attendee => (
-              <Dropdown.Item key={Math.random(1000)} >{attendee}</Dropdown.Item>))}
-          </DropdownButton><br />
-          <ButtonToolBar>
-            <Button 
-            variant="success"
-            style={{ marginRight:".8rem", width:"80px" }}
-            onClick={() => this.handleEdit(ref, event)}>
-              Edit
-            </Button>
-            <Button 
-              variant="danger" 
-              style={{ width:"80px" }}
-              onClick={() => this.showModal(ref)}>
-              Delete
-            </Button>
-          </ButtonToolBar>
-        </Card.Body>
-      </Card>)
+      // Add this card to the list of all cards to be displayed on the profile
+      this.state.cards.push(
+        <Card
+          key={Math.random(1001,5000)} 
+          bg={'light'}
+          border="secondary"
+          text={'light' ? 'dark' : 'white'}
+          style={{ width: '18rem' }}
+          className="mb-2">
+          {card}
+          {/* <Card.Img variant="top" src={imageUrl[0]} /> */}
+          <Card.Body>
+            <Card.Title>{event.eventName}</Card.Title>
+            <Card.Text>
+              {event.description}
+            </Card.Text>
+            <Card.Text>{event.locationName}</Card.Text>
+            <Card.Text>{event.startTime} - {event.endTime}</Card.Text>
+            <DropdownButton id="dropdown-basic-button" title="Attendees">
+              {namesOfAttendees.map(attendee => (
+                <Dropdown.Item key={Math.random(1000)} >{attendee}</Dropdown.Item>))}
+            </DropdownButton><br />
+            <ButtonToolBar>
+              <Button 
+              variant="success"
+              style={{ marginRight:".8rem", width:"80px" }}
+              onClick={() => this.handleEdit(ref, event)}>
+                Edit
+              </Button>
+              <Button 
+                variant="danger" 
+                style={{ width:"80px" }}
+                onClick={() => this.showModal(ref)}>
+                Delete
+              </Button>
+            </ButtonToolBar>
+          </Card.Body>
+        </Card>)
 
 
       this.setState({
@@ -114,6 +118,22 @@ class Profile extends React.Component {
       })
     }
     
+  }
+
+  getNamesOfAttendees(refAttendees) {
+    var names = []
+    var len = refAttendees.length;
+    var ref = fb.userRef.child('users');
+
+    for (var i = 0; i < len; i++) {
+      var current_attendee = ref.child(refAttendees[i]).child('name');
+
+      current_attendee.on('value', snapshot => {
+        let name = snapshot.val();
+        names.push(name);
+      })
+    }
+    return names;
   }
 
   getData(eventKeys) {
@@ -193,6 +213,7 @@ class Profile extends React.Component {
       reference: key
     }
     this.props.changeMapState(currentState);
+    this.reduxState = this.props.articles[0];
 
     this.props.history.push({
       pathname: '/update',

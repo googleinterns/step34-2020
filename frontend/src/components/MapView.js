@@ -5,7 +5,9 @@ import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
 import EventInfoWindow from "./EventInfoWindow";
-import '../gm-styles.css'
+import '../gm-styles.css';
+
+
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -32,7 +34,8 @@ class MapView extends Component {
         showInfoWindows: true,
         contents: null,
         resizeState: false,
-        maxWidth: 100
+        maxWidth: 100,
+        filter_choice: props.articles[0].filter_choice,
       };
     } else {
       this.state = {
@@ -42,18 +45,13 @@ class MapView extends Component {
         showInfoWindows: false,
         contents: null,
         resizeState: false,
-        maxWith: 100
+        maxWith: 100,
+        filter_choice: props.articles[0].filter_choice,
       };
     }
-
-    var plusCode = this.state.plusCode;
-
-    document.addEventListener('domready', () => {
-      document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
-    });
-
-    this.queryEventsAndStoreInMemory(plusCode);
+    
     this.renderInfo = this.renderInfo.bind(this);
+    this.infoWindows = [];
   }
 
   async UNSAFE_componentWillReceiveProps(nextProps) {
@@ -78,33 +76,52 @@ class MapView extends Component {
     await this.renderInfo()
   }
 
+
   renderInfo () {
+    var listEvents = [];
+
+    const filter_choice =  this.props.articles[0].filter_choice;
+
+    if (filter_choice === null || typeof filter_choice === 'undefined') {
+      listEvents = this.state.allEvents;
+    } else {
+      console.log("changed filter")
+      listEvents = this.state.allEvents.filter((event) => {
+        return event.category.toLowerCase() === (filter_choice).toLowerCase();
+      });
+    }
+
+    let article = this.props.articles[0];
+    let container = document.getElementById('map-view')
+    
+    //unmount the component so that we can render new data
+    ReactDOM.unmountComponentAtNode(container)
+
+
     ReactDOM.render(
-    this.props.articles.map(article => {
-      return (
-        <Map
+      <Map
           id="map"
-            key={article.toString()}
-            google={this.props.google}
-            zoom={17}
+          key={ Math.floor(Math.random())}
+          google={this.props.google}
+          zoom={17}
           onReady={this.onReady}
-            style={mapStyles}
-            initialCenter={{
-              lat: article.lat,
-              lng: article.lng
-            }}
-            center={{
-              lat: article.lat,
-              lng: article.lng
-            }}
-            zoomControl={true}
-          >
-        {this.state.allEvents.map((element, index) => {
-          return (this.getInfoBox(element, index));
+          style={mapStyles}
+          initialCenter={{
+            lat: article.lat,
+            lng: article.lng
+          }}
+          center={{
+            lat: article.lat,
+            lng: article.lng
+          }}
+          zoomControl={true}
+        >
+        {listEvents.map((element, index) => {
+          console.log(element)
+          return this.getInfoBox(element, index);
         })}
       </Map>
-      )
-    }), document.getElementById('map-view') )
+    , container)
   }
 
   // Queries all events with a given university plus code
@@ -171,10 +188,6 @@ class MapView extends Component {
     }
   }
 
-  addInfoBoxEvent(event) {
-    return this.getInfoBox(event);
-  }
-
   getInfoBox(event, index) {
     if(event != null) {
       var location = this.getCoords(event.location);
@@ -192,8 +205,11 @@ class MapView extends Component {
         imageUrl = imageUrl.split(",")[0];
       }
 
+
       return(
         <EventInfoWindow
+          onOpen={this.windowHasOpened}
+          onclose={this.windowHasClosed}
           key={index}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
@@ -212,6 +228,7 @@ class MapView extends Component {
       );
     }
   }
+
 
   printSomething() {
     if (!this.state.resizeState) {
@@ -245,6 +262,7 @@ class MapView extends Component {
 
 
   onReady = () => {
+    console.log('ready')
     this.setState({
       showInfoWindows: true
     });
