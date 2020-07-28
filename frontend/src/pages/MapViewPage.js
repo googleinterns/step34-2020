@@ -56,26 +56,26 @@ class MapViewPage extends Component {
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
         <Toast style={{position: "absolute", zIndex: 2, padding: "0rem", minWidth: "40rem", float: "right", margin: "1rem"}}>
         <Toast.Body>	
-            <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
-            <Col xs="auto">
+          <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
+          <Col xs="auto">
             <Form.Group>
             <Form.Control id = "autocomplete" placeholder = "Enter university"/>
             </Form.Group>
             <Form.Group>
             <Form.Control
-                onChange={this.handleFilter}
-                as="select"
-                className="my-1 mr-sm-2"
-                id="categoriesSelect"
-                custom="true">
-                <option value="">Filter</option>
-                <option value="0">Social Gathering</option>
-                <option value="1">Volunteer Event</option>
-                <option value="2">Student Organization Event</option>
-                </Form.Control>
+              onChange={this.handleFilter}
+              as="select"
+              className="my-1 mr-sm-2"
+              id="categoriesSelect"
+              custom="true">
+              <option value="">Filter</option>
+              <option value="0">Social Gathering</option>
+              <option value="1">Volunteer Event</option>
+              <option value="2">Student Organization Event</option>
+            </Form.Control>
             </Form.Group>
-            </Col>
-            </Form>
+          </Col>
+          </Form>
         </Toast.Body>
         </Toast>	
         <MapView style={{zIndex: 1}} plusCode={this.state.plusCode}/>
