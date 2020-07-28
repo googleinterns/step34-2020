@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
-import { Toast, Form, Col, Container } from 'react-bootstrap';
+import { Accordion, Card, Toast, Form, Col, Container } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { GoogleApiWrapper } from 'google-maps-react';
@@ -54,32 +54,41 @@ class MapViewPage extends Component {
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
-	<Toast style={{position: "absolute", zIndex: 2, padding: "0rem", minWidth: "40rem", float: "right", margin: "1rem"}}>
-	  <Toast.Body>	
-	    <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
-	      <Form.Row>
-		<Form.Group as={Col}>
-		  <Form.Label> Enter your university</Form.Label>
-		  <Form.Control id = "autocomplete" placeholder = "Enter university"/>
-		</Form.Group>
-		<Form.Group as={Col}>
-		  <Form.Label> Filter </Form.Label>
-		  <Form.Control
+	<Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", float: "right", margin: "1rem"}}>
+	  <Toast.Body>
+      	    <Card style={{border: 0}}>
+	      <Form>
+		<Form.Control style={{border: 0, focusOutline: "none"}} id = "autocomplete" placeholder = "Enter university"/>
+	      </Form>
+      	    </Card>
+      	    <hr/>
+	    <Card style={{border: 0}} id="eventInfo">
+	      <Accordion defaultActiveKey="0">
+		<Accordion.Collapse eventKey="0">
+		  <Form>
+		    <Form.Control
 		      onChange={this.handleFilter}
 		      as="select"
 		      className="my-1 mr-sm-2"
 		      id="categoriesSelect"
+      		      style={{border: 0}}
 		      custom="true">
-		      <option value="">Choose...</option>
+		      <option value="">Filter by</option>
 		      <option value="0">Social Gathering</option>
 		      <option value="1">Volunteer Event</option>
 		      <option value="2">Student Organization Event</option>
 		    </Form.Control>
-		</Form.Group>
-	      </Form.Row>
-	    </Form>
+		  </Form>
+		</Accordion.Collapse>
+	      </Accordion>
+	    </Card>
 	  </Toast.Body>
-	</Toast>	
+	</Toast>
+      	<Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", maxHeight: "80vh", float: "right", margin: "1rem", marginTop: "11rem"}}>
+      	  <Toast.Body id="event-info">
+      	    Start by clicking on an event!
+      	  </Toast.Body>
+      	</Toast>
         <MapView style={{zIndex: 1}} plusCode={this.state.plusCode}/>
       </div>
     );

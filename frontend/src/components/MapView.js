@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Toast, ButtonToolbar, Badge, Button, Container, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
+import { Toast, ButtonToolbar, Badge, Button, ToggleButton, Container, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
@@ -11,6 +11,10 @@ import moment from 'moment';
 import PlaceIcon from '@material-ui/icons/Place';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import GroupIcon from '@material-ui/icons/Group';
+import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import StarIcon from '@material-ui/icons/Star';
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -205,24 +209,6 @@ class MapView extends Component {
       var lat = parseFloat(location[0]);
       var lng = parseFloat(location[1]);
 
-      var images = "";
-      var length = 0;
-
-      // Check image urls are not undefined
-      var imageUrl = "";
-      if (event.imageUrls !== undefined) {
-        length = event.imageUrls.length;
-      }
-
-      // Convert each image into a carousel item
-      if (length > 0) {
-        imageUrl = event.imageUrls.slice(1, length - 2);
-        imageUrl = imageUrl.split(","); 
-	images = imageUrl.map(url =>
-            <Carousel.Item>
-              <Image className="rounded" fluid src={url} />
-            </Carousel.Item>);
-      }
 
       // Format time and dates to a more comfortable format
       let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
@@ -292,31 +278,78 @@ class MapView extends Component {
       lat: coords[0],
       lng: coords[1]
     });
+    this.renderSidePanel(event);
   }
 
   renderSidePanel(event) {
+      
+    var images = "";
+    var length = 0;
+
+    // Check image urls are not undefined
+    var imageUrl = "";
+    if (event.imageUrls !== undefined) {
+      length = event.imageUrls.length;
+    }
+
+    // Convert each image into a carousel item
+    if (length > 0) {
+      imageUrl = event.imageUrls.slice(1, length - 2);
+      imageUrl = imageUrl.split(","); 
+      images = imageUrl.map(url =>
+	  <Carousel.Item>
+	    <Image className="rounded" fluid src={url} />
+	  </Carousel.Item>);
+    }
+
+    var attendees = event.attendees.slice(1, event.attendees.length-1).split(",");
+    let num = attendees.length;
+
     let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
     let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
     let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
-    return (
+    var eventInfo = (
       <Container> 
 	<Card
-	  className="shadow event-cards"
+	  className="event-cards"
 	  key={Math.random(1001,5000)} 
 	  text={'light' ? 'dark' : 'white'}>
 	  <Carousel className="fill-parent">
+      	    {images}
 	  </Carousel>
 	  <Card.Body>
 	    <Card.Title>
 	      <h1 className="event-cards-title">{event.eventName}</h1>
 	    </Card.Title>
 	    <Card.Text className="event-text"> 
-	      <PlaceIcon/>
-	      {event.locationName}
+	      <Row>
+      	        <Col xs={1}>
+		  <PlaceIcon/>
+      		</Col>
+      		<Col>	
+		  {event.locationName}
+      		</Col>
+      	      </Row>
 	    </Card.Text> 
 	    <Card.Text> 
-	      <AccessTimeIcon/>
-	      {date}, {startTime} - {endTime}
+	      <Row>
+      	        <Col xs={1}>
+		  <AccessTimeIcon/>
+      		</Col>
+      		<Col>	
+		  {date}, {startTime} - {endTime}
+      		</Col>
+      	      </Row>
+	    </Card.Text>
+	    <Card.Text> 
+	      <Row>
+      	        <Col xs={1}>
+		  <GroupIcon/>
+      		</Col>
+      		<Col>	
+		  {num} attending
+      		</Col>
+      	      </Row>
 	    </Card.Text>
 	    <hr/>
 	    <Card.Text className="event-cards-description">
@@ -327,23 +360,40 @@ class MapView extends Component {
 	      {event.category}
 	    </Badge>
 	    <hr/>
-	    <ButtonToolbar className="float-right">
-	      <Button 
-	      variant="primary"
-	      style={{ marginRight:".8rem", width:"80px" }}>
-		Edit
-	      </Button>
-	      <Button 
-		variant="danger" 
-		style={{ width:"80px" }}>
-		Delete
-	      </Button>
-	    </ButtonToolbar>
+	    <Row className="justify-content-md-center">
+	      <Col md="auto">
+      		{this.checkGoing(attendees)}
+      		<div className="event-cards-attendtext">Going</div>
+	      </Col>
+	      <Col md="auto">
+		<StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
+      		<div className="event-cards-attendtext">Interested</div>
+	      </Col>
+	    </Row>
 	  </Card.Body>
 	</Card>
       </Container>
     );
+
+    let eventInfoContainer = document.getElementById("event-info");
+    ReactDOM.render(eventInfo, eventInfoContainer);
   }
+
+  checkGoing(attendees) {
+    if (this.reduxState.credentials === undefined) {
+      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+    }
+    
+    const uid = this.reduxState.credentials.uid;
+    const found = attendees.find(element => element === uid);
+
+    if (found === undefined) {
+      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+    } else {
+      return (<CheckCircleIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+    }
+  }
+
 
   onReady = () => {
     console.log('ready')
