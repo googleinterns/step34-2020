@@ -12,7 +12,7 @@
 /build
 
 # misc
-../backend/target
+/home/micomyiza/Development/step-capstone/step34-2020/backend/target
 .env
 .DS_Store
 .env
