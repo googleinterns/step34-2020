@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
-import { Navbar, Nav, Button } from 'react-bootstrap'
+import { Col, Form, Navbar, Nav, Button } from 'react-bootstrap'
 import Modal from './SignInUpModal';
 import style from 'bootstrap/dist/css/bootstrap.css';
 import Firebase from 'firebase';

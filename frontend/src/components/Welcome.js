@@ -42,7 +42,7 @@ class Search extends Component {
       <div className="welcomeContent">
         <Script url={url} onLoad={this.handleScriptLoad}/> 
         <TopNavbar history={this.props.history}/>
-        <Jumbotron >
+        <Jumbotron>
           <h1> Welcome to MapIT! </h1> 
           <Form>
             <Form.Group>

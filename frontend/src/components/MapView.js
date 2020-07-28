@@ -48,7 +48,7 @@ class MapView extends Component {
       };
     }
 
-    var plusCode = this.state.plusCode;
+    //var plusCode = this.state.plusCode;
 
     document.addEventListener('domready', () => {
       document.querySelector('.gm-style-iw').addEventListener('click', this.printSomething);
@@ -99,11 +99,12 @@ class MapView extends Component {
     let container = document.getElementById('map-view')
 
     //console.log(container)
+    var ourId = "map" + Math.floor(Math.random());
 
     ReactDOM.render(
       <Map
-        id="map"
-        key={article.toString()}
+        id={ourId}
+        key={Math.floor(Math.random())}
         google={this.props.google}
         zoom={17}
         onReady={this.onReady}
@@ -119,7 +120,8 @@ class MapView extends Component {
         zoomControl={true}
       >
       {listEvents.map((element, index) => {
-        //console.log(element)
+        console.log("element")
+        console.log(element)
         return (this.getInfoBox(element, index));
       })}
     </Map>
