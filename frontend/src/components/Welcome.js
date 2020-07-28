@@ -15,10 +15,14 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const mapStateToProps = state => {
+  return { articles : state.articles }
+}
+
 class Search extends Component {
-  // Define Constructor.
   constructor(props) {
     super(props);
+
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -27,17 +31,15 @@ class Search extends Component {
     this.onShareClick = this.onShareClick.bind(this);
     this.types = ['university'];
     this.autocomplete = null;
-    this.plus_code = "";
 
-    // Declare State
     this.state = {
-      query: null,
       location: null,
       viewport: null,
       loggedIn: false,
       openFind: true,
       openCreate: false,
       openShare: false,
+      plusCode: '847X884Q+22',
       background: "",
       playBottomAnim: "",
     };
@@ -239,6 +241,18 @@ class Search extends Component {
 
     this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
+
+    var defaultLatLng = new google.maps.LatLng({
+      lat: 35.3050053,
+      lng: -120.6624942
+    }); 
+
+    this.setState({
+      lat: defaultLatLng.lat(),
+      lng: defaultLatLng.lng()
+    });
+    this.props.changeMapState(this.state);
+    console.log(this.props.articles);
   }
 
   async handlePlaceSelect() {
@@ -246,40 +260,50 @@ class Search extends Component {
     const address = await addressObject.address_components;
     const addressGeometry = addressObject.geometry;
 
-    if (address && typeof addressObject.plus_code != 'undefined') {
-      const currentState  = {
-        query: addressObject.name,
+    var currentState = {};
+    if (address && addressObject.plus_code) {
+      currentState  = {
         location: addressGeometry.location,
+        lat: addressGeometry.location.lat(),
+        lng: addressGeometry.location.lng(),
         locationObject: addressObject,
-        viewport: addressGeometry.viewport,  
-      }
-      this.props.changeMapState(currentState);
-
-      this.plus_code = addressObject.plus_code.global_code;
-
-      this.setState(currentState);
+        plusCode: addressObject.plus_code.global_code,
+        loggedIn: this.state.loggedIn
+      } 
+    } else {
+      currentState  = {
+        location: addressGeometry.location,
+        lat: addressGeometry.location.lat(),
+        lng: addressGeometry.location.lng(),
+        locationObject: addressObject,
+        plusCode: undefined,
+        loggedIn: this.state.loggedIn
+      }    
     }
+    this.props.changeMapState(currentState);
+    console.log(currentState)
+    this.setState(currentState);
   }
 
   handleButtonClick(event) {
     var mutedText = document.getElementById('text-muted');
-    if (this.state.viewport == null) {
+    if (this.state.location == null) {
       mutedText.innerHTML = 'Please select your university from the drop-down menu.';
+      event.preventDefault();
+    } else if (this.state.plusCode == null) {
+      mutedText.innerHTML = 'MapIT does not support this location.  Please choose another.';
       event.preventDefault();
     } else {
       event.preventDefault();
-    //   this.props.history.push('/map/');
-      console.log(this.plus_code);
       this.props.history.push({
         pathname: '/map',
-        state: {loggedIn: this.state.loggedIn, plus_code: this.plus_code}
       });
     }
   }
 }
 
 const ConnectedSearch = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Search);
 

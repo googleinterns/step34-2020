@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { ButtonToolbar, Badge, Button, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
+import { Toast, ButtonToolbar, Badge, Button, Container, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
@@ -18,25 +18,39 @@ const mapStateToProps = state => {
 
 const mapStyles = {
   width: '100%',
-  height: '100%'
+  height: '100%',
 };
 
 class MapView extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      allEvents: [],
-      renderedEvents: [],
-      location: undefined,
-      plusCode: props.plusCode,
-      showInfoWindows: true,
-      contents: null,
-      resizeState: false,
-      centerLat: "",
-      centerLng: ""
-    };
-
     this.mapRef = React.createRef();
+
+    this.reduxState = this.props.articles[0];
+
+    if (this.reduxState) {
+      this.state = {
+        allEvents: [],
+	renderedEvents: [],
+        location: this.reduxState.location,
+        lat: this.reduxState.lat,
+        lng: this.reduxState.lng,
+        plusCode: this.reduxState.plusCode,
+        showInfoWindows: true,
+        contents: null,
+        resizeState: false,
+      };
+    } else {
+      this.state = {
+        allEvents: [],
+	renderedEvents: [],
+        location: undefined,
+        plusCode: '',
+        showInfoWindows: false,
+        contents: null,
+        resizeState: false,
+      };
+    }
 
     var plusCode = this.state.plusCode;
     this.queryEventsAndStoreInMemory(plusCode);
@@ -44,6 +58,12 @@ class MapView extends Component {
   }
 
   async UNSAFE_componentWillReceiveProps(nextProps) {
+    this.props.articles.map(article => {
+      this.setState({
+      	lat: article.lat,
+	lng: article.lng
+      });
+    })
     await this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, async () => {
       await this.queryEventsAndStoreInMemory(nextProps.plusCode);
       await this.setState({showInfoWindows: true});
@@ -64,37 +84,33 @@ class MapView extends Component {
     await this.handleShowWindow()
     await this.renderInfo()
   }
-
+  
   renderInfo () {
-    var map = "";
-    this.props.articles.map(article => {
-      this.state.centerLat = article.location.lat();
-      this.state.centerLng = article.location.lng();
-      map = (
-	<Map
-	  ref={this.mapRef}
-	  id="map"
-	  key={article.toString()}
-	  google={this.props.google}
-	  zoom={17}
-	  onReady={this.onReady}
-	  style={mapStyles}
-	  initialCenter={{
-	    lat: this.state.centerLat,
-	    lng: this.state.centerLng
-	  }}
-	  center={{
-	    lat: this.state.centerLat,
-	    lng: this.state.centerLng
-	  }}
-	  zoomControl={true}>
-	  {this.state.allEvents.map((element, index) => {
-	    return (this.getInfoBox(element, index));
-	  })}
-	</Map>
-      );
-    })
-
+    var map = (
+      <Map
+	ref={this.mapRef}
+	id="map"
+	google={this.props.google}
+	zoom={17}
+      	mapTypeControl={false}
+      	fullscreenControl={false}
+	onReady={this.onReady}
+	style={mapStyles}
+	initialCenter={{
+	  lat: this.state.lat,
+	  lng: this.state.lng
+	}}
+	center={{
+	  lat: this.state.lat,
+	  lng: this.state.lng
+	}}
+	zoomControl={true}>
+	{this.state.allEvents.map((element, index) => {
+	  return (this.getInfoBox(element, index));
+	})}
+      </Map>
+    );
+    
     ReactDOM.render(
       map, document.getElementById("map-view")
     );
@@ -148,7 +164,6 @@ class MapView extends Component {
 
   // Updates the event info box and updates the map in memory
   updateEvent(eventId, event) {
-    // Update event info box
     this.state.allEvents.push({
       key: eventId,
       value: event
@@ -238,7 +253,7 @@ class MapView extends Component {
     var coords = "";
     var length = 0;
     if (location != null) {
-     length = location.length;
+      length = location.length;
     }
     if (length > 0) {
       coords = location.slice(1, length-2);
@@ -248,12 +263,71 @@ class MapView extends Component {
   }
 
   infoWindowOnClick(index) {
+    let renderedEvent = this.state.renderedEvents[index];
     let event = this.state.allEvents[index];
     let coords = this.getCoords(event.location);
     this.setState({
-      centerLat: coords[0],
-      centerLng: coords[1]
+      lat: coords[0],
+      lng: coords[1]
     });
+    this.showSidePanelWithProps(event);
+  }
+
+  showSidePanelWithProps(event) {
+    ReactDOM.render(
+      this.renderSidePanel(event), document.getElementById("side-panel-col")
+    );
+  }
+
+  renderSidePanel(event) {
+    let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
+    let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
+    let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
+    return (
+      <Container> 
+	<Card
+	  className="shadow event-cards"
+	  key={Math.random(1001,5000)} 
+	  text={'light' ? 'dark' : 'white'}>
+	  <Carousel className="fill-parent">
+	  </Carousel>
+	  <Card.Body>
+	    <Card.Title>
+	      <h1 className="event-cards-title">{event.eventName}</h1>
+	    </Card.Title>
+	    <Card.Text className="event-text"> 
+	      <PlaceIcon/>
+	      {event.locationName}
+	    </Card.Text> 
+	    <Card.Text> 
+	      <AccessTimeIcon/>
+	      {date}, {startTime} - {endTime}
+	    </Card.Text>
+	    <hr/>
+	    <Card.Text className="event-cards-description">
+	      About
+	    </Card.Text>
+	    <Card.Text>{event.description}</Card.Text>
+	    <Badge variant="secondary">
+	      {event.category}
+	    </Badge>
+	    <hr/>
+	    <ButtonToolbar className="float-right">
+	      <Button 
+	      variant="primary"
+	      style={{ marginRight:".8rem", width:"80px" }}>
+		Edit
+	      </Button>
+	      <Button 
+		variant="danger" 
+		style={{ width:"80px" }}>
+		Delete
+	      </Button>
+	    </ButtonToolbar>
+	  </Card.Body>
+	</Card>
+      </Container>
+    );
   }
 
   onReady = () => {
@@ -264,7 +338,8 @@ class MapView extends Component {
 
   render() {
     return (
-      <div className="mapView" id="map-view">
+      <div>
+        <div className="mapView" id="map-view"></div>
       </div>
     )
   }

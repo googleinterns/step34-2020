@@ -261,8 +261,11 @@ class Firebase {
         // When the status is "failed" show error message and deferred promise as false
         } else { 
           failureCallback(sessionId, requestId, ref);
-          deferred.resolve(false);
-        }
+          // alert(this)
+          // this.successCallback(sessionId, requestId);
+          deferred.resolve(true);
+        // When the status is "failed" show error message and deferred promise as false
+        } 
       }
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);

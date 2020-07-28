@@ -6,25 +6,47 @@ import style from 'bootstrap/dist/css/bootstrap.css';
 import Firebase from 'firebase';
 import logo from '../IT.png';
 import '../navbarStyle.css';
+import { changeMapState } from "../actions/index";
+import { connect } from "react-redux";
+import store from "../store/index";
+import { Provider } from "react-redux";
 
-export default class TopNavbar extends React.Component {
+function mapDispatchToProps(dispatch) {
+  return {
+    changeMapState: mapState => dispatch(changeMapState(mapState))
+  };
+}
+
+const mapStateToProps = state => {
+  return { articles: state.articles };
+}
+
+class TopNavbar extends React.Component {
   constructor(props) {
     super(props);
+    
+    this.reduxState = this.props.articles[0];
 
-    this.state= {
-      loggedIn: props.loggedIn,
-      history: props.history,
-    }
-
-    var credentials;
-
-    if (props.credentials) {
-      this.credentials = props.credentials;
-    } else if (props.history.location.state){
-      if (props.history.location.state.credentials) {
-        this.credentials = props.history.location.state.credentials;
+    if (this.reduxState) {
+      this.state = {
+        loggedIn: this.reduxState.loggedIn,
+        plusCode: this.reduxState.plusCode,
+        credentials: this.reduxState.credentials
+      }
+    } else {
+      this.state = {
+        loggedIn: false,
       }
     }
+  }
+
+  logOutAndUpdateRedux() {
+    // update redux
+    const currentState = {
+      loggedIn: false,
+    }
+    this.props.changeMapState(currentState); 
+    this.setState(currentState);
   }
 
   handleLogoutButton() {
@@ -38,9 +60,11 @@ export default class TopNavbar extends React.Component {
   
   handleLoginButtonClick() {
     ReactDOM.render(
-      <div id="modal">
-        <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-      </div>,
+      <Provider store={store}>
+        <div id="modal">
+          <Modal history={this.props.history}/>
+        </div>
+      </Provider>,
       document.getElementById('modal-wrapper')
     );
   }
@@ -48,40 +72,40 @@ export default class TopNavbar extends React.Component {
   handleMapViewonClick() {
     this.props.history.push({
       pathname: '/map/',
-      state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
     });
   }
 
   handleProfileButtonClick() {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
-    if (this.props.loggedIn) {
-        console.log(this.props.plus_code)
+    if (this.state.loggedIn) {
       this.props.history.push({
         pathname: '/profile/',
-        state: {loggedIn: this.props.loggedIn, credentials: JSON.stringify(this.credentials), plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
-        <div id="modal">
-          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-        </div>,
+        <Provider store={store}>
+          <div id="modal">
+            <Modal history={this.props.history}/>
+          </div>
+        </Provider>,
         document.getElementById('modal-wrapper')
       );
     }
   }
 
   handleCreateButton() {
-    if (this.props.loggedIn) {
+    if (this.state.loggedIn) {
       this.props.history.push({
         pathname: '/create/',
-        state: {loggedIn: this.props.loggedIn, credentials: this.credentials, plus_code: this.props.plus_code}
       })
     } else {
       ReactDOM.render(
-        <div id="modal">
-          <Modal history={this.props.history} plus_code={this.props.plus_code}/>
-        </div>,
+        <Provider store={store}>
+          <div id="modal">
+            <Modal history={this.props.history}/>
+          </div>
+        </Provider>,
         document.getElementById('modal-wrapper')
       );
     }
@@ -175,3 +199,10 @@ function ProfileButtonNav(props) {
     return null;
   }
 }
+
+const ConnectedTopNavbar = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TopNavbar);
+
+export default ConnectedTopNavbar;
