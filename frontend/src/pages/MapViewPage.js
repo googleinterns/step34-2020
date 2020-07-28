@@ -57,26 +57,24 @@ class MapViewPage extends Component {
         <Toast style={{position: "absolute", zIndex: 2, padding: "0rem", minWidth: "40rem", float: "right", margin: "1rem"}}>
         <Toast.Body>	
             <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
-            <Form.Row>
-            <Form.Group as={Col}>
-            <Form.Label> Enter your university</Form.Label>
+            <Col xs="auto">
+            <Form.Group>
             <Form.Control id = "autocomplete" placeholder = "Enter university"/>
             </Form.Group>
-            <Form.Group as={Col}>
-            <Form.Label> Filter </Form.Label>
+            <Form.Group>
             <Form.Control
                 onChange={this.handleFilter}
                 as="select"
                 className="my-1 mr-sm-2"
                 id="categoriesSelect"
                 custom="true">
-                <option value="">Choose...</option>
+                <option value="">Filter</option>
                 <option value="0">Social Gathering</option>
                 <option value="1">Volunteer Event</option>
                 <option value="2">Student Organization Event</option>
                 </Form.Control>
             </Form.Group>
-            </Form.Row>
+            </Col>
             </Form>
         </Toast.Body>
         </Toast>	
