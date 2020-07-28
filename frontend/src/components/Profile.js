@@ -329,8 +329,7 @@ class Profile extends React.Component {
 	  <TopNavbar 
 	    loggedIn={true}
 	    history={this.props.history} 
-	    credentials={this.state.credentials} 
-	    plus_code={this.props.history.location.state.plus_code}/>
+	    credentials={this.state.credentials} />
 	  <Jumbotron>
 	    {this.renderProfile()}
 	    {this.renderEvents()}
