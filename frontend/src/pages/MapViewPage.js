@@ -26,6 +26,7 @@ class MapViewPage extends Component {
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.inputRef = React.createRef();
 
     this.types = ['university'];
@@ -40,7 +41,8 @@ class MapViewPage extends Component {
         lng: this.reduxState.lng,
         loggedIn: this.reduxState.loggedIn,
         plusCode: this.reduxState.plusCode,
-        credentials: this.reduxState.credentials
+        credentials: this.reduxState.credentials,
+        isChecked: false
       };
     } else {
       window.location = "/";
@@ -75,7 +77,11 @@ class MapViewPage extends Component {
               </Form.Control>
             </Form.Group>
             <Form.Group>
-              <Form.Check type="checkbox" label="Show today's events"/>
+              <Form.Check
+                onChange={this.handleCheckboxChange}
+                defaultChecked={this.state.isChecked}
+                type="checkbox"
+                label="Show today's events"/>
             </Form.Group>
           </Col>
           </Form>
@@ -84,6 +90,10 @@ class MapViewPage extends Component {
         <MapView style={{zIndex: 1}} plusCode={this.state.plusCode}/>
       </div>
     );
+  }
+
+  handleCheckboxChange() {
+    
   }
 
   handleFilter(input) {

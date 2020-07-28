@@ -31,7 +31,7 @@ class MapView extends Component {
     if (this.reduxState) {
       this.state = {
         allEvents: [],
-	renderedEvents: [],
+	    renderedEvents: [],
         location: this.reduxState.location,
         lat: this.reduxState.lat,
         lng: this.reduxState.lng,
@@ -44,7 +44,7 @@ class MapView extends Component {
     } else {
       this.state = {
         allEvents: [],
-	renderedEvents: [],
+	    renderedEvents: [],
         location: undefined,
         plusCode: '',
         showInfoWindows: false,
@@ -63,7 +63,7 @@ class MapView extends Component {
     this.props.articles.map(article => {
       this.setState({
       	lat: article.lat,
-	lng: article.lng
+	    lng: article.lng
       });
     })
     await this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, async () => {
