@@ -211,7 +211,7 @@
 .event-cards {
   border-radius: 20px!important;
   border: none!important;
-  min-width: 30rem!important;
+  max-width: 30rem!important;
 }
 
 .event-cards-body {
@@ -255,3 +255,4 @@
 .gm-style-iw-d {
   overflow: hidden!important;
 }
+
