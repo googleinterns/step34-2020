@@ -22,6 +22,7 @@ class MapViewPage extends Component {
     super(props);
 
     this.reduxState = this.props.articles[0];
+    this.isChecked = false;
 
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
@@ -42,7 +43,6 @@ class MapViewPage extends Component {
         loggedIn: this.reduxState.loggedIn,
         plusCode: this.reduxState.plusCode,
         credentials: this.reduxState.credentials,
-        isChecked: false
       };
     } else {
       window.location = "/";
@@ -79,7 +79,7 @@ class MapViewPage extends Component {
             <Form.Group>
               <Form.Check
                 onChange={this.handleCheckboxChange}
-                defaultChecked={this.state.isChecked}
+                defaultChecked={this.isChecked}
                 type="checkbox"
                 label="Show today's events"/>
             </Form.Group>
@@ -93,7 +93,25 @@ class MapViewPage extends Component {
   }
 
   handleCheckboxChange() {
-    
+    this.isChecked = !this.isChecked;
+    console.log(this.reduxState);
+
+    const newState = {
+      location: this.state.location,
+      lat: this.state.lat,
+      lng: this.state.lng,
+      locationObject:this.state.locationObject,
+      plusCode: this.state.plusCode,
+      loggedIn: this.state.loggedIn,
+      credentials: this.state.credentials,
+      filter_choice: this.reduxState.filter_choice,
+      isChecked: this.isChecked
+    }
+
+    this.props.changeMapState(newState);
+    this.reduxState = this.props.articles[0];
+    console.log(this.reduxState);
+    this.setState(newState);
   }
 
   handleFilter(input) {
@@ -125,9 +143,11 @@ class MapViewPage extends Component {
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
       filter_choice: filter_choice,
+      isChecked: this.isChecked
     }
 
     this.props.changeMapState(newState);
+    this.reduxState = this.props.articles[0];
     this.setState(newState);
   }
 

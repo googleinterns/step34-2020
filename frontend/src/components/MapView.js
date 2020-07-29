@@ -112,8 +112,8 @@ class MapView extends Component {
         id="map"
         google={this.props.google}
         zoom={17}
-              mapTypeControl={false}
-              fullscreenControl={false}
+        mapTypeControl={false}
+        fullscreenControl={false}
         onReady={this.onReady}
         style={mapStyles}
         initialCenter={{
@@ -122,10 +122,11 @@ class MapView extends Component {
         }}
         center={{
           lat: this.state.lat,
-                lng: this.state.lng
+          lng: this.state.lng
         }}
         zoomControl={true}>
         {listEvents.map((element, index) => {
+          console.log(element)
           return (this.getInfoBox(element, index));
         })}
       </Map>
