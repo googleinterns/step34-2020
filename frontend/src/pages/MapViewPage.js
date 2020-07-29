@@ -78,20 +78,18 @@ class MapViewPage extends Component {
                     <option value="1">Volunteer Event</option>
                     <option value="2">Student Organization Event</option>
                   </Form.Control>
-                  <Form.Group>
-                    <Form.Check
-                      onChange={this.handleCheckboxChange}
-                      defaultChecked={this.isChecked}
-                      type="checkbox"
-                      label="Show today's events"/>
-                    </Form.Group>
+		  <Form.Check
+		    onChange={this.handleCheckboxChange}
+		    defaultChecked={this.isChecked}
+		    type="checkbox"
+		    label="Show today's events"/>
                   </Form>
                 </Accordion.Collapse>
               </Accordion>
             </Card>
           </Toast.Body>
         </Toast>
-      	<Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", maxHeight: "80vh", float: "right", margin: "1rem", marginTop: "11rem"}}>
+      	<Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", maxHeight: "80vh", float: "right", margin: "1rem", marginTop: "13rem"}}>
       	  <Toast.Body id="event-info">
       	    Start by clicking on an event!
       	  </Toast.Body>
