@@ -22,10 +22,12 @@ class MapViewPage extends Component {
     super(props);
 
     this.reduxState = this.props.articles[0];
+    this.isChecked = false;
 
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.inputRef = React.createRef();
 
     this.types = ['university'];
@@ -40,13 +42,11 @@ class MapViewPage extends Component {
         lng: this.reduxState.lng,
         loggedIn: this.reduxState.loggedIn,
         plusCode: this.reduxState.plusCode,
-        credentials: this.reduxState.credentials
+        credentials: this.reduxState.credentials,
       };
     } else {
       window.location = "/";
     }
-
-    console.log(this.state)
   }
 
   render() {
@@ -54,36 +54,43 @@ class MapViewPage extends Component {
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
-	<Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", float: "right", margin: "1rem"}}>
-	  <Toast.Body>
+	      <Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", float: "right", margin: "1rem"}}>
+	        <Toast.Body>
       	    <Card style={{border: 0}}>
-	      <Form>
-		<Form.Control style={{border: 0, focusOutline: "none"}} id = "autocomplete" placeholder = "Enter university"/>
-	      </Form>
+	            <Form>
+		            <Form.Control style={{border: 0, focusOutline: "none"}} id = "autocomplete" placeholder = "Enter university"/>
+	            </Form>
       	    </Card>
       	    <hr/>
-	    <Card style={{border: 0}} id="eventInfo">
-	      <Accordion defaultActiveKey="0">
-		<Accordion.Collapse eventKey="0">
-		  <Form>
-		    <Form.Control
-		      onChange={this.handleFilter}
-		      as="select"
-		      className="my-1 mr-sm-2"
-		      id="categoriesSelect"
-      		      style={{border: 0}}
-		      custom="true">
-		      <option value="">Filter by</option>
-		      <option value="0">Social Gathering</option>
-		      <option value="1">Volunteer Event</option>
-		      <option value="2">Student Organization Event</option>
-		    </Form.Control>
-		  </Form>
-		</Accordion.Collapse>
-	      </Accordion>
-	    </Card>
-	  </Toast.Body>
-	</Toast>
+	          <Card style={{border: 0}} id="eventInfo">
+	          <Accordion defaultActiveKey="0">
+		          <Accordion.Collapse eventKey="0">
+                <Form>
+                  <Form.Control
+                    onChange={this.handleFilter}
+                    as="select"
+                    className="my-1 mr-sm-2"
+                    id="categoriesSelect"
+                          style={{border: 0}}
+                    custom="true">
+                    <option value="">Filter by</option>
+                    <option value="0">Social Gathering</option>
+                    <option value="1">Volunteer Event</option>
+                    <option value="2">Student Organization Event</option>
+                  </Form.Control>
+                  <Form.Group>
+                    <Form.Check
+                      onChange={this.handleCheckboxChange}
+                      defaultChecked={this.isChecked}
+                      type="checkbox"
+                      label="Show today's events"/>
+                    </Form.Group>
+                  </Form>
+                </Accordion.Collapse>
+              </Accordion>
+            </Card>
+          </Toast.Body>
+        </Toast>
       	<Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", maxHeight: "80vh", float: "right", margin: "1rem", marginTop: "11rem"}}>
       	  <Toast.Body id="event-info">
       	    Start by clicking on an event!
@@ -94,7 +101,27 @@ class MapViewPage extends Component {
     );
   }
 
-  handleFilter(input) {
+  async handleCheckboxChange() {
+    this.isChecked = !this.isChecked;
+
+    const newState = {
+      location: this.state.location,
+      lat: this.state.lat,
+      lng: this.state.lng,
+      locationObject:this.state.locationObject,
+      plusCode: this.state.plusCode,
+      loggedIn: this.state.loggedIn,
+      credentials: this.state.credentials,
+      filter_choice: this.reduxState.filter_choice,
+      isChecked: this.isChecked
+    };
+
+    await this.props.changeMapState(newState);
+    this.reduxState = this.props.articles[0];
+    this.setState(newState);
+  }
+
+  async handleFilter(input) {
     // Set filter category
     let filter_choice = null;
     switch (input.target.value) {
@@ -123,9 +150,11 @@ class MapViewPage extends Component {
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
       filter_choice: filter_choice,
+      isChecked: this.isChecked
     }
 
-    this.props.changeMapState(newState);
+    await this.props.changeMapState(newState);
+    this.reduxState = this.props.articles[0];
     this.setState(newState);
   }
 
@@ -137,12 +166,10 @@ class MapViewPage extends Component {
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
-  handlePlaceSelect() {
+  async handlePlaceSelect() {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
-    console.log(addressObject);
-    console.log(this.state.filter_choice)
 
     if (address && typeof addressObject.plus_code != 'undefined') {
       const newState = {
@@ -154,9 +181,9 @@ class MapViewPage extends Component {
         loggedIn: this.state.loggedIn,
         credentials: this.state.credentials,
         filter_choice: this.state.filter_choice,
-
+        isChecked: this.isChecked
       }
-      this.props.changeMapState(newState);
+      await this.props.changeMapState(newState);
       this.reduxState = this.props.articles[0];
       this.setState(newState);
     } else {
