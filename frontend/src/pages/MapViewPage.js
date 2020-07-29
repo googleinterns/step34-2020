@@ -106,8 +106,8 @@ class MapViewPage extends Component {
     };
 
     await this.props.changeMapState(newState);
-    this.setState(newState);
     this.reduxState = this.props.articles[0];
+    this.setState(newState);
   }
 
   async handleFilter(input) {
@@ -144,6 +144,7 @@ class MapViewPage extends Component {
 
     await this.props.changeMapState(newState);
     this.reduxState = this.props.articles[0];
+    console.log(this.reduxState);
     this.setState(newState);
   }
 
@@ -155,7 +156,7 @@ class MapViewPage extends Component {
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
-  handlePlaceSelect() {
+  async handlePlaceSelect() {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
@@ -170,9 +171,9 @@ class MapViewPage extends Component {
         loggedIn: this.state.loggedIn,
         credentials: this.state.credentials,
         filter_choice: this.state.filter_choice,
-
+        isChecked: this.isChecked
       }
-      this.props.changeMapState(newState);
+      await this.props.changeMapState(newState);
       this.reduxState = this.props.articles[0];
       this.setState(newState);
     } else {

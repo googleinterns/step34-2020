@@ -88,17 +88,34 @@ class MapView extends Component {
   }
 
   renderInfo () {
+    this.reduxState = this.props.articles[0];
     var listEvents = [];
 
-    const filter_choice =  this.props.articles[0].filter_choice;
+    const filter_choice =  this.reduxState.filter_choice;
+    const showTodayOnly = this.reduxState.isChecked;
 
     if (filter_choice === null || typeof filter_choice === 'undefined') {
       listEvents = this.state.allEvents;
     } else {
-      console.log("changed filter")
       listEvents = this.state.allEvents.filter((event) => {
         return event.category.toLowerCase() === (filter_choice).toLowerCase();
       });
+    }
+
+    if (showTodayOnly) {
+      const today = new Date();
+      listEvents = listEvents.filter((event) => {
+        // event.date is YYYY-MM-DD
+        //               0123456789
+        const eventDate = event.date;
+        const eventYear = eventDate.substring(0, 3);
+        const eventMonth = eventDate.substring(5, 6);
+        const eventDay = eventDate.substring(8, 9);
+
+        console.log("year: " + eventYear);
+        console.log("month: " + eventMonth);
+        console.log("day: " + eventDay);
+      })
     }
 
     let container = document.getElementById('map-view')
