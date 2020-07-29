@@ -351,33 +351,33 @@ class MapView extends Component {
             </Card.Title>
             <div className="event-text">
               <Row>
-                      <Col xs={1}>
-            <PlaceIcon/>
+                <Col xs={1}>
+                  <PlaceIcon/>
                 </Col>
                 <Col>
-            {event.locationName}
+                  {event.locationName}
                 </Col>
-                    </Row>
+              </Row>
             </div>
             <div>
               <Row>
-                      <Col xs={1}>
-            <AccessTimeIcon/>
+                <Col xs={1}>
+                  <AccessTimeIcon/>
                 </Col>
                 <Col>
-            {date}, {startTime} - {endTime}
+                  {date}, {startTime} - {endTime}
                 </Col>
-                    </Row>
+              </Row>
             </div>
             <div>
               <Row>
-                      <Col xs={1}>
-            <GroupIcon/>
+                <Col xs={1}>
+                  <GroupIcon/>
                 </Col>
                 <Col>
-            {num} attending
+                  {num} attending
                 </Col>
-                    </Row>
+              </Row>
             </div>
             <hr/>
             <Card.Text className="event-cards-description">
@@ -394,7 +394,7 @@ class MapView extends Component {
                 <div className="event-cards-attendtext">Going</div>
               </Col>
               <Col md="auto">
-          <StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
+                <StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
                 <div className="event-cards-attendtext">Interested</div>
               </Col>
             </Row>

@@ -45,7 +45,6 @@ class Profile extends React.Component {
       window.location = "/";
     }
 
-    console.log(this.state.credentials);
     this.showModal =  this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -322,16 +321,16 @@ class Profile extends React.Component {
   render() {
     if (this.reduxState) {
       return (
-  <div>
-    <TopNavbar
-      loggedIn={true}
-      history={this.props.history}
-      credentials={this.state.credentials} />
-    <Jumbotron>
-      {this.renderProfile()}
-      {this.renderEvents()}
-    </Jumbotron>
-  </div>
+        <div>
+          <TopNavbar
+            loggedIn={true}
+            history={this.props.history}
+            credentials={this.state.credentials} />
+          <Jumbotron>
+            {this.renderProfile()}
+            {this.renderEvents()}
+          </Jumbotron>
+        </div>
       )
     } else {
       window.location = '/';
