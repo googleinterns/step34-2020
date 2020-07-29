@@ -35,7 +35,7 @@ class MapView extends Component {
     if (this.reduxState) {
       this.state = {
         allEvents: [],
-	renderedEvents: [],
+        renderedEvents: [],
         location: this.reduxState.location,
         lat: this.reduxState.lat,
         lng: this.reduxState.lng,
@@ -48,7 +48,7 @@ class MapView extends Component {
     } else {
       this.state = {
         allEvents: [],
-	renderedEvents: [],
+        renderedEvents: [],
         location: undefined,
         plusCode: '',
         showInfoWindows: false,
@@ -66,9 +66,10 @@ class MapView extends Component {
   async UNSAFE_componentWillReceiveProps(nextProps) {
     this.props.articles.map(article => {
       this.setState({
-      	lat: article.lat,
-	lng: article.lng
+        lat: article.lat,
+        lng: article.lng
       });
+      return null;
     })
     await this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, async () => {
       await this.queryEventsAndStoreInMemory(nextProps.plusCode);
@@ -105,7 +106,6 @@ class MapView extends Component {
       });
     }
 
-    let article = this.props.articles[0];
     let container = document.getElementById('map-view')
     
     //unmount the component so that we can render new data
@@ -113,7 +113,7 @@ class MapView extends Component {
 
     var map = (
       <Map
-	ref={this.mapRef}
+	ref={(map) => this.mapRef = map}
 	id="map"
 	google={this.props.google}
 	zoom={17}
@@ -209,7 +209,6 @@ class MapView extends Component {
       var lat = parseFloat(location[0]);
       var lng = parseFloat(location[1]);
 
-
       // Format time and dates to a more comfortable format
       let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
       let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
@@ -223,33 +222,33 @@ class MapView extends Component {
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
           <Card
-	    border="light"
-	    tag="a"
-	    onClick={this.infoWindowOnClick.bind(this, index)}
-	    style={{cursor: 'pointer'}}>
-	    <Card.Body>
-	      <Card.Title>{event.eventName}</Card.Title>
-	      <hr/>
-	      <Card.Text> 
-		<PlaceIcon/>
-		{event.locationName}
-	      </Card.Text> 
-	      <Card.Text> 
-		<AccessTimeIcon/>
-		{date}, {startTime} - {endTime}
-	      </Card.Text>
-	      <Badge variant="secondary">
-		{event.category}
-	      </Badge>
-	      <hr/>
-	    </Card.Body>
+            border="light"
+            tag="a"
+            onClick={this.infoWindowOnClick.bind(this, index)}
+            style={{cursor: 'pointer'}}>
+            <Card.Body>
+              <Card.Title>{event.eventName}</Card.Title>
+              <hr/>
+              <Card.Text> 
+                <PlaceIcon/>
+                {event.locationName}
+              </Card.Text> 
+              <Card.Text> 
+                <AccessTimeIcon/>
+                  {date}, {startTime} - {endTime}
+              </Card.Text>
+              <Badge variant="secondary">
+                {event.category}
+              </Badge>
+              <hr/>
+            </Card.Body>
           </Card>
         </EventInfoWindow>
       );
 
       this.state.renderedEvents.push({
-	key: index,
-	value: eventInfoWindow, 
+        key: index,
+        value: eventInfoWindow, 
       });
       return eventInfoWindow;
     }
@@ -271,13 +270,9 @@ class MapView extends Component {
 
   // Handle when an info window is clicked
   infoWindowOnClick(index) {
-    let renderedEvent = this.state.renderedEvents[index];
     let event = this.state.allEvents[index];
     let coords = this.getCoords(event.location);
-    this.setState({
-      lat: coords[0],
-      lng: coords[1]
-    });
+    console.log(this.mapRef);
     this.renderSidePanel(event);
   }
 
@@ -321,7 +316,7 @@ class MapView extends Component {
 	    <Card.Title>
 	      <h1 className="event-cards-title">{event.eventName}</h1>
 	    </Card.Title>
-	    <Card.Text className="event-text"> 
+	    <div className="event-text"> 
 	      <Row>
       	        <Col xs={1}>
 		  <PlaceIcon/>
@@ -330,8 +325,8 @@ class MapView extends Component {
 		  {event.locationName}
       		</Col>
       	      </Row>
-	    </Card.Text> 
-	    <Card.Text> 
+	    </div> 
+	    <div> 
 	      <Row>
       	        <Col xs={1}>
 		  <AccessTimeIcon/>
@@ -340,8 +335,8 @@ class MapView extends Component {
 		  {date}, {startTime} - {endTime}
       		</Col>
       	      </Row>
-	    </Card.Text>
-	    <Card.Text> 
+	    </div>
+	    <div> 
 	      <Row>
       	        <Col xs={1}>
 		  <GroupIcon/>
@@ -350,7 +345,7 @@ class MapView extends Component {
 		  {num} attending
       		</Col>
       	      </Row>
-	    </Card.Text>
+	    </div>
 	    <hr/>
 	    <Card.Text className="event-cards-description">
 	      About
@@ -404,9 +399,7 @@ class MapView extends Component {
 
   render() {
     return (
-      <div>
-        <div className="mapView" id="map-view"></div>
-      </div>
+      <div className="mapView" id="map-view"></div>
     )
   }
 }

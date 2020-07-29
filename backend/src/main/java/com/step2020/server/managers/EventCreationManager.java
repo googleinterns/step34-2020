@@ -354,7 +354,7 @@ public class EventCreationManager {
     Iterator<Map.Entry<String,String>> it = entries.iterator();
     while(it.hasNext()) {
       Map.Entry<String, String> entry = it.next();
-      if (!entry.getKey().equals("imagePaths") && !entry.getKey().equals("organization")) {
+      if (!entry.getKey().equals("imageUrls") && !entry.getKey().equals("organization")) {
         if (entry.getValue() == null || entry.getValue().isEmpty()) {
 	  System.out.println(entry.getKey());
           return false;

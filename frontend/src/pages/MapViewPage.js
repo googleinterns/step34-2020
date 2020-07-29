@@ -52,7 +52,7 @@ class MapViewPage extends Component {
   render() {
     return (
       <div>
-        <Script url = {this.url} onLoad = {this.handleScriptLoad}/> 
+        <Script url = {this.url} onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
 	<Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", float: "right", margin: "1rem"}}>
 	  <Toast.Body>
@@ -124,7 +124,7 @@ class MapViewPage extends Component {
       credentials: this.state.credentials,
       filter_choice: filter_choice,
     }
-    
+
     this.props.changeMapState(newState);
     this.setState(newState);
   }
@@ -154,7 +154,7 @@ class MapViewPage extends Component {
         loggedIn: this.state.loggedIn,
         credentials: this.state.credentials,
         filter_choice: this.state.filter_choice,
-        
+
       }
       this.props.changeMapState(newState);
       this.reduxState = this.props.articles[0];

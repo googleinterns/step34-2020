@@ -12,6 +12,7 @@
 /build
 
 # misc
+../backend/target
 .env
 .DS_Store
 .env
