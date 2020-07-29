@@ -48,7 +48,7 @@ class MapView extends Component {
     } else {
       this.state = {
         allEvents: [],
-	    renderedEvents: [],
+      renderedEvents: [],
         location: undefined,
         plusCode: '',
         showInfoWindows: false,
@@ -134,32 +134,32 @@ class MapView extends Component {
     }
 
     let container = document.getElementById('map-view')
-    
+
     //unmount the component so that we can render new data
     ReactDOM.unmountComponentAtNode(container)
 
     var map = (
       <Map
-	ref={(map) => this.mapRef = map}
-	id="map"
-	google={this.props.google}
-	zoom={17}
+        ref={(map) => this.mapRef = map}
+        id="map"
+        google={this.props.google}
+        zoom={17}
         mapTypeControl={false}
         fullscreenControl={false}
-	onReady={this.onReady}
-	style={mapStyles}
-	initialCenter={{
-	  lat: this.state.lat,
-	  lng: this.state.lng
-	}}
-	center={{
-	  lat: this.state.lat,
-	  lng: this.state.lng
-	 }}
-	zoomControl={true}>
-	{listEvents.map((element, index) => {
-	  return (this.getInfoBox(element, index));
-	})}
+        onReady={this.onReady}
+        style={mapStyles}
+        initialCenter={{
+          lat: this.state.lat,
+          lng: this.state.lng
+        }}
+        center={{
+          lat: this.state.lat,
+          lng: this.state.lng
+        }}
+        zoomControl={true}>
+        {listEvents.map((element, index) => {
+          return (this.getInfoBox(element, index));
+        })}
        </Map>
     );
     ReactDOM.render(map, container);
@@ -255,11 +255,11 @@ class MapView extends Component {
             <Card.Body>
               <Card.Title>{event.eventName}</Card.Title>
               <hr/>
-              <Card.Text> 
+              <Card.Text>
                 <PlaceIcon/>
                 {event.locationName}
-              </Card.Text> 
-              <Card.Text> 
+              </Card.Text>
+              <Card.Text>
                 <AccessTimeIcon/>
                   {date}, {startTime} - {endTime}
               </Card.Text>
@@ -274,7 +274,7 @@ class MapView extends Component {
 
       this.state.renderedEvents.push({
         key: index,
-        value: eventInfoWindow, 
+        value: eventInfoWindow,
       });
       return eventInfoWindow;
     }
@@ -298,7 +298,7 @@ class MapView extends Component {
   infoWindowOnClick(index) {
     let event = this.state.allEvents[index];
     let coords = this.getCoords(event.location);
-    
+
     // Change coords to parses and pan to the location
     var lat = parseFloat(coords[0]);
     var lng = parseFloat(coords[1]);
@@ -310,7 +310,7 @@ class MapView extends Component {
   }
 
   renderSidePanel(event) {
-      
+
     var images = "";
     var length = 0;
 
@@ -323,11 +323,11 @@ class MapView extends Component {
     // Convert each image into a carousel item
     if (length > 0) {
       imageUrl = event.imageUrls.slice(1, length - 2);
-      imageUrl = imageUrl.split(","); 
+      imageUrl = imageUrl.split(",");
       images = imageUrl.map(url =>
-	  <Carousel.Item>
-	    <Image className="rounded" fluid src={url} />
-	  </Carousel.Item>);
+    <Carousel.Item>
+      <Image className="rounded" fluid src={url} />
+    </Carousel.Item>);
     }
 
     var attendees = event.attendees.slice(1, event.attendees.length-1).split(",");
@@ -337,69 +337,69 @@ class MapView extends Component {
     let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
     let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
     var eventInfo = (
-      <Container> 
-	<Card
-	  className="event-cards"
-	  key={Math.random(1001,5000)} 
-	  text={'light' ? 'dark' : 'white'}>
-	  <Carousel className="fill-parent">
-      	    {images}
-	  </Carousel>
-	  <Card.Body>
-	    <Card.Title>
-	      <h1 className="event-cards-title">{event.eventName}</h1>
-	    </Card.Title>
-	    <div className="event-text"> 
-	      <Row>
-      	        <Col xs={1}>
-		  <PlaceIcon/>
-      		</Col>
-      		<Col>	
-		  {event.locationName}
-      		</Col>
-      	      </Row>
-	    </div> 
-	    <div> 
-	      <Row>
-      	        <Col xs={1}>
-		  <AccessTimeIcon/>
-      		</Col>
-      		<Col>	
-		  {date}, {startTime} - {endTime}
-      		</Col>
-      	      </Row>
-	    </div>
-	    <div> 
-	      <Row>
-      	        <Col xs={1}>
-		  <GroupIcon/>
-      		</Col>
-      		<Col>	
-		  {num} attending
-      		</Col>
-      	      </Row>
-	    </div>
-	    <hr/>
-	    <Card.Text className="event-cards-description">
-	      About
-	    </Card.Text>
-	    <Card.Text>{event.description}</Card.Text>
-	    <Badge variant="secondary">
-	      {event.category}
-	    </Badge>
-	    <hr/>
-	    <Row className="justify-content-md-center">
-	      <Col md="auto">
-      		{this.checkGoing(attendees)}
-      		<div className="event-cards-attendtext">Going</div>
-	      </Col>
-	      <Col md="auto">
-		<StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
-      		<div className="event-cards-attendtext">Interested</div>
-	      </Col>
-	    </Row>
-	  </Card.Body>
-	</Card>
+      <Container>
+        <Card
+          className="event-cards"
+          key={Math.random(1001,5000)}
+          text={'light' ? 'dark' : 'white'}>
+          <Carousel className="fill-parent">
+                  {images}
+          </Carousel>
+          <Card.Body>
+            <Card.Title>
+              <h1 className="event-cards-title">{event.eventName}</h1>
+            </Card.Title>
+            <div className="event-text">
+              <Row>
+                      <Col xs={1}>
+            <PlaceIcon/>
+                </Col>
+                <Col>
+            {event.locationName}
+                </Col>
+                    </Row>
+            </div>
+            <div>
+              <Row>
+                      <Col xs={1}>
+            <AccessTimeIcon/>
+                </Col>
+                <Col>
+            {date}, {startTime} - {endTime}
+                </Col>
+                    </Row>
+            </div>
+            <div>
+              <Row>
+                      <Col xs={1}>
+            <GroupIcon/>
+                </Col>
+                <Col>
+            {num} attending
+                </Col>
+                    </Row>
+            </div>
+            <hr/>
+            <Card.Text className="event-cards-description">
+              About
+            </Card.Text>
+            <Card.Text>{event.description}</Card.Text>
+            <Badge variant="secondary">
+              {event.category}
+            </Badge>
+            <hr/>
+            <Row className="justify-content-md-center">
+              <Col md="auto">
+                {this.checkGoing(attendees)}
+                <div className="event-cards-attendtext">Going</div>
+              </Col>
+              <Col md="auto">
+          <StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
+                <div className="event-cards-attendtext">Interested</div>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
       </Container>
     );
 
@@ -409,16 +409,16 @@ class MapView extends Component {
 
   checkGoing(attendees) {
     if (this.reduxState.credentials === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
     }
-    
+
     const uid = this.reduxState.credentials.uid;
     const found = attendees.find(element => element === uid);
 
     if (found === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
     } else {
-      return (<CheckCircleIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+      return (<CheckCircleIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
     }
   }
 
