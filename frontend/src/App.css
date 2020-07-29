@@ -230,6 +230,13 @@
   font-family: Roboto;
 }
 
+.event-cards-attendtext {
+  font-size: .9rem;
+  font-weight: 400;
+  font-family: Roboto;
+  text-align: center;
+}
+
 .fill-parent {
   background-size: cover!important;
   background-position: center!important;
