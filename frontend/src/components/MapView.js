@@ -4,6 +4,7 @@ import { Toast, ButtonToolbar, Badge, Button, ToggleButton, Container, Card, Car
 import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
+import { Deferred } from '@firebase/util';
 import EventInfoWindow from "./EventInfoWindow";
 import '../gm-styles.css';
 import '../App.css';
@@ -48,7 +49,7 @@ class MapView extends Component {
     } else {
       this.state = {
         allEvents: [],
-	    renderedEvents: [],
+	renderedEvents: [],
         location: undefined,
         plusCode: '',
         showInfoWindows: false,
@@ -64,42 +65,34 @@ class MapView extends Component {
   }
 
   async UNSAFE_componentWillReceiveProps(nextProps) {
-    this.props.articles.map(article => {
+    console.log(nextProps);
+    if (nextProps.articles[0].lat !== this.state.lat || nextProps.articles[0].lng !== this.state.lng) {
       this.setState({
-        lat: article.lat,
-        lng: article.lng
+	lat: nextProps.articles[0].lat,
+	lng: nextProps.articles[0].lng
       });
-      return null;
-    })
-    await this.setState({ showInfoWindows: false, allEvents: [], plusCode: nextProps.plusCode }, async () => {
-      await this.queryEventsAndStoreInMemory(nextProps.plusCode);
-      await this.setState({showInfoWindows: true});
-    });
-  }
+    }
 
-  // Whenever component is updated, we need to re-render again
-  componentDidUpdate() {
+    if (nextProps.plusCode !== this.state.plusCode) {
+      await this.setState({ allEvents: [], plusCode: nextProps.plusCode });
+      await this.queryEventsAndStoreInMemory(nextProps.plusCode);
+      console.log(this.state.allEvents);
+    }
+
+    if (nextProps.articles[0].filter_choice !== this.state.filter_choice) {
+      this.setState({ filter_choice: nextProps.articles[0].filter_choice });
+    }
+
+    await this.setState({renderedEvents: []});
+    this.renderInfo();
     this.renderInfo();
   }
 
-  handleShowWindow() {
-    this.setState({showInfoWindows: true})
-  }
-
-  /*
-  async componentDidMount() {
-    await this.queryEventsAndStoreInMemory(this.props.plusCode);
-    await this.handleShowWindow()
-    await this.renderInfo()
-  }
-  */
-
   renderInfo () {
-    this.reduxState = this.props.articles[0];
     var listEvents = [];
 
-    const filter_choice =  this.reduxState.filter_choice;
-    const showTodayOnly = this.reduxState.isChecked;
+    const filter_choice =  this.state.filter_choice;
+    const showTodayOnly = this.state.isChecked;
 
     if (filter_choice === null || typeof filter_choice === 'undefined') {
       listEvents = this.state.allEvents;
@@ -140,11 +133,7 @@ class MapView extends Component {
       });
     }
 
-    let container = document.getElementById('map-view')
-    
-    //unmount the component so that we can render new data
-    ReactDOM.unmountComponentAtNode(container)
-
+    let container = document.getElementById('map-view') 
     var map = (
       <Map
 	ref={(map) => this.mapRef = map}
@@ -164,7 +153,7 @@ class MapView extends Component {
 	  lng: this.state.lng
 	 }}
 	zoomControl={true}>
-	{listEvents.map((element, index) => {
+	{this.state.allEvents.map((element, index) => {
 	  return (this.getInfoBox(element, index));
 	})}
        </Map>
@@ -173,49 +162,56 @@ class MapView extends Component {
   }
 
   // Queries all events with a given university plus code
-  queryEventsAndStoreInMemory(plusCode) {
+  async queryEventsAndStoreInMemory(plusCode) {
+    var deferred = new Deferred();
     if (plusCode !== undefined) {
       const eventsRef = fb.eventsRef;
-      eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", (dataSnapshot) => {
+      eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", async (dataSnapshot) => {
         if (dataSnapshot.numChildren() !== 0) {
           var events = Object.values(dataSnapshot.val());
           for (var i = 0; i < events.length; i++) {
-            this.updateEventIdsAndLoadEvent(events[i]);
+            await this.updateEventIdsAndLoadEvent(events[i]);
           }
+	  deferred.resolve();
         }
       });
     } else {
       const eventsRef = fb.eventsRef;
-      eventsRef.child("university").child("8QC7XP32+PC").child("All").orderByKey().on("value", (dataSnapshot) => {
+      eventsRef.child("university").child("8QC7XP32+PC").child("All").orderByKey().on("value", async (dataSnapshot) => {
         if (dataSnapshot.numChildren() !== 0) {
           var events = Object.values(dataSnapshot.val());
           for (var i = 0; i < events.length; i++) {
-            this.updateEventIdsAndLoadEvent(events[i]);
+            await this.updateEventIdsAndLoadEvent(events[i]);
           }
+	  deferred.resolve();
         }
       });
     }
+    return deferred.promise;
   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
-  updateEventIdsAndLoadEvent(eventId) {
+  async updateEventIdsAndLoadEvent(eventId) {
+    var deferred = new Deferred();
     // Events reference
     const eventsRef = fb.eventsRef;
     // Query and then listen for any changes of that event
     eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
-        // The event object
-        const event = dataSnapshot.val();
-        // If the state has the event then update the change
-        if (this.state.allEvents[eventId] !== undefined) {
-          this.updateEvent(eventId, event);
-        } else {
-          // If the state doesnt have the event, add the event to the map
-          this.setState(prevState => ({
-            allEvents: [...prevState.allEvents, event]
-          }));
-          this.forceUpdate();
-        }
+      // The event object
+      const event = dataSnapshot.val();
+      // If the state has the event then update the change
+      if (this.state.allEvents[eventId] !== undefined) {
+	this.updateEvent(eventId, event);
+      } else {
+	// If the state doesnt have the event, add the event to the map
+	this.setState(prevState => ({
+	  allEvents: [...prevState.allEvents, event]
+	}));
+      }
+      deferred.resolve();
     });
+
+    return deferred.promise;
   }
 
   // Updates the event info box and updates the map in memory
@@ -228,14 +224,7 @@ class MapView extends Component {
       allEvents: this.state.allEvents,
     });
   }
-
-  loadArticle(article) {
-    if (article.locationObject) {
-      this.plusCodeGlobalCode = article.locationObject.plus_code.global_code;
-      this.setState({allEvents: []});
-    }
-  }
-
+  
   getInfoBox(event, index) {
     if(event != null) {
       var location = this.getCoords(event.location);
@@ -280,8 +269,7 @@ class MapView extends Component {
       );
 
       this.state.renderedEvents.push({
-        key: index,
-        value: eventInfoWindow, 
+        eventInfoWindow
       });
       return eventInfoWindow;
     }
@@ -331,8 +319,8 @@ class MapView extends Component {
     if (length > 0) {
       imageUrl = event.imageUrls.slice(1, length - 2);
       imageUrl = imageUrl.split(","); 
-      images = imageUrl.map(url =>
-	  <Carousel.Item>
+      images = imageUrl.map((url, index) =>
+	  <Carousel.Item key={index}>
 	    <Image className="rounded" fluid src={url} />
 	  </Carousel.Item>);
     }
