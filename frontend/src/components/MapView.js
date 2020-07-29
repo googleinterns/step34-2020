@@ -45,6 +45,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
+	isChecked: false
       };
     } else {
       this.state = {
@@ -56,6 +57,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
+	isChecked: false
       };
     }
 
@@ -64,47 +66,50 @@ class MapView extends Component {
     this.renderInfo = this.renderInfo.bind(this);
   }
 
+  // Called whenever the props change (when the university, filter, or time today are changed)
   async UNSAFE_componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-    if (nextProps.articles[0].lat !== this.state.lat || nextProps.articles[0].lng !== this.state.lng) {
-      this.setState({
-	lat: nextProps.articles[0].lat,
-	lng: nextProps.articles[0].lng
-      });
-    }
-
+    // If the plus code changes, requery with the new plus code and wipe all event data currently on the map
     if (nextProps.plusCode !== this.state.plusCode) {
       await this.setState({ allEvents: [], plusCode: nextProps.plusCode });
       await this.queryEventsAndStoreInMemory(nextProps.plusCode);
-      console.log(this.state.allEvents);
+      
+      // Render the map with events twice
+      // For some strange reason, whenever we dont call renderInfo a second time, the events wont show
+      await this.setState({ renderedEvents: [] });
+      this.renderInfo();
+      await this.setState({ renderedEvents: [] });
+      this.renderInfo();
     }
 
+    // Shows all the events
+    this.showAllEvents();
+    
+    // If the filter has changed, set the state and handle filter changes
     if (nextProps.articles[0].filter_choice !== this.state.filter_choice) {
-      this.setState({ filter_choice: nextProps.articles[0].filter_choice });
+      await this.setState({ filter_choice: nextProps.articles[0].filter_choice });
+      this.handleFilterChange();
     }
 
-    await this.setState({renderedEvents: []});
-    this.renderInfo();
-    this.renderInfo();
+    // If the today's events is checked, set the state and handle filter changes
+    if (nextProps.articles[0].isChecked) {
+      await this.setState({ isChecked: nextProps.articles[0].isChecked });
+      this.handleTimeTodayChange();
+    }
   }
 
-  renderInfo () {
-    var listEvents = [];
+  // Shows all events
+  showAllEvents() {
+    this.state.renderedEvents.map((element) => {
+      element.eventRef.current.show();
+    });
+  }
 
-    const filter_choice =  this.state.filter_choice;
+  // Checks if we need to show only today, if we do, hide all events that are not today
+  handleTimeTodayChange() {
     const showTodayOnly = this.state.isChecked;
-
-    if (filter_choice === null || typeof filter_choice === 'undefined') {
-      listEvents = this.state.allEvents;
-    } else {
-      listEvents = this.state.allEvents.filter((event) => {
-        return event.category.toLowerCase() === (filter_choice).toLowerCase();
-      });
-    }
-
     if (showTodayOnly) {
       const today = new Date();
-      listEvents = listEvents.filter((event) => {
+      this.state.allEvents.map((event, index) => {
         // event.date is YYYY-MM-DD
         //               0123456789
         const eventDate = event.date;
@@ -129,10 +134,27 @@ class MapView extends Component {
         const monthsMatch = eventMonth.valueOf() == todayMonth.valueOf();
         const daysMatch = eventDay.valueOf() == todayDay.valueOf();
 
-        return yearsMatch && monthsMatch && daysMatch;
+        if (!(yearsMatch && monthsMatch && daysMatch)) {
+	  this.state.renderedEvents[index].eventRef.current.hide();
+	}
       });
     }
+  }
 
+  // Handles when the filter changes. Hides all event infowindows that are not part of that category
+  handleFilterChange() {
+    const filter_choice =  this.state.filter_choice;
+    if (filter_choice !== null && typeof filter_choice !== 'undefined') {
+      this.state.allEvents.map((element, index) => {
+	if (element.category.toLowerCase() !== (filter_choice).toLowerCase()) {
+	  this.state.renderedEvents[index].eventRef.current.hide();
+	}
+      });
+    }
+  }
+
+  // Renders the map with the event info
+  renderInfo () { 
     let container = document.getElementById('map-view') 
     var map = (
       <Map
@@ -158,6 +180,7 @@ class MapView extends Component {
 	})}
        </Map>
     );
+
     ReactDOM.render(map, container);
   }
 
@@ -236,11 +259,13 @@ class MapView extends Component {
       let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
       let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
 
+      var eventRef = React.createRef();
+
       var eventInfoWindow = (
         <EventInfoWindow
-          onOpen={this.windowHasOpened}
-          onclose={this.windowHasClosed}
           key={index}
+	  index={index}
+	  ref={eventRef}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
           <Card
@@ -267,9 +292,9 @@ class MapView extends Component {
           </Card>
         </EventInfoWindow>
       );
-
+      console.log(eventRef);
       this.state.renderedEvents.push({
-        eventInfoWindow
+        eventRef
       });
       return eventInfoWindow;
     }

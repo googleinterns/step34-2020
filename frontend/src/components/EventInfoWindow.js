@@ -6,10 +6,21 @@ import '../App.css';
 class EventInfoWindow extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      visible: true
+    }
     this.infoWindowRef = React.createRef();
     this.contentElement = document.createElement(`div`);
   }
 
+  hide() {
+    this.setState({visible: false});
+  }
+
+  show() {
+    this.setState({visible: true});
+  }
+  
   componentDidUpdate(prevProps) {
     if (this.props.children !== prevProps.children) {
       ReactDOM.render(
@@ -23,7 +34,8 @@ class EventInfoWindow extends Component {
   render() {
     return (
       <InfoWindow
-        ref={this.infoWindowRef} {...this.props} />
+        ref={this.infoWindowRef} {...this.props}
+        visible={this.state.visible} />
     );
   }
 }
