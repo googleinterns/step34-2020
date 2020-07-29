@@ -108,14 +108,29 @@ class MapView extends Component {
         // event.date is YYYY-MM-DD
         //               0123456789
         const eventDate = event.date;
-        const eventYear = eventDate.substring(0, 3);
-        const eventMonth = eventDate.substring(5, 6);
-        const eventDay = eventDate.substring(8, 9);
+        console.log(eventDate);
+        console.log(today);
+        const eventYear = eventDate.substring(0, 4);
+        var eventMonth = eventDate.substring(5, 7);
+        if (eventMonth.charAt(0) == '0'){
+          eventMonth = eventMonth.substring(1, eventMonth.length);
+        }
+        const eventDay = eventDate.substring(8, 10);
 
-        console.log("year: " + eventYear);
-        console.log("month: " + eventMonth);
-        console.log("day: " + eventDay);
-      })
+        const todayYear = today.getFullYear().toString();
+        const todayMonth = (today.getMonth() + 1).toString(); // months are 0-indexed
+        const todayDay = today.getDate().toString();
+
+        console.log('years: ' + eventYear + ' ' + todayYear);
+        console.log('months: ' + eventMonth + ' ' + todayMonth);
+        console.log('days: ' + eventDay + ' ' + todayDay);
+
+        const yearsMatch = eventYear.valueOf() == todayYear.valueOf();
+        const monthsMatch = eventMonth.valueOf() == todayMonth.valueOf();
+        const daysMatch = eventDay.valueOf() == todayDay.valueOf();
+
+        return yearsMatch && monthsMatch && daysMatch;
+      });
     }
 
     let container = document.getElementById('map-view')

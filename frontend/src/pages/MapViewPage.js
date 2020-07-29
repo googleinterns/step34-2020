@@ -144,7 +144,6 @@ class MapViewPage extends Component {
 
     await this.props.changeMapState(newState);
     this.reduxState = this.props.articles[0];
-    console.log(this.reduxState);
     this.setState(newState);
   }
 
