@@ -47,8 +47,6 @@ class MapViewPage extends Component {
     } else {
       window.location = "/";
     }
-
-    console.log(this.state)
   }
 
   render() {
@@ -92,9 +90,8 @@ class MapViewPage extends Component {
     );
   }
 
-  handleCheckboxChange() {
+  async handleCheckboxChange() {
     this.isChecked = !this.isChecked;
-    console.log(this.reduxState);
 
     const newState = {
       location: this.state.location,
@@ -106,15 +103,14 @@ class MapViewPage extends Component {
       credentials: this.state.credentials,
       filter_choice: this.reduxState.filter_choice,
       isChecked: this.isChecked
-    }
+    };
 
-    this.props.changeMapState(newState);
-    this.reduxState = this.props.articles[0];
-    console.log(this.reduxState);
+    await this.props.changeMapState(newState);
     this.setState(newState);
+    this.reduxState = this.props.articles[0];
   }
 
-  handleFilter(input) {
+  async handleFilter(input) {
     // Set filter category
     let filter_choice = null;
     switch (input.target.value) {
@@ -146,7 +142,7 @@ class MapViewPage extends Component {
       isChecked: this.isChecked
     }
 
-    this.props.changeMapState(newState);
+    await this.props.changeMapState(newState);
     this.reduxState = this.props.articles[0];
     this.setState(newState);
   }
@@ -163,8 +159,6 @@ class MapViewPage extends Component {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
-    console.log(addressObject);
-    console.log(this.state.filter_choice)
 
     if (address && typeof addressObject.plus_code != 'undefined') {
       const newState = {

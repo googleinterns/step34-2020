@@ -126,7 +126,6 @@ class MapView extends Component {
         }}
         zoomControl={true}>
         {listEvents.map((element, index) => {
-          console.log(element)
           return (this.getInfoBox(element, index));
         })}
       </Map>
