@@ -147,26 +147,26 @@ class MapView extends Component {
 
     var map = (
       <Map
-	      ref={(map) => this.mapRef = map}
-	      id="map"
-	      google={this.props.google}
-	      zoom={17}
+	ref={(map) => this.mapRef = map}
+	id="map"
+	google={this.props.google}
+	zoom={17}
         mapTypeControl={false}
         fullscreenControl={false}
-	      onReady={this.onReady}
-	      style={mapStyles}
-	      initialCenter={{
-	        lat: this.state.lat,
-	        lng: this.state.lng
-	      }}
-	      center={{
-	        lat: this.state.lat,
-	        lng: this.state.lng
-	       }}
-	      zoomControl={true}>
-	      {listEvents.map((element, index) => {
-	        return (this.getInfoBox(element, index));
-	      })}
+	onReady={this.onReady}
+	style={mapStyles}
+	initialCenter={{
+	  lat: this.state.lat,
+	  lng: this.state.lng
+	}}
+	center={{
+	  lat: this.state.lat,
+	  lng: this.state.lng
+	 }}
+	zoomControl={true}>
+	{listEvents.map((element, index) => {
+	  return (this.getInfoBox(element, index));
+	})}
        </Map>
     );
     ReactDOM.render(map, container);

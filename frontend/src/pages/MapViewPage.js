@@ -54,12 +54,12 @@ class MapViewPage extends Component {
       <div>
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
-	        <Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", float: "right", margin: "1rem"}}>
-	          <Toast.Body>
+	  <Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", float: "right", margin: "1rem"}}>
+	    <Toast.Body>
       	      <Card style={{border: 0}}>
-	              <Form>
-	                <Form.Control style={{border: 0, focusOutline: "none"}} id = "autocomplete" placeholder = "Enter university"/>
-	              </Form>
+		<Form>
+		  <Form.Control style={{border: 0, focusOutline: "none"}} id = "autocomplete" placeholder = "Enter university"/>
+		</Form>
       	      </Card>
               <hr/>
               <Card style={{border: 0}} id="eventInfo">
