@@ -115,7 +115,7 @@ class TopNavbar extends React.Component {
     return(
       <Navbar bg="light" expand="lg" style={style}>
         <Navbar.Brand href="/">IT</Navbar.Brand>
-        <Navbar.Brand onClick={this.handleMapViewonClick.bind(this)}>Map</Navbar.Brand>
+        <Navbar.Brand style={{cursor: "pointer"}} onClick={this.handleMapViewonClick.bind(this)}>Map</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
