@@ -86,11 +86,13 @@ class MapView extends Component {
     this.setState({showInfoWindows: true})
   }
 
+  /*
   async componentDidMount() {
     await this.queryEventsAndStoreInMemory(this.props.plusCode);
     await this.handleShowWindow()
     await this.renderInfo()
   }
+  */
 
   renderInfo () {
     var listEvents = [];
@@ -130,7 +132,7 @@ class MapView extends Component {
 	  lng: this.state.lng
 	}}
 	zoomControl={true}>
-	{this.state.allEvents.map((element, index) => {
+	{listEvents.map((element, index) => {
 	  return (this.getInfoBox(element, index));
 	})}
       </Map>
@@ -272,7 +274,14 @@ class MapView extends Component {
   infoWindowOnClick(index) {
     let event = this.state.allEvents[index];
     let coords = this.getCoords(event.location);
-    console.log(this.mapRef);
+    
+    // Change coords to parses and pan to the location
+    var lat = parseFloat(coords[0]);
+    var lng = parseFloat(coords[1]);
+    let googleMapCoords = new this.mapRef.props.google.maps.LatLng(lat, lng);
+    this.mapRef.map.panTo(googleMapCoords);
+
+    // Render the side panel
     this.renderSidePanel(event);
   }
 
