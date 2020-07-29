@@ -288,11 +288,10 @@ class Profile extends React.Component {
         <br/>
         <Row>
           <Col md={{ span: 4, offset: 4 }}>
-            <h1 className="profile-name">John Doe</h1>
+            <h1 className="profile-name">{this.state.credentials.displayName}</h1>
             <br />
-                  <h1 className="profile-email">jdoe@osu.edu</h1>
+                  <h1 className="profile-email">{this.state.credentials.email}</h1>
                   <br />
-            <h1 className="profile-university">The Ohio State University</h1>
           </Col>
         </Row>
       </div>

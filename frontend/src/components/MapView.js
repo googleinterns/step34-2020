@@ -81,12 +81,6 @@ class MapView extends Component {
     this.setState({showInfoWindows: true})
   }
 
-  async componentDidMount() {
-    await this.queryEventsAndStoreInMemory(this.props.plusCode);
-    await this.handleShowWindow()
-    await this.renderInfo()
-  }
-
   renderInfo () {
     this.reduxState = this.props.articles[0];
     var listEvents = [];
@@ -112,7 +106,7 @@ class MapView extends Component {
         console.log(today);
         const eventYear = eventDate.substring(0, 4);
         var eventMonth = eventDate.substring(5, 7);
-        if (eventMonth.charAt(0) == '0'){
+        if (eventMonth.charAt(0) === '0'){
           eventMonth = eventMonth.substring(1, eventMonth.length);
         }
         const eventDay = eventDate.substring(8, 10);
@@ -125,9 +119,9 @@ class MapView extends Component {
         console.log('months: ' + eventMonth + ' ' + todayMonth);
         console.log('days: ' + eventDay + ' ' + todayDay);
 
-        const yearsMatch = eventYear.valueOf() == todayYear.valueOf();
-        const monthsMatch = eventMonth.valueOf() == todayMonth.valueOf();
-        const daysMatch = eventDay.valueOf() == todayDay.valueOf();
+        const yearsMatch = eventYear.valueOf() === todayYear.valueOf();
+        const monthsMatch = eventMonth.valueOf() === todayMonth.valueOf();
+        const daysMatch = eventDay.valueOf() === todayDay.valueOf();
 
         return yearsMatch && monthsMatch && daysMatch;
       });
