@@ -22,10 +22,12 @@ class MapViewPage extends Component {
     super(props);
 
     this.reduxState = this.props.articles[0];
+    this.isChecked = false;
 
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.inputRef = React.createRef();
 
     this.types = ['university'];
@@ -40,13 +42,11 @@ class MapViewPage extends Component {
         lng: this.reduxState.lng,
         loggedIn: this.reduxState.loggedIn,
         plusCode: this.reduxState.plusCode,
-        credentials: this.reduxState.credentials
+        credentials: this.reduxState.credentials,
       };
     } else {
       window.location = "/";
     }
-
-    console.log(this.state)
   }
 
   render() {
@@ -55,37 +55,62 @@ class MapViewPage extends Component {
         <Script url = {this.url} onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
         <Toast style={{position: "absolute", zIndex: 2, padding: "0rem", minWidth: "40rem", float: "right", margin: "1rem"}}>
-          <Toast.Body>
-            <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
-              <Form.Row>
-                <Form.Group as={Col}>
-                  <Form.Label> Enter your university</Form.Label>
-                  <Form.Control id = "autocomplete" placeholder = "Enter university"/>
-                </Form.Group>
-                <Form.Group as={Col}>
-                  <Form.Label> Filter </Form.Label>
-                  <Form.Control
-                      onChange={this.handleFilter}
-                      as="select"
-                      className="my-1 mr-sm-2"
-                      id="categoriesSelect"
-                      custom="true">
-                      <option value="">Choose...</option>
-                      <option value="0">Social Gathering</option>
-                      <option value="1">Volunteer Event</option>
-                      <option value="2">Student Organization Event</option>
-                    </Form.Control>
-                </Form.Group>
-              </Form.Row>
-            </Form>
-          </Toast.Body>
-        </Toast>
+        <Toast.Body>	
+          <Form style={{marginLeft: '3rem', marginRight: '3rem'}}>
+          <Col xs="auto">
+            <Form.Group>
+              <Form.Control id = "autocomplete" placeholder = "Enter university"/>
+            </Form.Group>
+            <Form.Group>
+              <Form.Control
+                onChange={this.handleFilter}
+                as="select"
+                className="my-1 mr-sm-2"
+                id="categoriesSelect"
+                custom="true">
+                <option value="">Filter</option>
+                <option value="0">Social Gathering</option>
+                <option value="1">Volunteer Event</option>
+                <option value="2">Student Organization Event</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Check
+                onChange={this.handleCheckboxChange}
+                defaultChecked={this.isChecked}
+                type="checkbox"
+                label="Show today's events"/>
+            </Form.Group>
+          </Col>
+          </Form>
+        </Toast.Body>
+        </Toast>	
         <MapView style={{zIndex: 1}} plusCode={this.state.plusCode}/>
       </div>
     );
   }
 
-  handleFilter(input) {
+  async handleCheckboxChange() {
+    this.isChecked = !this.isChecked;
+
+    const newState = {
+      location: this.state.location,
+      lat: this.state.lat,
+      lng: this.state.lng,
+      locationObject:this.state.locationObject,
+      plusCode: this.state.plusCode,
+      loggedIn: this.state.loggedIn,
+      credentials: this.state.credentials,
+      filter_choice: this.reduxState.filter_choice,
+      isChecked: this.isChecked
+    };
+
+    await this.props.changeMapState(newState);
+    this.reduxState = this.props.articles[0];
+    this.setState(newState);
+  }
+
+  async handleFilter(input) {
     // Set filter category
     let filter_choice = null;
     switch (input.target.value) {
@@ -114,9 +139,11 @@ class MapViewPage extends Component {
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
       filter_choice: filter_choice,
+      isChecked: this.isChecked
     }
 
-    this.props.changeMapState(newState);
+    await this.props.changeMapState(newState);
+    this.reduxState = this.props.articles[0];
     this.setState(newState);
   }
 
@@ -128,12 +155,10 @@ class MapViewPage extends Component {
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
-  handlePlaceSelect() {
+  async handlePlaceSelect() {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
     const addressGeometry = addressObject.geometry;
-    console.log(addressObject);
-    console.log(this.state.filter_choice)
 
     if (address && typeof addressObject.plus_code != 'undefined') {
       const newState = {
@@ -145,9 +170,9 @@ class MapViewPage extends Component {
         loggedIn: this.state.loggedIn,
         credentials: this.state.credentials,
         filter_choice: this.state.filter_choice,
-
+        isChecked: this.isChecked
       }
-      this.props.changeMapState(newState);
+      await this.props.changeMapState(newState);
       this.reduxState = this.props.articles[0];
       this.setState(newState);
     } else {

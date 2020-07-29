@@ -43,7 +43,7 @@ class MapView extends Component {
     } else {
       this.state = {
         allEvents: [],
-        renderedEvents: [],
+	    renderedEvents: [],
         location: undefined,
         plusCode: '',
         showInfoWindows: false,
@@ -88,16 +88,48 @@ class MapView extends Component {
   }
 
   renderInfo () {
+    this.reduxState = this.props.articles[0];
     var listEvents = [];
 
-    const filter_choice =  this.props.articles[0].filter_choice;
+    const filter_choice =  this.reduxState.filter_choice;
+    const showTodayOnly = this.reduxState.isChecked;
 
     if (filter_choice === null || typeof filter_choice === 'undefined') {
       listEvents = this.state.allEvents;
     } else {
-      console.log("changed filter")
       listEvents = this.state.allEvents.filter((event) => {
         return event.category.toLowerCase() === (filter_choice).toLowerCase();
+      });
+    }
+
+    if (showTodayOnly) {
+      const today = new Date();
+      listEvents = listEvents.filter((event) => {
+        // event.date is YYYY-MM-DD
+        //               0123456789
+        const eventDate = event.date;
+        console.log(eventDate);
+        console.log(today);
+        const eventYear = eventDate.substring(0, 4);
+        var eventMonth = eventDate.substring(5, 7);
+        if (eventMonth.charAt(0) == '0'){
+          eventMonth = eventMonth.substring(1, eventMonth.length);
+        }
+        const eventDay = eventDate.substring(8, 10);
+
+        const todayYear = today.getFullYear().toString();
+        const todayMonth = (today.getMonth() + 1).toString(); // months are 0-indexed
+        const todayDay = today.getDate().toString();
+
+        console.log('years: ' + eventYear + ' ' + todayYear);
+        console.log('months: ' + eventMonth + ' ' + todayMonth);
+        console.log('days: ' + eventDay + ' ' + todayDay);
+
+        const yearsMatch = eventYear.valueOf() == todayYear.valueOf();
+        const monthsMatch = eventMonth.valueOf() == todayMonth.valueOf();
+        const daysMatch = eventDay.valueOf() == todayDay.valueOf();
+
+        return yearsMatch && monthsMatch && daysMatch;
       });
     }
 
@@ -112,8 +144,8 @@ class MapView extends Component {
         id="map"
         google={this.props.google}
         zoom={17}
-              mapTypeControl={false}
-              fullscreenControl={false}
+        mapTypeControl={false}
+        fullscreenControl={false}
         onReady={this.onReady}
         style={mapStyles}
         initialCenter={{
@@ -122,7 +154,7 @@ class MapView extends Component {
         }}
         center={{
           lat: this.state.lat,
-                lng: this.state.lng
+          lng: this.state.lng
         }}
         zoomControl={true}>
         {listEvents.map((element, index) => {
