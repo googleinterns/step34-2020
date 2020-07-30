@@ -30,7 +30,6 @@ class Profile extends React.Component {
     super(props);
 
     this.reduxState = this.props.articles[0];
-    console.log(this.reduxState);
 
     if (this.reduxState) {
       this.state = {
@@ -68,7 +67,6 @@ class Profile extends React.Component {
             if(len >= 1) {
               imageUrl = event.imageUrls.slice(1, len - 2);
               imageUrl = imageUrl.split(",");
-              console.log(imageUrl);
               // dynamically create a card that contain images for the event
               card = imageUrl.map(url =>
                 <Carousel.Item>

@@ -45,7 +45,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-	isChecked: false
+        isChecked: false
       };
     } else {
       this.state = {
@@ -57,7 +57,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-	isChecked: false
+        isChecked: false
       };
     }
 
@@ -122,8 +122,6 @@ class MapView extends Component {
         // event.date is YYYY-MM-DD
         //               0123456789
         const eventDate = event.date;
-        console.log(eventDate);
-        console.log(today);
         const eventYear = eventDate.substring(0, 4);
         var eventMonth = eventDate.substring(5, 7);
         if (eventMonth.charAt(0) === '0'){
@@ -135,17 +133,13 @@ class MapView extends Component {
         const todayMonth = (today.getMonth() + 1).toString(); // months are 0-indexed
         const todayDay = today.getDate().toString();
 
-        console.log('years: ' + eventYear + ' ' + todayYear);
-        console.log('months: ' + eventMonth + ' ' + todayMonth);
-        console.log('days: ' + eventDay + ' ' + todayDay);
-
         const yearsMatch = eventYear.valueOf() === todayYear.valueOf();
         const monthsMatch = eventMonth.valueOf() === todayMonth.valueOf();
         const daysMatch = eventDay.valueOf() === todayDay.valueOf();
 
         if (!(yearsMatch && monthsMatch && daysMatch)) {
-	  this.state.renderedEvents[index].eventRef.current.hide();
-	}
+          this.state.renderedEvents[index].eventRef.current.hide();
+        }
       });
     }
   }
@@ -204,7 +198,7 @@ class MapView extends Component {
           for (var i = 0; i < events.length; i++) {
             await this.updateEventIdsAndLoadEvent(events[i]);
           }
-	  deferred.resolve();
+          deferred.resolve();
         }
       });
     } else {
@@ -215,7 +209,7 @@ class MapView extends Component {
           for (var i = 0; i < events.length; i++) {
             await this.updateEventIdsAndLoadEvent(events[i]);
           }
-	  deferred.resolve();
+          deferred.resolve();
         }
       });
     }
@@ -233,12 +227,12 @@ class MapView extends Component {
       const event = dataSnapshot.val();
       // If the state has the event then update the change
       if (this.state.allEvents[eventId] !== undefined) {
-	this.updateEvent(eventId, event);
+        this.updateEvent(eventId, event);
       } else {
-	// If the state doesnt have the event, add the event to the map
-	this.setState(prevState => ({
-	  allEvents: [...prevState.allEvents, event]
-	}));
+        // If the state doesnt have the event, add the event to the map
+        this.setState(prevState => ({
+          allEvents: [...prevState.allEvents, event]
+        }));
       }
       deferred.resolve();
     });
@@ -273,8 +267,8 @@ class MapView extends Component {
       var eventInfoWindow = (
         <EventInfoWindow
           key={index}
-	  index={index}
-	  ref={eventRef}
+          index={index}
+          ref={eventRef}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
           <Card
@@ -301,7 +295,6 @@ class MapView extends Component {
           </Card>
         </EventInfoWindow>
       );
-      console.log(eventRef);
       this.state.renderedEvents.push({
         eventRef
       });
@@ -354,9 +347,9 @@ class MapView extends Component {
       imageUrl = event.imageUrls.slice(1, length - 2);
       imageUrl = imageUrl.split(","); 
       images = imageUrl.map((url, index) =>
-	  <Carousel.Item key={index}>
-	    <Image className="rounded" fluid src={url} />
-	  </Carousel.Item>);
+    <Carousel.Item key={index}>
+      <Image className="rounded" fluid src={url} />
+    </Carousel.Item>);
     }
 
     var attendees = event.attendees.slice(1, event.attendees.length-1).split(",");
@@ -453,7 +446,6 @@ class MapView extends Component {
 
 
   onReady = () => {
-    console.log('ready')
     this.setState({
       showInfoWindows: true
     });

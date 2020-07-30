@@ -245,7 +245,6 @@ class UpdateEvent extends Component {
       // The respone acquired from the server
       let response = await fb.requestEventUpdate(eventId, uid, title, date, startTime, endTime, description, location, locationName, imageUrls, category, organization);
       if (response) {
-        console.log(this.reduxState.plus_code);
         this.props.history.push({
           pathname: '/map/',
         })

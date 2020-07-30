@@ -118,7 +118,6 @@ class Events extends Component {
       this.setState({
         plusCode: universityPlusCode
       });
-      console.log(universityPlusCode);
     } else {
       this.hasLocationError = true;
       alert("MapIT does not support this location.  Please choose another.")
@@ -133,8 +132,6 @@ class Events extends Component {
        location: locationObject.toString(),
        locationName: locationAddressObject.name + ", " + locationAddressObject.formatted_address
     });
-    console.log(locationAddressObject.name);
-    console.log(locationAddressObject.formatted_address);
   }
 
   // When the image is inputted, display the image

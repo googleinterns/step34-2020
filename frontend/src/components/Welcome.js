@@ -252,7 +252,6 @@ class Search extends Component {
       lng: defaultLatLng.lng()
     });
     this.props.changeMapState(this.state);
-    console.log(this.props.articles);
   }
 
   async handlePlaceSelect() {
@@ -281,7 +280,6 @@ class Search extends Component {
       }
     }
     this.props.changeMapState(currentState);
-    console.log(currentState)
     this.setState(currentState);
   }
 
