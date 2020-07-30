@@ -3,6 +3,19 @@ import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { Form } from 'react-bootstrap';
 
+// initialize global constant values
+const NONE_SELECTED_KEY = "";
+const SOCIAL_GATHERING_KEY = "0";
+const VOLUNTEER_EVENT_KEY = "1";
+const STUDENT_ORGANIZATION_EVENT_KEY = "2";
+
+const SOCIAL_GATHERING = "Social Gathering";
+const VOLUNTEER_EVENT = "Volunteer Event";
+const STUDENT_ORGANIZATION_EVENT = "Student Organization Event";
+const NO_FILTER_SELECTED = null;
+
+const CHECKBOX_TEXT = "Show today's events";
+
 function mapDispatchToProps(dispatch) {
   return {
     changeMapState: mapState => dispatch(changeMapState(mapState))
@@ -29,31 +42,27 @@ class EventFilter extends Component {
       };
     }
 
-    this.NONE_SELECTED = "";
-    this.SOCIAL_GATHERING = "0";
-    this.VOLUNTEER_EVENT = "1";
-    this.STUDENT_ORGANIZATION_EVENT = "2"
+    // initialize global values that can change
     this.isChecked = false;
 
-    this.handleFilter = this.handleFilter.bind(this);
+    this.handleFilterChange = this.handleFilter.bind(this);
     this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.updateReduxState = this.updateReduxState.bind(this);
   }
 
-  async handleFilter(input) {
-    // Set filter category
-    let filter_choice = null;
+  async handleFilterChange(input) {
+    let filter_choice = NO_FILTER_SELECTED;
     switch (input.target.value) {
-      case this.SOCIAL_GATHERING:
-        filter_choice = "Social Gathering";
+      case SOCIAL_GATHERING_KEY:
+        filter_choice = SOCIAL_GATHERING;
         break;
 
-      case this.VOLUNTEER_EVENT:
-        filter_choice = "Volunteer Event";
+      case VOLUNTEER_EVENT_KEY:
+        filter_choice = VOLUNTEER_EVENT;
         break;
       
-      case this.STUDENT_ORGANIZATION_EVENT:
-        filter_choice = "Student Organization Event";
+      case STUDENT_ORGANIZATION_EVENT_KEY:
+        filter_choice = STUDENT_ORGANIZATION_EVENT;
         break;
     
       default:
@@ -89,21 +98,21 @@ class EventFilter extends Component {
     return(
       <Form>
       <Form.Control
-        onChange={this.handleFilter}
+        onChange={this.handleFilterChange}
         as="select"
         className="my-1 mr-sm-2"
         id="categoriesSelect"
         custom="true">
-        <option value={this.NONE_SELECTED}>Filter</option>
-        <option value={this.SOCIAL_GATHERING}>Social Gathering</option>
-        <option value={this.VOLUNTEER_EVENT}>Volunteer Event</option>
-        <option value={this.STUDENT_ORGANIZATION_EVENT}>Student Organization Event</option>
+        <option value={NONE_SELECTED_KEY}>Filter</option>
+        <option value={SOCIAL_GATHERING_KEY}>Social Gathering</option>
+        <option value={VOLUNTEER_EVENT_KEY}>Volunteer Event</option>
+        <option value={STUDENT_ORGANIZATION_EVENT_KEY}>Student Organization Event</option>
       </Form.Control>
       <Form.Check
         onChange={this.handleCheckboxChange}
         defaultChecked={this.isChecked}
         type="checkbox"
-        label="Show today's events"/>
+        label={CHECKBOX_TEXT}/>
       </Form>
     )
   }
