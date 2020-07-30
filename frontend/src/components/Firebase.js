@@ -149,7 +149,6 @@ class Firebase {
         // Get the status and message
         var status = snapshot.child("status").val();
         var message = snapshot.child("message").val();
-        console.log(status);
         // When the status is "success" sign in and make deferred promise true
         if (status === "success") {
           let response = await firebase.auth().signInWithEmailAndPassword(email, password);
@@ -252,8 +251,6 @@ class Firebase {
       if (snapshot.key === requestId) {
         // Get the status and message
         var status = snapshot.child("status").val();
-        //var message = snapshot.child("message").val();
-        console.log(status);
         // When the status is "success" make deferred promise true
         if (status === "success") {
           successCallback(sessionId, requestId, ref);
@@ -261,8 +258,6 @@ class Firebase {
         // When the status is "failed" show error message and deferred promise as false
         } else { 
           failureCallback(sessionId, requestId, ref);
-          // alert(this)
-          // this.successCallback(sessionId, requestId);
           deferred.resolve(true);
         // When the status is "failed" show error message and deferred promise as false
         } 
@@ -274,13 +269,11 @@ class Firebase {
 
   // A callback to remove the request and print success
   successCallback(sessionId, requestId, ref) {
-    console.log("success");
     ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
   // A callback to remove the request and print failure
   failureCallback(sessionId, requestId, ref) {
-    console.log("failed");
     ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
@@ -305,7 +298,6 @@ class Firebase {
     for (var i = 0; i < images.length; i++) {
       // Upload image and wait to get a url
       let url = await this.uploadImage(images[i], uploadTask.child(i + ""));
-      console.log(url);
       // If a url is null then return
       if (url == null) {
         return;
@@ -321,15 +313,10 @@ class Firebase {
   async uploadImage(image, uploadTask) {
     var deferred = new Deferred();
     uploadTask.put(image).on('state_changed', function(snapshot){
-      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log('Upload is ' + progress + '% done');
       switch (snapshot.state) {
         case firebase.storage.TaskState.PAUSED: // or 'paused'
-          console.log('Upload is paused');
           break;
         case firebase.storage.TaskState.RUNNING: // or 'running'
-          console.log('Upload is running');
           break;
         default:
           break;
@@ -348,7 +335,6 @@ class Firebase {
         case 'storage/unknown':
           // Unknown error occurred, inspect error.serverResponse
           alert("Unknown error. Cancelling event creation...");
-          console.log(error.serverResponse);
           break;
         default:
             break;
