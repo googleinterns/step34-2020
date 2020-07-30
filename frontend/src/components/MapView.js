@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Toast, ButtonToolbar, Badge, Button, ToggleButton, Container, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
+import { Badge, Container, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
@@ -15,7 +15,7 @@ import GroupIcon from '@material-ui/icons/Group';
 import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import StarIcon from '@material-ui/icons/Star';
+
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -45,19 +45,19 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-	isChecked: false
+	      isChecked: false
       };
     } else {
       this.state = {
         allEvents: [],
-	renderedEvents: [],
+        renderedEvents: [],
         location: undefined,
         plusCode: '',
         showInfoWindows: false,
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-	isChecked: false
+	      isChecked: false
       };
     }
 
@@ -126,7 +126,7 @@ class MapView extends Component {
         console.log(today);
         const eventYear = eventDate.substring(0, 4);
         var eventMonth = eventDate.substring(5, 7);
-        if (eventMonth.charAt(0) == '0'){
+        if (eventMonth.charAt(0) === '0'){
           eventMonth = eventMonth.substring(1, eventMonth.length);
         }
         const eventDay = eventDate.substring(8, 10);
@@ -139,9 +139,9 @@ class MapView extends Component {
         console.log('months: ' + eventMonth + ' ' + todayMonth);
         console.log('days: ' + eventDay + ' ' + todayDay);
 
-        const yearsMatch = eventYear.valueOf() == todayYear.valueOf();
-        const monthsMatch = eventMonth.valueOf() == todayMonth.valueOf();
-        const daysMatch = eventDay.valueOf() == todayDay.valueOf();
+        const yearsMatch = eventYear.valueOf() === todayYear.valueOf();
+        const monthsMatch = eventMonth.valueOf() === todayMonth.valueOf();
+        const daysMatch = eventDay.valueOf() === todayDay.valueOf();
 
         if (!(yearsMatch && monthsMatch && daysMatch)) {
 	  this.state.renderedEvents[index].eventRef.current.hide();
@@ -155,9 +155,9 @@ class MapView extends Component {
     const filter_choice =  this.state.filter_choice;
     if (filter_choice !== null && typeof filter_choice !== 'undefined') {
       this.state.allEvents.map((element, index) => {
-	if (element.category.toLowerCase() !== (filter_choice).toLowerCase()) {
-	  this.state.renderedEvents[index].eventRef.current.hide();
-	}
+        if (element.category.toLowerCase() !== (filter_choice).toLowerCase()) {
+          this.state.renderedEvents[index].eventRef.current.hide();
+        }
       });
     }
   }
@@ -167,26 +167,26 @@ class MapView extends Component {
     let container = document.getElementById('map-view') 
     var map = (
       <Map
-	ref={(map) => this.mapRef = map}
-	id="map"
-	google={this.props.google}
-	zoom={17}
+        ref={(map) => this.mapRef = map}
+        id="map"
+        google={this.props.google}
+        zoom={17}
         mapTypeControl={false}
         fullscreenControl={false}
-	onReady={this.onReady}
-	style={mapStyles}
-	initialCenter={{
-	  lat: this.state.lat,
-	  lng: this.state.lng
-	}}
-	center={{
-	  lat: this.state.lat,
-	  lng: this.state.lng
-	 }}
-	zoomControl={true}>
-	{this.state.allEvents.map((element, index) => {
-	  return (this.getInfoBox(element, index));
-	})}
+        onReady={this.onReady}
+        style={mapStyles}
+        initialCenter={{
+          lat: this.state.lat,
+          lng: this.state.lng
+        }}
+        center={{
+          lat: this.state.lat,
+          lng: this.state.lng
+         }}
+        zoomControl={true}>
+        {this.state.allEvents.map((element, index) => {
+          return (this.getInfoBox(element, index));
+        })}
        </Map>
     );
 
@@ -285,11 +285,11 @@ class MapView extends Component {
             <Card.Body>
               <Card.Title>{event.eventName}</Card.Title>
               <hr/>
-              <Card.Text> 
+              <Card.Text>
                 <PlaceIcon/>
                 {event.locationName}
-              </Card.Text> 
-              <Card.Text> 
+              </Card.Text>
+              <Card.Text>
                 <AccessTimeIcon/>
                   {date}, {startTime} - {endTime}
               </Card.Text>
@@ -327,7 +327,7 @@ class MapView extends Component {
   infoWindowOnClick(index) {
     let event = this.state.allEvents[index];
     let coords = this.getCoords(event.location);
-    
+
     // Change coords to parses and pan to the location
     var lat = parseFloat(coords[0]);
     var lng = parseFloat(coords[1]);
@@ -339,7 +339,7 @@ class MapView extends Component {
   }
 
   renderSidePanel(event) {
-      
+
     var images = "";
     var length = 0;
 
@@ -366,69 +366,69 @@ class MapView extends Component {
     let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
     let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
     var eventInfo = (
-      <Container> 
-	<Card
-	  className="event-cards"
-	  key={Math.random(1001,5000)} 
-	  text={'light' ? 'dark' : 'white'}>
-	  <Carousel className="fill-parent">
-      	    {images}
-	  </Carousel>
-	  <Card.Body>
-	    <Card.Title>
-	      <h1 className="event-cards-title">{event.eventName}</h1>
-	    </Card.Title>
-	    <div className="event-text"> 
-	      <Row>
-      	        <Col xs={1}>
-		  <PlaceIcon/>
-      		</Col>
-      		<Col>	
-		  {event.locationName}
-      		</Col>
-      	      </Row>
-	    </div> 
-	    <div> 
-	      <Row>
-      	        <Col xs={1}>
-		  <AccessTimeIcon/>
-      		</Col>
-      		<Col>	
-		  {date}, {startTime} - {endTime}
-      		</Col>
-      	      </Row>
-	    </div>
-	    <div> 
-	      <Row>
-      	        <Col xs={1}>
-		  <GroupIcon/>
-      		</Col>
-      		<Col>	
-		  {num} attending
-      		</Col>
-      	      </Row>
-	    </div>
-	    <hr/>
-	    <Card.Text className="event-cards-description">
-	      About
-	    </Card.Text>
-	    <Card.Text>{event.description}</Card.Text>
-	    <Badge variant="secondary">
-	      {event.category}
-	    </Badge>
-	    <hr/>
-	    <Row className="justify-content-md-center">
-	      <Col md="auto">
-      		{this.checkGoing(attendees)}
-      		<div className="event-cards-attendtext">Going</div>
-	      </Col>
-	      <Col md="auto">
-		<StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
-      		<div className="event-cards-attendtext">Interested</div>
-	      </Col>
-	    </Row>
-	  </Card.Body>
-	</Card>
+      <Container>
+        <Card
+          className="event-cards"
+          key={Math.random(1001,5000)}
+          text={'light' ? 'dark' : 'white'}>
+          <Carousel className="fill-parent">
+                  {images}
+          </Carousel>
+          <Card.Body>
+            <Card.Title>
+              <h1 className="event-cards-title">{event.eventName}</h1>
+            </Card.Title>
+            <div className="event-text">
+              <Row>
+                <Col xs={1}>
+                  <PlaceIcon/>
+                </Col>
+                <Col>
+                  {event.locationName}
+                </Col>
+              </Row>
+            </div>
+            <div>
+              <Row>
+                <Col xs={1}>
+                  <AccessTimeIcon/>
+                </Col>
+                <Col>
+                  {date}, {startTime} - {endTime}
+                </Col>
+              </Row>
+            </div>
+            <div>
+              <Row>
+                <Col xs={1}>
+                  <GroupIcon/>
+                </Col>
+                <Col>
+                  {num} attending
+                </Col>
+              </Row>
+            </div>
+            <hr/>
+            <Card.Text className="event-cards-description">
+              About
+            </Card.Text>
+            <Card.Text>{event.description}</Card.Text>
+            <Badge variant="secondary">
+              {event.category}
+            </Badge>
+            <hr/>
+            <Row className="justify-content-md-center">
+              <Col md="auto">
+                {this.checkGoing(attendees)}
+                <div className="event-cards-attendtext">Going</div>
+              </Col>
+              <Col md="auto">
+                <StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
+                <div className="event-cards-attendtext">Interested</div>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
       </Container>
     );
 
@@ -438,16 +438,16 @@ class MapView extends Component {
 
   checkGoing(attendees) {
     if (this.reduxState.credentials === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
     }
-    
+
     const uid = this.reduxState.credentials.uid;
     const found = attendees.find(element => element === uid);
 
     if (found === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
     } else {
-      return (<CheckCircleIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);	
+      return (<CheckCircleIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
     }
   }
 

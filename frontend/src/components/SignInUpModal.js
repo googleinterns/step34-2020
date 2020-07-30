@@ -5,6 +5,10 @@ import { fb } from '../App';
 import firebase from 'firebase';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
+import zxcvbn from 'zxcvbn';
+import tldjs from 'tldjs';
+
+const { getDomain, getPublicSuffix } = tldjs
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -80,14 +84,25 @@ class LogInAndSignUp extends Component {
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
     const confirmpassword = document.querySelector('#confirmpassword').value;
+    const domain = getDomain(email);
+    const suffix = getPublicSuffix(domain);
+    const passIsValid = this.passwordStrength(password);
+
 
     if (confirmpassword === password){
-      // Create user account, sign them in, then retrieve credentials
-      let response = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
-      if (response != null) {
-        this.setState({credentials: response.user, loggedIn: true})
-        this.updateRedux(response.user, true);
-        this.onLoginSuccess()
+      //validate that email provided is a student email and password is strong enough
+      if (passIsValid && suffix === 'edu') {
+        // Create user account, sign them in, then retrieve credentials
+        let response = await fb.requestUserSignUpAndListenForResponse(email, password, nickname);
+        if (response != null) {
+          this.setState({credentials: response.user, loggedIn: true})
+          this.updateRedux(response.user, true);
+          this.onLoginSuccess()
+        }
+      } else if (suffix !== 'edu') {
+        alert('email should be .edu')
+      } else {
+        alert('password is short or weak')
       }
     } else {
       alert("Passwords don't match. Please try again")
@@ -170,6 +185,17 @@ class LogInAndSignUp extends Component {
     ReactDOM.unmountComponentAtNode(modal);
   }
 
+  // Evaluates the strength of the password user provided
+  passwordStrength(password) {
+    const strength = zxcvbn(password).score;
+    const len = password.length;
+
+    if (strength >= 3 && len >= 16) {
+      return true;
+    } 
+    return false;
+  }
+
   render() {
     const isLoading = this.state.loading;
     return (
@@ -249,7 +275,7 @@ class LogInAndSignUp extends Component {
               },
               {
                 containerClass: 'RML-form-group',
-                label: 'Password',
+                label: 'Password, Note: it should be at least 16 characters/A mixture of uppercase and lowercase letters/numbers/special character e.g., ! @ # ?',
                 type: 'password',
                 inputClass: 'RML-form-control',
                 id: 'password',
