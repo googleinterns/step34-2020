@@ -55,8 +55,6 @@ class Profile extends React.Component {
     if(event !== null) {
       var attendees = event.attendees.slice(1, event.attendees.length -1).split(",");
 
-      // NOTE: We left list of attendees out for now.
-      //var namesOfAttendees = this.getNamesOfAttendees (attendees);
       let num = attendees.length;
       var len = 0;
       var imageUrl = "";
@@ -67,15 +65,15 @@ class Profile extends React.Component {
         len = event.imageUrls.length;
             }
             // Retrieve image urls only if they were provided. Otherwise set url to default value
-            if(len > 0) {
-        imageUrl = event.imageUrls.slice(1, len - 2);
-        imageUrl = imageUrl.split(",");
-        console.log(imageUrl);
-        // dynamically create a card that contain images for the event
-        card = imageUrl.map(url =>
-          <Carousel.Item>
-            <Image className="rounded" fluid src={url} />
-          </Carousel.Item>);
+            if(len >= 1) {
+              imageUrl = event.imageUrls.slice(1, len - 2);
+              imageUrl = imageUrl.split(",");
+              console.log(imageUrl);
+              // dynamically create a card that contain images for the event
+              card = imageUrl.map(url =>
+                <Carousel.Item>
+                  <Image className="rounded" fluid src={url} />
+                </Carousel.Item>);
             }
 
             let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
@@ -158,22 +156,6 @@ class Profile extends React.Component {
       })
     }
 
-  }
-
-  getNamesOfAttendees(refAttendees) {
-    var names = []
-    var len = refAttendees.length;
-    var ref = fb.userRef.child('users');
-
-    for (var i = 0; i < len; i++) {
-      var current_attendee = ref.child(refAttendees[i]).child('name');
-
-      current_attendee.on('value', snapshot => {
-        let name = snapshot.val();
-        names.push(name);
-      })
-    }
-    return names;
   }
 
   getData(eventKeys) {

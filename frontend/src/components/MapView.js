@@ -243,7 +243,7 @@ class MapView extends Component {
       var eventInfoWindow = (
         <EventInfoWindow
           onOpen={this.windowHasOpened}
-          onclose={this.windowHasClosed}
+          onClose={this.windowHasClosed}
           key={index}
           visible={this.state.showInfoWindows}
           position={{lat: lat, lng: lng}}>
