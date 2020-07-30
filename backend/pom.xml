@@ -17,18 +17,8 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <groupId>com.example.flexible</groupId>
-  <artifactId>flexible-helloworld</artifactId>
-
-  <!--
-    The parent pom defines common style checks and testing strategies for our samples.
-    Removing or replacing it should not affect the execution of the samples in anyway.
-  -->
-  <parent>
-    <groupId>com.google.cloud.samples</groupId>
-    <artifactId>shared-configuration</artifactId>
-    <version>1.0.18</version>
-  </parent>
+  <groupId>com.step2020.mapit</groupId>
+  <artifactId>mapit</artifactId>
 
   <properties>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -40,9 +30,12 @@
     <jetty>9.4.30.v20200611</jetty>
   </properties>
 
-  <!-- [START gae_flex_libraries_dependencies] -->
   <dependencies>
-
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-1.0-sdk</artifactId>
+      <version>1.9.80</version>
+    </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -50,9 +43,12 @@
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>6.14.0</version>
+    </dependency>
   </dependencies>
-  <!-- [END gae_flex_libraries_dependencies] -->
 
   <build>
     <!-- for hot reload of the web application -->

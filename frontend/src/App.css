@@ -1,0 +1,265 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.content {
+  background-color: #e9ecef;
+  margin-bottom: 0rem;
+}
+
+
+.profile {
+  text-align: center;
+  background-color: #373b42;
+  color: #e9ecef;
+}
+
+.main-footer {
+  position: static;;
+  bottom: 0rem;
+}
+
+.footer-content {
+  flex: 1 auto;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #323436;
+  color: rgb(211, 209, 209);
+}
+
+.footer-bottom {
+  text-align: center;
+}
+
+.row {
+  justify-content: space-between;
+}
+
+.welcomeContent {
+  text-align: left;
+  align-items: left;
+  justify-content: center;
+  flex-direction: column;
+}
+.beforeWelcome {
+  height: 100%;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mapView {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.backgroundToLight {
+  animation: darkLight 1s;
+  animation-fill-mode: forwards;
+}
+
+.backgroundToDark {
+  animation: lightDark 1s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes darkLight {
+  from {background-color: #202124;}
+  to {background-color: white;}
+}
+
+@keyframes lightDark {
+  from {background-color: white;}
+  to {background-color: #202124;}
+}
+
+.title {
+  font-size: 15rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.subtitle {
+  color: #757575;
+  font-size: 4rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.subtitle1 {
+  font-size: 2rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.find {
+  animation-delay: 1s;
+  animation-duration: 1s;
+}
+
+.create {
+  animation-delay: 2s;
+  animation-duration: 1s;
+}
+
+.share {
+  animation-delay: 3s;
+  animation-duration: 1s;
+}
+
+.inputUni {
+  margin: auto;
+  width: 75%;
+  animation-delay: 5s;
+  animation-duration: 1s;
+}
+
+.findeventbutton {
+  animation-delay: 5s;
+  animation-duration: 1s;
+  background: #5E9EFF!important;
+  border: #5E9EFF!important;
+  font-size:1.2rem!important;
+  font-weight:500!important;
+  border-radius: 15px!important;
+  padding: 1rem!important 1rem!important;
+  height: 3rem!important;
+  width: 10rem!important;
+}
+
+.exploreTitle {
+  color: white;
+  font-size: 3rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.collapseTitle {
+  color: white;
+  cursor: pointer;
+  font-size: 2rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.collapseText {
+  color: white;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.collapseLine {
+  background-color: white;
+}
+
+.jumbotron {
+  background-color: transparent!important;
+}
+
+.vertical-line {
+  border-left:1px solid #C7C2C2;
+  height:100%;
+}
+
+.profile-name {
+  font-size: 2rem;
+  font-weight: 400;
+  text-align: center;
+  font-family: Roboto;
+}
+
+.profile-email {
+  color: #757575;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 400;
+  font-family: Roboto;
+}
+
+.profile-university {
+  font-size: 2rem;
+  font-weight: 400;
+  text-align: center;
+  font-family: Roboto;
+}
+
+.event-container {
+  overflow: scroll;
+}
+
+.event-col {
+  margin-right: 2rem!important;
+  max-width: 40rem!important;
+}
+
+.event-cards {
+  border-radius: 20px!important;
+  border: none!important;
+  max-width: 30rem!important;
+}
+
+.event-cards-body {
+  min-width: 40rem!important;
+}
+
+.event-cards-title {
+  font-size: 2rem;
+  font-weight: 600;
+  font-family: Roboto;
+}
+
+.event-cards-description {
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-family: Roboto;
+}
+
+.event-cards-attendtext {
+  font-size: .9rem;
+  font-weight: 400;
+  font-family: Roboto;
+  text-align: center;
+}
+
+.fill-parent {
+  background-size: cover!important;
+  background-position: center!important;
+  background-repeat: no-repeat!important;
+}
+
+.event-text {
+  text-align: left!important;
+}
+
+.animate__animated.animate__fadeInDown {
+  animation-delay: 4s;
+  animation-duration: 1.5s;
+}
+
+.gm-style-iw {
+  padding: 0!important;
+  max-width: 3.5%!important;
+  font-weight: normal!important;
+  font-size: .7rem!important;
+}
+
+.gm-style-iw-d {
+  overflow: hidden!important;
+}
+
