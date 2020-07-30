@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
+import EventFilter from '../components/EventFilter';
 import { Accordion, Card, Toast, Form } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
@@ -26,8 +27,6 @@ class MapViewPage extends Component {
 
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
-    this.handleFilter = this.handleFilter.bind(this);
-    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.inputRef = React.createRef();
 
     this.types = ['university'];
@@ -65,25 +64,7 @@ class MapViewPage extends Component {
             <Card style={{border: 0}} id="eventInfo">
               <Accordion defaultActiveKey="0">
                 <Accordion.Collapse eventKey="0">
-                  <Form>
-                    <Form.Control
-                      onChange={this.handleFilter}
-                      as="select"
-                      className="my-1 mr-sm-2"
-                      id="categoriesSelect"
-                            style={{border: 0}}
-                      custom="true">
-                      <option value="">Filter by</option>
-                      <option value="0">Social Gathering</option>
-                      <option value="1">Volunteer Event</option>
-                      <option value="2">Student Organization Event</option>
-                    </Form.Control>
-                    <Form.Check
-                      onChange={this.handleCheckboxChange}
-                      defaultChecked={this.isChecked}
-                      type="checkbox"
-                      label="Show today's events"/>
-                  </Form>
+                  <EventFilter />
                 </Accordion.Collapse>
               </Accordion>
             </Card>
@@ -97,63 +78,6 @@ class MapViewPage extends Component {
         <MapView style={{zIndex: 1}} plusCode={this.state.plusCode}/>
       </div>
     );
-  }
-
-  async handleCheckboxChange() {
-    this.isChecked = !this.isChecked;
-
-    const newState = {
-      location: this.state.location,
-      lat: this.state.lat,
-      lng: this.state.lng,
-      locationObject:this.state.locationObject,
-      plusCode: this.state.plusCode,
-      loggedIn: this.state.loggedIn,
-      credentials: this.state.credentials,
-      filter_choice: this.reduxState.filter_choice,
-      isChecked: this.isChecked
-    };
-
-    await this.props.changeMapState(newState);
-    this.reduxState = this.props.articles[0];
-    this.setState(newState);
-  }
-
-  async handleFilter(input) {
-    // Set filter category
-    let filter_choice = null;
-    switch (input.target.value) {
-      case "0":
-        filter_choice = "Social Gathering";
-        break;
-
-      case "1":
-        filter_choice = "Volunteer Event";
-        break;
-
-      case "2":
-        filter_choice = "Student Organization Event";
-        break;
-
-      default:
-        break;
-    }
-
-    const newState = {
-      location: this.state.location,
-      lat: this.state.lat,
-      lng: this.state.lng,
-      locationObject:this.state.locationObject,
-      plusCode: this.state.plusCode,
-      loggedIn: this.state.loggedIn,
-      credentials: this.state.credentials,
-      filter_choice: filter_choice,
-      isChecked: this.isChecked
-    }
-
-    await this.props.changeMapState(newState);
-    this.reduxState = this.props.articles[0];
-    this.setState(newState);
   }
 
   handleScriptLoad() {

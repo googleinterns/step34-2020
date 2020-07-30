@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { changeMapState } from "../actions.index";
+import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { Form } from 'react-bootstrap';
 
@@ -36,7 +36,8 @@ class EventFilter extends Component {
     this.isChecked = false;
 
     this.handleFilter = this.handleFilter.bind(this);
-    this.handleCheckbox = this.handleCheckbox.bind(this);
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+    this.updateReduxState = this.updateReduxState.bind(this);
   }
 
   async handleFilter(input) {
@@ -58,13 +59,12 @@ class EventFilter extends Component {
       default:
         break;
     }
-
-    updateReduxState(filter_choice);
+    this.updateReduxState(filter_choice);
   }
 
   async handleCheckboxChange() {
     this.isChecked = !this.isChecked;
-    updateReduxState(this.reduxState.filter_choice);
+    this.updateReduxState(this.reduxState.filter_choice);
   }
 
   async updateReduxState(filter_choice) {
@@ -87,6 +87,7 @@ class EventFilter extends Component {
 
   render() {
     return(
+      <Form>
       <Form.Control
         onChange={this.handleFilter}
         as="select"
@@ -103,6 +104,7 @@ class EventFilter extends Component {
         defaultChecked={this.isChecked}
         type="checkbox"
         label="Show today's events"/>
+      </Form>
     )
   }
 }
