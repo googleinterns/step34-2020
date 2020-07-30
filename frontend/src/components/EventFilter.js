@@ -57,6 +57,10 @@ class EventFilter extends Component {
         break;
     }
 
+    updateReduxState(filter_choice);
+  }
+
+  updateReduxState(filter_choice) {
     const updatedState = {
       location: this.state.location,
       lat: this.state.lat,
