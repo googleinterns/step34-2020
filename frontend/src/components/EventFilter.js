@@ -37,7 +37,7 @@ class EventFilter extends Component {
     this.handleFilter = this.handleFilter.bind(this);
   }
 
-  handleFilter(input) {
+  async handleFilter(input) {
     // Set filter category
     let filter_choice = null;
     switch (input.target.value) {
@@ -60,7 +60,7 @@ class EventFilter extends Component {
     updateReduxState(filter_choice);
   }
 
-  updateReduxState(filter_choice) {
+  async updateReduxState(filter_choice) {
     const updatedState = {
       location: this.state.location,
       lat: this.state.lat,
@@ -72,7 +72,7 @@ class EventFilter extends Component {
       filter_choice: filter_choice
     }
 
-    this.props.changeMapState(updatedState);
+    await this.props.changeMapState(updatedState);
     this.reduxState = this.props.articles[0];
     this.setState(updatedState);
   }
