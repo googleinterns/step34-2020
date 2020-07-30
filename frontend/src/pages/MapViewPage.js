@@ -2,11 +2,14 @@ import React, { Component } from 'react'
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
-import EventFilter from '../components/EventFilter';
-import { Accordion, Card, Toast, Form } from 'react-bootstrap';
+import MapViewSidePanel from '../components/MapViewSidePanel';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { GoogleApiWrapper } from 'google-maps-react';
+
+// initialize global constant values
+const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+const types = ['university'];
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -22,17 +25,14 @@ class MapViewPage extends Component {
   constructor(props) {
     super(props);
 
+    // initialize global variables that can change 
     this.reduxState = this.props.articles[0];
     this.isChecked = false;
+    this.autocomplete = null;
 
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.inputRef = React.createRef();
-
-    this.types = ['university'];
-    this.autocomplete = null;
-
-    this.url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 
     if (this.reduxState) {
       this.state = {
@@ -51,30 +51,11 @@ class MapViewPage extends Component {
   render() {
     return (
       <div>
-        <Script url = {this.url} onLoad = {this.handleScriptLoad}/>
-        <TopNavbar history={this.props.history} loggedIn={this.state.loggedIn} plus_code={this.state.plus_code}/>
-        <Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", float: "right", margin: "1rem"}}>
-          <Toast.Body>
-            <Card style={{border: 0}}>
-              <Form>
-                <Form.Control style={{border: 0, focusOutline: "none"}} id = "autocomplete" placeholder = "Enter university"/>
-              </Form>
-            </Card>
-            <hr/>
-            <Card style={{border: 0}} id="eventInfo">
-              <Accordion defaultActiveKey="0">
-                <Accordion.Collapse eventKey="0">
-                  <EventFilter />
-                </Accordion.Collapse>
-              </Accordion>
-            </Card>
-          </Toast.Body>
-        </Toast>
-        <Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", maxHeight: "80vh", float: "right", margin: "1rem", marginTop: "13rem"}}>
-          <Toast.Body id="event-info">
-            Start by clicking on an event!
-          </Toast.Body>
-        </Toast>
+        <Script
+          url={url}
+          onLoad = {this.handleScriptLoad}/>
+        <TopNavbar history={this.props.history}/>
+        <MapViewSidePanel />
         <MapView style={{zIndex: 1}} plusCode={this.state.plusCode}/>
       </div>
     );
@@ -82,7 +63,7 @@ class MapViewPage extends Component {
 
   handleScriptLoad() {
     /*global google*/
-    this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
+    this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), types);
 
     this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
