@@ -45,7 +45,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-	      isChecked: false
+	isChecked: false
       };
     } else {
       this.state = {
@@ -57,7 +57,7 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-	      isChecked: false
+	isChecked: false
       };
     }
 
