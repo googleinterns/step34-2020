@@ -33,8 +33,10 @@ class EventFilter extends Component {
     this.SOCIAL_GATHERING = "0";
     this.VOLUNTEER_EVENT = "1";
     this.STUDENT_ORGANIZATION_EVENT = "2"
+    this.isChecked = false;
 
     this.handleFilter = this.handleFilter.bind(this);
+    this.handleCheckbox = this.handleCheckbox.bind(this);
   }
 
   async handleFilter(input) {
@@ -60,6 +62,11 @@ class EventFilter extends Component {
     updateReduxState(filter_choice);
   }
 
+  async handleCheckboxChange() {
+    this.isChecked = !this.isChecked;
+    updateReduxState(this.reduxState.filter_choice);
+  }
+
   async updateReduxState(filter_choice) {
     const updatedState = {
       location: this.state.location,
@@ -69,7 +76,8 @@ class EventFilter extends Component {
       plusCode: this.state.plusCode,
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
-      filter_choice: filter_choice
+      filter_choice: filter_choice,
+      isChecked: this.isChecked
     }
 
     await this.props.changeMapState(updatedState);
@@ -90,6 +98,11 @@ class EventFilter extends Component {
         <option value={this.VOLUNTEER_EVENT}>Volunteer Event</option>
         <option value={this.STUDENT_ORGANIZATION_EVENT}>Student Organization Event</option>
       </Form.Control>
+      <Form.Check
+        onChange={this.handleCheckboxChange}
+        defaultChecked={this.isChecked}
+        type="checkbox"
+        label="Show today's events"/>
     )
   }
 }
