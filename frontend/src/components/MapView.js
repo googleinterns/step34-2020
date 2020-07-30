@@ -32,7 +32,7 @@ class MapView extends Component {
     this.mapRef = React.createRef();
 
     this.reduxState = this.props.articles[0];
-
+    
     if (this.reduxState) {
       this.state = {
         allEvents: [],
@@ -62,8 +62,13 @@ class MapView extends Component {
     }
 
     var plusCode = this.state.plusCode;
-    this.queryEventsAndStoreInMemory(plusCode);
     this.renderInfo = this.renderInfo.bind(this);
+  }
+
+  async componentDidMount() {
+    await this.setState({ allEvents: [] });
+    await this.queryEventsAndStoreInMemory(this.state.plusCode);
+    await this.initializeRender();
   }
 
   // Called whenever the props change (when the university, filter, or time today are changed)
@@ -72,13 +77,7 @@ class MapView extends Component {
     if (nextProps.plusCode !== this.state.plusCode) {
       await this.setState({ allEvents: [], plusCode: nextProps.plusCode });
       await this.queryEventsAndStoreInMemory(nextProps.plusCode);
-      
-      // Render the map with events twice
-      // For some strange reason, whenever we dont call renderInfo a second time, the events wont show
-      await this.setState({ renderedEvents: [] });
-      this.renderInfo();
-      await this.setState({ renderedEvents: [] });
-      this.renderInfo();
+      await this.initializeRender();
     }
 
     // Shows all the events
@@ -95,6 +94,16 @@ class MapView extends Component {
       await this.setState({ isChecked: nextProps.articles[0].isChecked });
       this.handleTimeTodayChange();
     }
+  }
+
+  // Initializes the render for whenever the map get loaded first or whenever the plus code props change
+  async initializeRender() {  
+    // Render the map with events twice
+    // For some strange reason, whenever we dont call renderInfo a second time, the events wont show
+    await this.setState({ renderedEvents: [] });
+    this.renderInfo();
+    await this.setState({ renderedEvents: [] });
+    this.renderInfo();
   }
 
   // Shows all events
