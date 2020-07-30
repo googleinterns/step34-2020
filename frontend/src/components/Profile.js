@@ -45,7 +45,6 @@ class Profile extends React.Component {
       window.location = "/";
     }
 
-    console.log(this.state.credentials);
     this.showModal =  this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -56,8 +55,6 @@ class Profile extends React.Component {
     if(event !== null) {
       var attendees = event.attendees.slice(1, event.attendees.length -1).split(",");
 
-      // NOTE: We left list of attendees out for now.
-      //var namesOfAttendees = this.getNamesOfAttendees (attendees);
       let num = attendees.length;
       var len = 0;
       var imageUrl = "";
@@ -68,15 +65,15 @@ class Profile extends React.Component {
         len = event.imageUrls.length;
             }
             // Retrieve image urls only if they were provided. Otherwise set url to default value
-            if(len > 0) {
-        imageUrl = event.imageUrls.slice(1, len - 2);
-        imageUrl = imageUrl.split(",");
-        console.log(imageUrl);
-        // dynamically create a card that contain images for the event
-        card = imageUrl.map(url =>
-          <Carousel.Item>
-            <Image className="rounded" fluid src={url} />
-          </Carousel.Item>);
+            if(len >= 1) {
+              imageUrl = event.imageUrls.slice(1, len - 2);
+              imageUrl = imageUrl.split(",");
+              console.log(imageUrl);
+              // dynamically create a card that contain images for the event
+              card = imageUrl.map(url =>
+                <Carousel.Item>
+                  <Image className="rounded" fluid src={url} />
+                </Carousel.Item>);
             }
 
             let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
@@ -159,22 +156,6 @@ class Profile extends React.Component {
       })
     }
 
-  }
-
-  getNamesOfAttendees(refAttendees) {
-    var names = []
-    var len = refAttendees.length;
-    var ref = fb.userRef.child('users');
-
-    for (var i = 0; i < len; i++) {
-      var current_attendee = ref.child(refAttendees[i]).child('name');
-
-      current_attendee.on('value', snapshot => {
-        let name = snapshot.val();
-        names.push(name);
-      })
-    }
-    return names;
   }
 
   getData(eventKeys) {
@@ -288,11 +269,10 @@ class Profile extends React.Component {
         <br/>
         <Row>
           <Col md={{ span: 4, offset: 4 }}>
-            <h1 className="profile-name">John Doe</h1>
+            <h1 className="profile-name">{this.state.credentials.displayName}</h1>
             <br />
-                  <h1 className="profile-email">jdoe@osu.edu</h1>
+                  <h1 className="profile-email">{this.state.credentials.email}</h1>
                   <br />
-            <h1 className="profile-university">The Ohio State University</h1>
           </Col>
         </Row>
       </div>
@@ -323,16 +303,16 @@ class Profile extends React.Component {
   render() {
     if (this.reduxState) {
       return (
-  <div>
-    <TopNavbar
-      loggedIn={true}
-      history={this.props.history}
-      credentials={this.state.credentials} />
-    <Jumbotron>
-      {this.renderProfile()}
-      {this.renderEvents()}
-    </Jumbotron>
-  </div>
+        <div>
+          <TopNavbar
+            loggedIn={true}
+            history={this.props.history}
+            credentials={this.state.credentials} />
+          <Jumbotron>
+            {this.renderProfile()}
+            {this.renderEvents()}
+          </Jumbotron>
+        </div>
       )
     } else {
       window.location = '/';
