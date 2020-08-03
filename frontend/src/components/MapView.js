@@ -189,48 +189,38 @@ class MapView extends Component {
   // Queries all events with a given university plus code
   async queryEventsAndStoreInMemory(plusCode) {
     var deferred = new Deferred();
-    if (plusCode !== undefined) {
-      const eventsRef = fb.eventsRef;
-      eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", async (dataSnapshot) => {
-        if (dataSnapshot.numChildren() !== 0) {
-          var events = Object.values(dataSnapshot.val());
-          for (var i = 0; i < events.length; i++) {
-            await this.updateEventIdsAndLoadEvent(events[i]);
-          }
-          deferred.resolve();
+    const eventsRef = fb.eventsRef;
+    eventsRef.child("university")
+    .child(plusCode).child("All")
+    .orderByKey()
+    .on("value", async (dataSnapshot) => {
+      if (dataSnapshot.numChildren() !== 0) {
+        var events = Object.values(dataSnapshot.val());
+        for (var i = 0; i < events.length; i++) {
+          await this.updateEventIdsAndLoadEvent(events[i]);
         }
-      });
-    } else {
-      const eventsRef = fb.eventsRef;
-      eventsRef.child("university").child("8QC7XP32+PC").child("All").orderByKey().on("value", async (dataSnapshot) => {
-        if (dataSnapshot.numChildren() !== 0) {
-          var events = Object.values(dataSnapshot.val());
-          for (var i = 0; i < events.length; i++) {
-            await this.updateEventIdsAndLoadEvent(events[i]);
-          }
-          deferred.resolve();
-        }
-      });
-    }
+        deferred.resolve();
+      }
+    });
     return deferred.promise;
   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
   async updateEventIdsAndLoadEvent(eventId) {
     var deferred = new Deferred();
-    // Events reference
     const eventsRef = fb.eventsRef;
+    
     // Query and then listen for any changes of that event
     eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
-      // The event object
-      const event = dataSnapshot.val();
+      const eventObj = dataSnapshot.val();
+
       // If the state has the event then update the change
       if (this.state.allEvents[eventId] !== undefined) {
-        this.updateEvent(eventId, event);
+        this.updateEvent(eventId, eventObj);
       } else {
         // If the state doesnt have the event, add the event to the map
         this.setState(prevState => ({
-          allEvents: [...prevState.allEvents, event]
+          allEvents: [...prevState.allEvents, eventObj]
         }));
       }
       deferred.resolve();
