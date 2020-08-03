@@ -1,21 +1,18 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Badge, Container, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { Map, GoogleApiWrapper, } from 'google-maps-react';
 import { fb } from '../App';
 import { connect } from "react-redux";
 import { Deferred } from '@firebase/util';
+import { Provider } from "react-redux";
 import EventInfoWindow from "./EventInfoWindow";
 import EventInfoWindowCard from "./EventInfoWindowCard";
+import EventSidePanel from "./EventSidePanel";
 import moment from 'moment';
-import PlaceIcon from '@material-ui/icons/Place';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import GroupIcon from '@material-ui/icons/Group';
-import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
 import '../gm-styles.css';
 import '../App.css';
+import store from "../store/index";
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -24,12 +21,6 @@ const mapStateToProps = state => {
 const mapStyles = {
   width: '100%',
   height: '100%',
-};
-
-const CHECK_CIRCLE_ICON_STYLE = {
-  color: "#1CA45C",
-  padding: 0,
-  fontSize: "60px"
 };
 
 class MapView extends Component {
@@ -322,127 +313,15 @@ class MapView extends Component {
   }
 
   renderSidePanel(event) {
-    var images = "";
-    var length = 0;
-
-    var imageUrl = "";
-    if (event.imageUrls !== undefined) {
-      length = event.imageUrls.length;
-    }
-
-    // Convert each image into a carousel item
-    if (length > 0) {
-      imageUrl = event.imageUrls.slice(1, length - 2);
-      imageUrl = imageUrl.split(","); 
-      images = imageUrl.map((url, index) =>
-        <Carousel.Item key={index}>
-          <Image 
-            className="rounded"
-            fluid 
-            src={url} 
-          />
-        </Carousel.Item>
-      );
-    }
-
-    var attendees = event.attendees.slice(1, event.attendees.length - 1).split(",");
-    let num = attendees.length;
-
-    let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
-    let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
-    let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
     var eventInfo = (
-      <Container>
-        <Card
-          className="event-cards"
-          key={Math.random(1001,5000)}
-          text={'light' ? 'dark' : 'white'}>
-          <Carousel className="fill-parent">
-                  {images}
-          </Carousel>
-          <Card.Body>
-            <Card.Title>
-              <h1 className="event-cards-title">{event.eventName}</h1>
-            </Card.Title>
-            <div className="event-text">
-              <Row>
-                <Col xs={1}>
-                  <PlaceIcon/>
-                </Col>
-                <Col>
-                  {event.locationName}
-                </Col>
-              </Row>
-            </div>
-            <div>
-              <Row>
-                <Col xs={1}>
-                  <AccessTimeIcon/>
-                </Col>
-                <Col>
-                  {date}, {startTime} - {endTime}
-                </Col>
-              </Row>
-            </div>
-            <div>
-              <Row>
-                <Col xs={1}>
-                  <GroupIcon/>
-                </Col>
-                <Col>
-                  {num} attending
-                </Col>
-              </Row>
-            </div>
-            <hr/>
-            <Card.Text className="event-cards-description">
-              About
-            </Card.Text>
-            <Card.Text>{event.description}</Card.Text>
-            <Badge variant="secondary">
-              {event.category}
-            </Badge>
-            <hr/>
-            <Row className="justify-content-md-center">
-              <Col md="auto">
-                {this.checkGoing(attendees)}
-                <div className="event-cards-attendtext">Going</div>
-              </Col>
-              <Col md="auto">
-                <StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
-                <div className="event-cards-attendtext">Interested</div>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      </Container>
+      <Provider store={store}>
+        <EventSidePanel event={event}/>
+      </Provider>
     );
 
     let eventInfoContainer = document.getElementById("event-info");
     ReactDOM.render(eventInfo, eventInfoContainer);
   }
-
-  checkGoing(attendees) {
-    if (this.reduxState.credentials === undefined) {
-      return (
-        <CheckCircleOutlinedIcon style={CHECK_CIRCLE_ICON_STYLE}/>
-      );
-    }
-
-    const uid = this.reduxState.credentials.uid;
-    const found = attendees.find(element => element === uid);
-
-    if (found === undefined) {
-      return (
-        <CheckCircleOutlinedIcon style={CHECK_CIRCLE_ICON_STYLE}/>
-      );
-    } else {
-      return (
-        <CheckCircleIcon style={CHECK_CIRCLE_ICON_STYLE}/>
-      );
-    }
-  }
-
 
   onReady = () => {
     this.setState({
