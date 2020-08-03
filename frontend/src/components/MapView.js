@@ -32,33 +32,19 @@ class MapView extends Component {
 
     this.reduxState = this.props.articles[0];
     
-    if (this.reduxState) {
-      this.state = {
-        allEvents: [],
-        renderedEvents: [],
-        location: this.reduxState.location,
-        lat: this.reduxState.lat,
-        lng: this.reduxState.lng,
-        plusCode: this.reduxState.plusCode,
-        showInfoWindows: true,
-        contents: null,
-        resizeState: false,
-        filter_choice: this.reduxState.filter_choice,
-        isChecked: false
-      };
-    } else {
-      this.state = {
-        allEvents: [],
-        renderedEvents: [],
-        location: undefined,
-        plusCode: '',
-        showInfoWindows: false,
-        contents: null,
-        resizeState: false,
-        filter_choice: this.reduxState.filter_choice,
-        isChecked: false
-      };
-    }
+    this.state = {
+      allEvents: [],
+      renderedEvents: [],
+      location: this.reduxState.location,
+      lat: this.reduxState.lat,
+      lng: this.reduxState.lng,
+      plusCode: this.reduxState.plusCode,
+      showInfoWindows: true,
+      contents: null,
+      resizeState: false,
+      filter_choice: this.reduxState.filter_choice,
+      isChecked: false
+    };
 
     this.renderInfo = this.renderInfo.bind(this);
   }
@@ -126,29 +112,33 @@ class MapView extends Component {
 
   // Checks if we need to show only today, if we do, hide all events that are not today
   handleTimeTodayChange() {
-    const showTodayOnly = this.state.isChecked;
-    if (showTodayOnly) {
+    if (this.state.isChecked) {
       const today = new Date();
+      const todayInfo = {
+        year: today.getFullYear(),
+        month: today.getMonth() + 1,
+        day: today.getDate()
+      }
+      
       this.state.allEvents.map((event, index) => {
         // event.date is YYYY-MM-DD
         //               0123456789
         const eventDate = event.date;
-        const eventYear = eventDate.substring(0, 4);
-        var eventMonth = eventDate.substring(5, 7);
-        if (eventMonth.charAt(0) === '0') {
-          eventMonth = eventMonth.substring(1, eventMonth.length);
+        const eventInfo = {
+          year: parseInt(eventDate.substring(0, 4)),
+          month: parseInt(eventDate.substring(5, 7)),
+          day: parseInt(eventDate.substring(8, 10)),
+        };
+
+        const matches = {
+          yearsMatch: todayInfo.year == eventInfo.year,
+          monthsMatch: todayInfo.month == eventInfo.month,
+          daysMatch: todayInfo.day == eventInfo.day
         }
-        const eventDay = eventDate.substring(8, 10);
 
-        const todayYear = today.getFullYear().toString();
-        const todayMonth = (today.getMonth() + 1).toString(); // months are 0-indexed
-        const todayDay = today.getDate().toString();
+        const datesMatch = matches.yearsMatch && matches.monthsMatch && matches.daysMatch;
 
-        const yearsMatch = eventYear.valueOf() === todayYear.valueOf();
-        const monthsMatch = eventMonth.valueOf() === todayMonth.valueOf();
-        const daysMatch = eventDay.valueOf() === todayDay.valueOf();
-
-        if (!(yearsMatch && monthsMatch && daysMatch)) {
+        if (!datesMatch) {
           this.state.renderedEvents[index].eventRef.current.hide();
         }
       });
