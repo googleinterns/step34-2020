@@ -45,7 +45,7 @@ class EventFilter extends Component {
     // initialize global values that can change
     this.isChecked = false;
 
-    this.handleFilterChange = this.handleFilter.bind(this);
+    this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.updateReduxState = this.updateReduxState.bind(this);
   }
