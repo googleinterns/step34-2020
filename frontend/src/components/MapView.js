@@ -105,9 +105,7 @@ class MapView extends Component {
   }
 
   showAllEvents() {
-    this.state.renderedEvents.map((element) => {
-      element.eventRef.current.show();
-    });
+    this.state.renderedEvents.forEach(element => element.eventRef.current.show());
   }
 
   // Checks if we need to show only today, if we do, hide all events that are not today
@@ -120,7 +118,7 @@ class MapView extends Component {
         day: today.getDate()
       }
       
-      this.state.allEvents.map((event, index) => {
+      this.state.allEvents.forEach((event, index) => {
         // event.date is YYYY-MM-DD
         //               0123456789
         const eventDate = event.date;
@@ -131,9 +129,9 @@ class MapView extends Component {
         };
 
         const matches = {
-          yearsMatch: todayInfo.year == eventInfo.year,
-          monthsMatch: todayInfo.month == eventInfo.month,
-          daysMatch: todayInfo.day == eventInfo.day
+          yearsMatch: todayInfo.year === eventInfo.year,
+          monthsMatch: todayInfo.month === eventInfo.month,
+          daysMatch: todayInfo.day === eventInfo.day
         }
 
         const datesMatch = matches.yearsMatch && matches.monthsMatch && matches.daysMatch;
@@ -149,7 +147,7 @@ class MapView extends Component {
   handleFilterChange() {
     const filter_choice =  this.state.filter_choice;
     if (filter_choice !== null && typeof filter_choice !== 'undefined') {
-      this.state.allEvents.map((element, index) => {
+      this.state.allEvents.forEach((element, index) => {
         if (element.category.toLowerCase() !== (filter_choice).toLowerCase()) {
           this.state.renderedEvents[index].eventRef.current.hide();
         }
