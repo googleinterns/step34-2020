@@ -7,6 +7,7 @@ import { fb } from '../App';
 import Script from 'react-load-script';
 import { connect } from "react-redux";
 import { changeMapState } from "../actions/index";
+import PopUp from './PopUp';
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -109,6 +110,19 @@ class Events extends Component {
     });
   }
 
+  handlePopUp(message) {
+    ReactDOM.render(
+      <div>
+        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+      </div>,
+      document.getElementById('popup-wrapper'))
+  }
+
+  hidePopUp() {
+    const modal = document.getElementById('popup-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
+  }
+
   handlePlusCodeChange() {
     const universityAddressObject = this.universityAutocomplete.getPlace();
 
@@ -120,7 +134,8 @@ class Events extends Component {
       });
     } else {
       this.hasLocationError = true;
-      alert("MapIT does not support this location.  Please choose another.")
+      var message = "MapIT does not support this location.  Please choose another.";
+      this.handlePopUp(message);
     }
     
   }
