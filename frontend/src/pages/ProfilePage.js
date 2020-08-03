@@ -11,6 +11,7 @@ import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import ConfirmDelete from '../components/ConfirmDelete';
 import Profile from '../components/Profile';
+import UserEvents from '../components/UserEvents';
 import moment from 'moment';
 import placeIcon from '../place-24px.svg';
 import timeIcon from '../access_time-24px.svg';
@@ -241,26 +242,26 @@ class ProfilePage extends React.Component {
     })
   }
 
-  renderEvents() {
-    return (
-      <div>
-        <Row>
-          <Col>
-            <h1 className="subtitle1">Events</h1>
-          </Col>
-        </Row>
-        <hr/>
-        <div
-          id="content"
-          style={{
-            marginLeft:"1.8rem",
-            marginTop:".8rem"}}>
-          <br />
-                {this.state.contents}
-        </div>
-      </div>
-    );
-  }
+//   renderEvents() {
+//     return (
+//       <div>
+//         <Row>
+//           <Col>
+//             <h1 className="subtitle1">Events</h1>
+//           </Col>
+//         </Row>
+//         <hr/>
+//         <div
+//           id="content"
+//           style={{
+//             marginLeft:"1.8rem",
+//             marginTop:".8rem"}}>
+//           <br />
+//                 {this.state.contents}
+//         </div>
+//       </div>
+//     );
+//   }
 
   render() {
     if (this.reduxState) {
@@ -274,7 +275,7 @@ class ProfilePage extends React.Component {
           <TopNavbar history={this.props.history}/>
           <Jumbotron>
             <Profile info={profileProps}/>
-            {this.renderEvents()}
+            <UserEvents contents={this.state.contents}/>
           </Jumbotron>
         </div>
       )
