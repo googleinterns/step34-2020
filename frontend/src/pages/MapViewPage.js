@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
-import { Accordion, Card, Toast, Form } from 'react-bootstrap';
+import { Accordion, Card, Toast, Form, Col } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { GoogleApiWrapper } from 'google-maps-react';
@@ -30,6 +30,7 @@ class MapViewPage extends Component {
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
     this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
     this.inputRef = React.createRef();
 
     this.types = ['university'];
@@ -75,16 +76,23 @@ class MapViewPage extends Component {
                       id="categoriesSelect"
                             style={{border: 0}}
                       custom="true">
-                      <option value="">Filter by</option>
+                      <option value="">Filter by category</option>
                       <option value="0">Social Gathering</option>
                       <option value="1">Volunteer Event</option>
                       <option value="2">Student Organization Event</option>
                     </Form.Control>
+                    <Form.Group as={Col} xs="auto">
+                    <Form.Control
+                      required
+                      onChange={this.handleDateChange}
+                      type="date"
+                      label="choose a date"/>
                     <Form.Check
                       onChange={this.handleCheckboxChange}
                       defaultChecked={this.isChecked}
                       type="checkbox"
-                      label="Show today's events"/>
+                      label="clear filters"/>
+                    </Form.Group>
                   </Form>
                 </Accordion.Collapse>
               </Accordion>
@@ -103,6 +111,13 @@ class MapViewPage extends Component {
 
   async handleCheckboxChange() {
     this.isChecked = !this.isChecked;
+    var category = null;
+    var date = null;
+
+    if(!this.isChecked) {
+      category = this.reduxState.filter_choice;
+      date = this.date;
+    }
 
     const newState = {
       location: this.state.location,
@@ -112,9 +127,29 @@ class MapViewPage extends Component {
       plusCode: this.state.plusCode,
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
-      filter_choice: this.reduxState.filter_choice,
-      isChecked: this.isChecked
+      filter_choice: category,
+      isChecked: this.isChecked,
+      date: date,
     };
+
+    await this.props.changeMapState(newState);
+    this.reduxState = this.props.articles[0];
+    this.setState(newState);
+  }
+
+  async handleDateChange(input) {
+    const newState = {
+      location: this.state.location,
+      lat: this.state.lat,
+      lng: this.state.lng,
+      locationObject:this.state.locationObject,
+      plusCode: this.state.plusCode,
+      loggedIn: this.state.loggedIn,
+      credentials: this.state.credentials,
+      filter_choice: this.filter_choice,
+      isChecked: !this.isChecked,
+      date: input.target.value,
+    }
 
     await this.props.changeMapState(newState);
     this.reduxState = this.props.articles[0];
@@ -150,7 +185,8 @@ class MapViewPage extends Component {
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
       filter_choice: filter_choice,
-      isChecked: this.isChecked
+      isChecked: !this.isChecked,
+      date: this.date,
     }
 
     await this.props.changeMapState(newState);
