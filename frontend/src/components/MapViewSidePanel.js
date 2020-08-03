@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { Accordion, Card, Toast, Form } from 'react-bootstrap';
 import EventFilter from './EventFilter';
+import Searchbar from './Searchbar';
 
 // initialize global constant values
 const KEY = "0";
+
 const SELECT_PLACEHOLDER = "Enter university";
+const EVENT_INFO_TEXT = "Start by clicking on an event!";
+
 const ENTER_UNI_TOAST_STYLE = {
   backgroundColor: "white",
   position: "absolute",
@@ -38,18 +42,19 @@ const FORM_CONTROL_STYLE = {
 }
 
 class MapViewSidePanel extends Component {
+  constructor(props) {
+    super(props)
+  }
+
   render() {
     return (
       <div>
         <Toast style={ENTER_UNI_TOAST_STYLE}>
           <Toast.Body>
             <Card style={CARD_STYLE}>
-              <Form>
-                <Form.Control
-                  style={FORM_CONTROL_STYLE}
-                  id="autocomplete"
-                  placeholder={SELECT_PLACEHOLDER}/>
-              </Form>
+              <Searchbar
+                style={FORM_CONTROL_STYLE}
+                rerenderParentCallback={this.props.rerenderParentCallback}/>
             </Card>
             <hr/>
             <Card
@@ -65,7 +70,7 @@ class MapViewSidePanel extends Component {
         </Toast>
         <Toast style={EVENT_INFO_TOAST_STYLE}>
           <Toast.Body id="event-info">
-            Start by clicking on an event!
+            {EVENT_INFO_TEXT}
           </Toast.Body>
         </Toast>
       </div>

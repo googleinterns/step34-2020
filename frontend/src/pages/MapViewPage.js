@@ -9,7 +9,9 @@ import { GoogleApiWrapper } from 'google-maps-react';
 
 // initialize global constant values
 const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+
 const types = ['university'];
+
 const MAPVIEW_STYLE = {
   zIndex: 1
 };
@@ -33,8 +35,8 @@ class MapViewPage extends Component {
     this.isChecked = false;
     this.autocomplete = null;
 
-    this.handleScriptLoad = this.handleScriptLoad.bind(this);
-    this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
+    this.updateReduxStateValue = this.updateReduxStateValue.bind(this);
     this.inputRef = React.createRef();
 
     if (this.reduxState) {
@@ -58,7 +60,7 @@ class MapViewPage extends Component {
           url={url}
           onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history}/>
-        <MapViewSidePanel />
+        <MapViewSidePanel rerenderParentCallback={this.rerenderParentCallback}/>
         <MapView 
           style={MAPVIEW_STYLE}
           plusCode={this.state.plusCode}/>
@@ -66,37 +68,13 @@ class MapViewPage extends Component {
     );
   }
 
-  handleScriptLoad() {
-    /*global google*/
-    this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), types);
-
-    this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
-    this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
+  updateReduxStateValue() {
+    this.reduxState = this.props.articles[0];
   }
 
-  async handlePlaceSelect() {
-    const addressObject = this.autocomplete.getPlace();
-    const address = addressObject.address_components;
-    const addressGeometry = addressObject.geometry;
-
-    if (address && typeof addressObject.plus_code != 'undefined') {
-      const newState = {
-        location: addressGeometry.location,
-        lat: addressGeometry.location.lat(),
-        lng: addressGeometry.location.lng(),
-        locationObject: addressObject,
-        plusCode: addressObject.plus_code.global_code,
-        loggedIn: this.state.loggedIn,
-        credentials: this.state.credentials,
-        filter_choice: this.state.filter_choice,
-        isChecked: this.isChecked
-      }
-      await this.props.changeMapState(newState);
-      this.reduxState = this.props.articles[0];
-      this.setState(newState);
-    } else {
-      alert('MapIT does not support this location.  Please choose another.');
-    }
+  rerenderParentCallback() {
+    this.updateReduxStateValue();
+    this.setState(this.reduxState);
   }
 }
 
