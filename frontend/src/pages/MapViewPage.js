@@ -10,8 +10,6 @@ import { GoogleApiWrapper } from 'google-maps-react';
 // initialize global constant values
 const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 
-const types = ['university'];
-
 const MAPVIEW_STYLE = {
   zIndex: 1
 };

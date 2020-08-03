@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Accordion, Card, Toast, Form } from 'react-bootstrap';
+import { Accordion, Card, Toast } from 'react-bootstrap';
 import EventFilter from './EventFilter';
 import Searchbar from './Searchbar';
 
 // initialize global constant values
 const KEY = "0";
 
-const SELECT_PLACEHOLDER = "Enter university";
 const EVENT_INFO_TEXT = "Start by clicking on an event!";
 
 const ENTER_UNI_TOAST_STYLE = {
@@ -43,6 +42,7 @@ const FORM_CONTROL_STYLE = {
 
 class MapViewSidePanel extends Component {
   constructor(props) {
+    // constructor needed to access this.props.rerenderParentCallback
     super(props)
   }
 
