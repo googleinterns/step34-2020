@@ -4,7 +4,7 @@ import { Router, Switch, Route } from 'react-router-dom';
 import MapViewPage from './pages/MapViewPage';
 import { createBrowserHistory } from 'history';
 import Welcome from './components/Welcome';
-import Profile from './components/Profile';
+import ProfilePage from './pages/ProfilePage';
 import Firebase from './components/Firebase';
 import Events from './components/CreateEvent';
 import Footer  from './components/Footer';
@@ -20,7 +20,7 @@ function App() {
           <Switch>
             <Route exact path="/"  component={Welcome} />
             <Route path="/map" component={MapViewPage} />
-            <Route path="/profile" component={Profile} />
+            <Route path="/profile" component={ProfilePage} />
             <Route path="/create" component={Events} />
             <Route path="/update" component={Update} />
           </Switch>
