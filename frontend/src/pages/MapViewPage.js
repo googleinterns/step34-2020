@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
@@ -6,6 +7,7 @@ import { Accordion, Card, Toast, Form } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { GoogleApiWrapper } from 'google-maps-react';
+import PopUp from '../components/PopUp';
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -164,6 +166,11 @@ class MapViewPage extends Component {
     this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
   }
 
+  hidePopUp() {
+    const modal = document.getElementById('popup-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
+  }
+
   async handlePlaceSelect() {
     const addressObject = this.autocomplete.getPlace();
     const address = addressObject.address_components;
@@ -185,7 +192,12 @@ class MapViewPage extends Component {
       this.reduxState = this.props.articles[0];
       this.setState(newState);
     } else {
-      alert('MapIT does not support this location.  Please choose another.');
+      var message = 'MapIT does not support this location.  Please choose another.';
+      ReactDOM.render(
+      <div>
+        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+      </div>,
+      document.getElementById('popup-wrapper'))
     }
   }
 }

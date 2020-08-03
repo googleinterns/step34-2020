@@ -1,6 +1,9 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import { Deferred } from '@firebase/util';
+import ReactDOM from 'react-dom';
+import React from 'react';
+import PopUp from './PopUp';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -83,6 +86,7 @@ class Firebase {
       // Start the session
       this.startSession();
     }
+
   }
 
   // Starts the user session. This is where the front end gets the session id
@@ -144,7 +148,7 @@ class Firebase {
     var sessionId = this.sessionId;
 
     // Listen for responses under the RESPONSES path
-    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', async function(snapshot) {
+    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', async snapshot => {
       if (snapshot.key === requestId) {
         // Get the status and message
         var status = snapshot.child("status").val();
@@ -155,9 +159,10 @@ class Firebase {
           deferred.resolve(response);
         // When the status is "failed" show error message and deferred promise as false
         } else { 
-          alert(message);
+          this.handlePopUp(message);
           deferred.resolve(null);
         }
+
       }
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);
@@ -222,6 +227,19 @@ class Firebase {
     const deferred = new Deferred();
     this.handleResponses(requestId, deferred);
     return deferred.promise;
+  }
+
+  handlePopUp(message) {
+    ReactDOM.render(
+      <div>
+        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+      </div>,
+      document.getElementById('popup-wrapper'))
+  }
+
+  hidePopUp() {
+    const modal = document.getElementById('popup-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
   }
 
   // Requests event deletion with the given event id and the uid
@@ -321,20 +339,24 @@ class Firebase {
         default:
           break;
       }
-    }, function(error) {
+    }, error => {
       // Handle unsuccessful uploads
+      var message = "";
       switch (error.code) {
         case 'storage/unauthorized':
           // User doesn't have permission to access the object
-          alert("Don't have permission to upload images, are you logged in? Cancelling event creation...");
+          message = "Don't have permission to upload images, are you logged in? Cancelling event creation...";
+          this.handlePopUp(message);
           break;
         case 'storage/canceled':
           // User canceled the upload
-          alert("Cancelled upload. Cancelling event creation...");
+          message = "Cancelled upload. Cancelling event creation...";
+          this.handlePopUp(message);
           break;
         case 'storage/unknown':
           // Unknown error occurred, inspect error.serverResponse
-          alert("Unknown error. Cancelling event creation...");
+          message = "Unknown error. Cancelling event creation...";
+          this.handlePopUp(message)
           break;
         default:
             break;
