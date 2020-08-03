@@ -60,7 +60,7 @@ class MapView extends Component {
         isChecked: false
       };
     }
-
+    
     var plusCode = this.state.plusCode;
     this.renderInfo = this.renderInfo.bind(this);
   }
@@ -73,9 +73,17 @@ class MapView extends Component {
 
   // Called whenever the props change (when the university, filter, or time today are changed)
   async UNSAFE_componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
     // If the plus code changes, requery with the new plus code and wipe all event data currently on the map
     if (nextProps.plusCode !== this.state.plusCode) {
-      await this.setState({ allEvents: [], plusCode: nextProps.plusCode });
+      await this.setState(
+	{
+	  allEvents: [], 
+	  plusCode: nextProps.plusCode, 
+	  lat: nextProps.articles[0].lat, 
+	  lng: nextProps.articles[0].lng
+	}
+      );
       await this.queryEventsAndStoreInMemory(nextProps.plusCode);
       await this.initializeRender();
     }
@@ -157,7 +165,7 @@ class MapView extends Component {
   }
 
   // Renders the map with the event info
-  renderInfo () { 
+  renderInfo () {
     let container = document.getElementById('map-view') 
     var map = (
       <Map
@@ -199,7 +207,9 @@ class MapView extends Component {
             await this.updateEventIdsAndLoadEvent(events[i]);
           }
           deferred.resolve();
-        }
+        } else {
+	  deferred.resolve();
+	}
       });
     } else {
       const eventsRef = fb.eventsRef;
@@ -210,7 +220,9 @@ class MapView extends Component {
             await this.updateEventIdsAndLoadEvent(events[i]);
           }
           deferred.resolve();
-        }
+        } else {
+	  deferred.resolve();
+	}
       });
     }
     return deferred.promise;
