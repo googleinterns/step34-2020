@@ -73,7 +73,6 @@ class MapView extends Component {
 
   // Called whenever the props change (when the university, filter, or time today are changed)
   async UNSAFE_componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     // If the plus code changes, requery with the new plus code and wipe all event data currently on the map
     if (nextProps.plusCode !== this.state.plusCode) {
       await this.setState(
