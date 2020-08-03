@@ -10,6 +10,9 @@ import { GoogleApiWrapper } from 'google-maps-react';
 // initialize global constant values
 const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 const types = ['university'];
+const MAPVIEW_STYLE = {
+  zIndex: 1
+};
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -56,7 +59,9 @@ class MapViewPage extends Component {
           onLoad = {this.handleScriptLoad}/>
         <TopNavbar history={this.props.history}/>
         <MapViewSidePanel />
-        <MapView style={{zIndex: 1}} plusCode={this.state.plusCode}/>
+        <MapView 
+          style={MAPVIEW_STYLE}
+          plusCode={this.state.plusCode}/>
       </div>
     );
   }
