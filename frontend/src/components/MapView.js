@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Card } from 'react-bootstrap';
-import { Map, GoogleApiWrapper, } from 'google-maps-react';
+import { Map, GoogleApiWrapper } from 'google-maps-react';
 import { fb } from '../App';
-import { connect } from "react-redux";
+import { Provider, connect } from "react-redux";
 import { Deferred } from '@firebase/util';
-import { Provider } from "react-redux";
 import EventInfoWindow from "./EventInfoWindow";
 import EventInfoWindowCard from "./EventInfoWindowCard";
 import EventSidePanel from "./EventSidePanel";

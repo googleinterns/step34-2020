@@ -25,6 +25,8 @@ class TopNavbar extends React.Component {
     super(props);
     
     this.reduxState = this.props.articles[0];
+    this.renderModal = this.renderModal.bind(this);
+    this.redirectPage = this.redirectPage.bind(this);
 
     if (this.reduxState) {
       this.state = {
@@ -40,7 +42,6 @@ class TopNavbar extends React.Component {
   }
 
   logOutAndUpdateRedux() {
-    // update redux
     const currentState = {
       loggedIn: false,
     }
@@ -50,15 +51,17 @@ class TopNavbar extends React.Component {
   }
 
   handleLogoutButton() {
-    //sign out the user
     Firebase.auth().signOut();
-
-    this.props.history.push({
-      pathname:'/',
-    })
+    this.redirectPage('/');
   }
-  
-  handleLoginButtonClick() {
+
+  redirectPage(pathname) {
+    this.props.history.push({
+      pathname: pathname
+    });
+  }
+
+  renderModal() {
     ReactDOM.render(
       <Provider store={store}>
         <div id="modal">
@@ -68,46 +71,30 @@ class TopNavbar extends React.Component {
       document.getElementById('modal-wrapper')
     );
   }
+  
+  handleLoginButtonClick() {
+    this.renderModal();
+  }
 
   handleMapViewonClick() {
-    this.props.history.push({
-      pathname: '/map/',
-    });
+    this.redirectPage('/map/')
   }
 
   handleProfileButtonClick() {
     // If the user is signed in route to profile
     // If the user is not signed in route to the signin modal
     if (this.state.loggedIn) {
-      this.props.history.push({
-        pathname: '/profile/',
-      })
+      this.redirectPage('/profile/');
     } else {
-      ReactDOM.render(
-        <Provider store={store}>
-          <div id="modal">
-            <Modal history={this.props.history}/>
-          </div>
-        </Provider>,
-        document.getElementById('modal-wrapper')
-      );
+      this.renderModal();
     }
   }
 
   handleCreateButton() {
     if (this.state.loggedIn) {
-      this.props.history.push({
-        pathname: '/create/',
-      })
+      this.redirectPage('/create/');
     } else {
-      ReactDOM.render(
-        <Provider store={store}>
-          <div id="modal">
-            <Modal history={this.props.history}/>
-          </div>
-        </Provider>,
-        document.getElementById('modal-wrapper')
-      );
+      this.renderModal();
     }
   }
   
