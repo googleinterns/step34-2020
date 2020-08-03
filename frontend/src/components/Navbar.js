@@ -10,6 +10,28 @@ import { connect } from "react-redux";
 import store from "../store/index";
 import { Provider } from "react-redux";
 
+const NAVBAR_STYLING = {
+  bg: 'light',
+  expand: 'lg',
+  mapButtonStyle: {
+    cursor: 'pointer'
+  },
+  ariaControls: 'basic-navbar-nav'
+}
+const BUTTON_STYLING = {
+  marginRight:".8rem", 
+  marginTop: ".3rem"
+}
+const PROFILE_BUTTON_STYLING = {
+  border: "2px solid #1A73E8",
+  maxWidth: "3rem",
+  maxHeight: "3rem",
+  marginRight:".8rem",
+  margin:"auto"
+};
+
+const PROFILE_PIC = "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg";
+
 function mapDispatchToProps(dispatch) {
   return {
     changeMapState: mapState => dispatch(changeMapState(mapState))
@@ -81,8 +103,6 @@ class TopNavbar extends React.Component {
   }
 
   handleProfileButtonClick() {
-    // If the user is signed in route to profile
-    // If the user is not signed in route to the signin modal
     if (this.state.loggedIn) {
       this.redirectPage('/profile/');
     } else {
@@ -100,16 +120,29 @@ class TopNavbar extends React.Component {
   
   render() {
     return(
-      <Navbar bg="light" expand="lg" style={style}>
+      <Navbar
+        bg={NAVBAR_STYLING.bg}
+        expand={NAVBAR_STYLING.expand} 
+        style={style}>
         <Navbar.Brand href="/">IT</Navbar.Brand>
-        <Navbar.Brand style={{cursor: "pointer"}} onClick={this.handleMapViewonClick.bind(this)}>Map</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+        <Navbar.Brand
+          style={NAVBAR_STYLING.mapButtonStyle}
+          onClick={this.handleMapViewonClick.bind(this)}>Map</Navbar.Brand>
+        <Navbar.Toggle aria-controls={NAVBAR_STYLING.ariaControls}/>
         <Navbar.Collapse id="basic-navbar-nav">  
           <Nav className="mr-auto"></Nav>
           <Nav>
-            <CreateEventButton onClick={this.handleCreateButton.bind(this)} loggedIn={this.props.loggedIn} />
-            <ProfileButtonNav onClick={this.handleProfileButtonClick.bind(this)} onLogout={this.handleLogoutButton.bind(this)} loggedIn={this.props.loggedIn} credentials={this.props.credentials} />
-            <LoginButtonNav onClick={this.handleLoginButtonClick.bind(this)} loggedIn={this.props.loggedIn} />
+            <CreateEventButton
+              onClick={this.handleCreateButton.bind(this)}
+              loggedIn={this.state.loggedIn} />
+            <ProfileButtonNav
+              onClick={this.handleProfileButtonClick.bind(this)}
+              onLogout={this.handleLogoutButton.bind(this)}
+              loggedIn={this.state.loggedIn}
+              credentials={this.state.credentials} />
+            <LoginButtonNav
+              onClick={this.handleLoginButtonClick.bind(this)}
+              loggedIn={this.state.loggedIn} />
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -124,7 +157,7 @@ function CreateEventButton(props) {
       <Button 
         type="button" 
         variant="primary"
-        style={{marginRight:".8rem", marginTop: ".3rem"}}
+        style={BUTTON_STYLING}
         className="custom-btn"
         onClick={props.onClick}>
         Create Event
@@ -138,7 +171,7 @@ function LoginButtonNav(props) {
     return (
       <div>
         <Button inline="true" 
-          style={{marginRight:".8rem", marginTop: ".3rem"}}
+          style={BUTTON_STYLING}
           type="button" 
           variant="outline-primary" 
           onClick={props.onClick}>
@@ -155,18 +188,24 @@ function ProfileButtonNav(props) {
   if (props.loggedIn) {
     return (
       <div>
-  <Dropdown alignRight>
-    <Dropdown.Toggle  as={Image} style={{border: "2px solid #1A73E8", maxWidth: "3rem", maxHeight: "3rem", marginRight:".8rem", margin:"auto"}}
-        type="button" 
-        variant="primary" 
-        roundedCircle
-       src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
-    </Dropdown.Toggle>
-    <Dropdown.Menu>
-      <Dropdown.Item as={Button} onClick={props.onClick}>Profile</Dropdown.Item>
-      <Dropdown.Item as={Button} onClick={props.onLogout}>Logout</Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
+        <Dropdown alignRight>
+          <Dropdown.Toggle 
+            as={Image}
+            style={PROFILE_BUTTON_STYLING}
+            type="button" 
+            variant="primary" 
+            roundedCircle
+            src={PROFILE_PIC}>
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item
+              as={Button}
+              onClick={props.onClick}>Profile</Dropdown.Item>
+            <Dropdown.Item
+              as={Button}
+              onClick={props.onLogout}>Logout</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     );
   } else {
