@@ -6,6 +6,7 @@ import { fb } from '../App';
 import { connect } from "react-redux";
 import { Deferred } from '@firebase/util';
 import EventInfoWindow from "./EventInfoWindow";
+import EventInfoWindowCard from "./EventInfoWindowCard";
 import moment from 'moment';
 import PlaceIcon from '@material-ui/icons/Place';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -23,6 +24,12 @@ const mapStateToProps = state => {
 const mapStyles = {
   width: '100%',
   height: '100%',
+};
+
+const CHECK_CIRCLE_ICON_STYLE = {
+  color: "#1CA45C",
+  padding: 0,
+  fontSize: "60px"
 };
 
 class MapView extends Component {
@@ -209,7 +216,7 @@ class MapView extends Component {
   async updateEventIdsAndLoadEvent(eventId) {
     var deferred = new Deferred();
     const eventsRef = fb.eventsRef;
-    
+
     // Query and then listen for any changes of that event
     eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
       const eventObj = dataSnapshot.val();
@@ -252,6 +259,14 @@ class MapView extends Component {
       let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
 
       var eventRef = React.createRef();
+      const eventInfoWindowCardProps = {
+        eventName: event.eventName,
+        locationName: event.locationName,
+        date: date,
+        startTime: startTime,
+        endTime: endTime,
+        category: event.category 
+      }
 
       var eventInfoWindow = (
         <EventInfoWindow
@@ -268,22 +283,7 @@ class MapView extends Component {
             tag="a"
             onClick={this.infoWindowOnClick.bind(this, index)}
             style={{cursor: 'pointer'}}>
-            <Card.Body>
-              <Card.Title>{event.eventName}</Card.Title>
-              <hr/>
-              <Card.Text>
-                <PlaceIcon/>
-                {event.locationName}
-              </Card.Text>
-              <Card.Text>
-                <AccessTimeIcon/>
-                  {date}, {startTime} - {endTime}
-              </Card.Text>
-              <Badge variant="secondary">
-                {event.category}
-              </Badge>
-              <hr/>
-            </Card.Body>
+            <EventInfoWindowCard eventInfo={eventInfoWindowCardProps}/>
           </Card>
         </EventInfoWindow>
       );
@@ -302,7 +302,7 @@ class MapView extends Component {
       length = location.length;
     }
     if (length > 0) {
-      coords = location.slice(1, length-2);
+      coords = location.slice(1, length - 2);
       coords = coords.split(",");
     }
     return coords;
@@ -313,22 +313,18 @@ class MapView extends Component {
     let event = this.state.allEvents[index];
     let coords = this.getCoords(event.location);
 
-    // Change coords to parses and pan to the location
     var lat = parseFloat(coords[0]);
     var lng = parseFloat(coords[1]);
     let googleMapCoords = new this.mapRef.props.google.maps.LatLng(lat, lng);
     this.mapRef.map.panTo(googleMapCoords);
 
-    // Render the side panel
     this.renderSidePanel(event);
   }
 
   renderSidePanel(event) {
-
     var images = "";
     var length = 0;
 
-    // Check image urls are not undefined
     var imageUrl = "";
     if (event.imageUrls !== undefined) {
       length = event.imageUrls.length;
@@ -339,12 +335,17 @@ class MapView extends Component {
       imageUrl = event.imageUrls.slice(1, length - 2);
       imageUrl = imageUrl.split(","); 
       images = imageUrl.map((url, index) =>
-    <Carousel.Item key={index}>
-      <Image className="rounded" fluid src={url} />
-    </Carousel.Item>);
+        <Carousel.Item key={index}>
+          <Image 
+            className="rounded"
+            fluid 
+            src={url} 
+          />
+        </Carousel.Item>
+      );
     }
 
-    var attendees = event.attendees.slice(1, event.attendees.length-1).split(",");
+    var attendees = event.attendees.slice(1, event.attendees.length - 1).split(",");
     let num = attendees.length;
 
     let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
@@ -423,16 +424,22 @@ class MapView extends Component {
 
   checkGoing(attendees) {
     if (this.reduxState.credentials === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
+      return (
+        <CheckCircleOutlinedIcon style={CHECK_CIRCLE_ICON_STYLE}/>
+      );
     }
 
     const uid = this.reduxState.credentials.uid;
     const found = attendees.find(element => element === uid);
 
     if (found === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
+      return (
+        <CheckCircleOutlinedIcon style={CHECK_CIRCLE_ICON_STYLE}/>
+      );
     } else {
-      return (<CheckCircleIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
+      return (
+        <CheckCircleIcon style={CHECK_CIRCLE_ICON_STYLE}/>
+      );
     }
   }
 
