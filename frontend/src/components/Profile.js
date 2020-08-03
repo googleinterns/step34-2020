@@ -13,15 +13,11 @@ const IMAGE_STYLE = {
 };
 
 class Profile extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return(
       <div className="profileContent">
         <Row>
-          <Col>
+          <Col> 
             <h1 className="subtitle1">Profile</h1>
           </Col>
         </Row>

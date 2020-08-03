@@ -41,11 +41,6 @@ const FORM_CONTROL_STYLE = {
 }
 
 class MapViewSidePanel extends Component {
-  constructor(props) {
-    // constructor needed to access this.props.rerenderParentCallback
-    super(props)
-  }
-
   render() {
     return (
       <div>

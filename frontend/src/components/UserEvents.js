@@ -7,10 +7,6 @@ const CONTENT_STYLING = {
 };
 
 class UserEvents extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return(
       <div>

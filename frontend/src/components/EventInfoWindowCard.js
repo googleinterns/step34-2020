@@ -4,10 +4,6 @@ import PlaceIcon from '@material-ui/icons/Place';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 
 class EventInfoWindowCard extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div>

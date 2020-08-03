@@ -242,27 +242,6 @@ class ProfilePage extends React.Component {
     })
   }
 
-//   renderEvents() {
-//     return (
-//       <div>
-//         <Row>
-//           <Col>
-//             <h1 className="subtitle1">Events</h1>
-//           </Col>
-//         </Row>
-//         <hr/>
-//         <div
-//           id="content"
-//           style={{
-//             marginLeft:"1.8rem",
-//             marginTop:".8rem"}}>
-//           <br />
-//                 {this.state.contents}
-//         </div>
-//       </div>
-//     );
-//   }
-
   render() {
     if (this.reduxState) {
       var profileProps = {
