@@ -45,7 +45,8 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-        isChecked: false
+        isChecked: false,
+        date: this.reduxState.date,
       };
     } else {
       this.state = {
@@ -57,7 +58,8 @@ class MapView extends Component {
         contents: null,
         resizeState: false,
         filter_choice: props.articles[0].filter_choice,
-        isChecked: false
+        isChecked: false,
+        date: this.reduxState.date,
       };
     }
 
@@ -86,15 +88,15 @@ class MapView extends Component {
     // If the filter has changed, set the state and handle filter changes
     if (nextProps.articles[0].filter_choice !== this.state.filter_choice) {
       await this.setState({ filter_choice: nextProps.articles[0].filter_choice });
-      this.handleFilterChange();
+      this.handleCategoryFilterChanged();
     }
 
-    // If the today's events is checked, set the state and handle filter changes
-    if (nextProps.articles[0].isChecked) {
-      await this.setState({ isChecked: nextProps.articles[0].isChecked });
-      this.handleTimeTodayChange();
+    //if the date filter option was selected
+    if(nextProps.articles[0].date) {
+      this.handleDateFilterChanged(nextProps.articles[0].date);
     }
   }
+
 
   // Initializes the render for whenever the map get loaded first or whenever the plus code props change
   async initializeRender() {  
@@ -113,39 +115,16 @@ class MapView extends Component {
     });
   }
 
-  // Checks if we need to show only today, if we do, hide all events that are not today
-  handleTimeTodayChange() {
-    const showTodayOnly = this.state.isChecked;
-    if (showTodayOnly) {
-      const today = new Date();
-      this.state.allEvents.map((event, index) => {
-        // event.date is YYYY-MM-DD
-        //               0123456789
-        const eventDate = event.date;
-        const eventYear = eventDate.substring(0, 4);
-        var eventMonth = eventDate.substring(5, 7);
-        if (eventMonth.charAt(0) === '0'){
-          eventMonth = eventMonth.substring(1, eventMonth.length);
-        }
-        const eventDay = eventDate.substring(8, 10);
-
-        const todayYear = today.getFullYear().toString();
-        const todayMonth = (today.getMonth() + 1).toString(); // months are 0-indexed
-        const todayDay = today.getDate().toString();
-
-        const yearsMatch = eventYear.valueOf() === todayYear.valueOf();
-        const monthsMatch = eventMonth.valueOf() === todayMonth.valueOf();
-        const daysMatch = eventDay.valueOf() === todayDay.valueOf();
-
-        if (!(yearsMatch && monthsMatch && daysMatch)) {
-          this.state.renderedEvents[index].eventRef.current.hide();
-        }
-      });
-    }
+  handleDateFilterChanged(date) {
+    this.state.allEvents.map((event, index) => {
+      if (!(date === event.date)) {
+        this.state.renderedEvents[index].eventRef.current.hide();
+      }
+    });
   }
 
   // Handles when the filter changes. Hides all event infowindows that are not part of that category
-  handleFilterChange() {
+  handleCategoryFilterChanged() {
     const filter_choice =  this.state.filter_choice;
     if (filter_choice !== null && typeof filter_choice !== 'undefined') {
       this.state.allEvents.map((element, index) => {
