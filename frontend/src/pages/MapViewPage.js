@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Script from 'react-load-script';
 import TopNavbar from '../components/Navbar';
 import MapView from '../components/MapView';
-import { Accordion, Card, Toast, Form, Col } from 'react-bootstrap';
+import { Accordion, Button, Card, Toast, Form, Col } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import { GoogleApiWrapper } from 'google-maps-react';
@@ -29,7 +29,7 @@ class MapViewPage extends Component {
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
     this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
-    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+    this.handleFilterClearChange = this.handleFilterClearChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.inputRef = React.createRef();
 
@@ -81,17 +81,19 @@ class MapViewPage extends Component {
                       <option value="1">Volunteer Event</option>
                       <option value="2">Student Organization Event</option>
                     </Form.Control>
-                    <Form.Group as={Col} xs="auto">
+                    <Form.Group>
                     <Form.Control
                       required
                       onChange={this.handleDateChange}
                       type="date"
                       label="choose a date"/>
-                    <Form.Check
-                      onChange={this.handleCheckboxChange}
-                      defaultChecked={this.isChecked}
-                      type="checkbox"
-                      label="clear filters"/>
+      		    </Form.Group>
+      		    <Form.Group>
+                    <Button
+      		      className="btn btn-sm"
+                      onClick={this.handleFilterClearChange}
+                      variant="primary"
+                      label="clear filters">Clear Filters</Button>
                     </Form.Group>
                   </Form>
                 </Accordion.Collapse>
@@ -99,7 +101,7 @@ class MapViewPage extends Component {
             </Card>
           </Toast.Body>
         </Toast>
-        <Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", maxHeight: "80vh", float: "right", margin: "1rem", marginTop: "13rem"}}>
+        <Toast style={{backgroundColor: "white", position: "absolute", zIndex: 2, border: 0, borderRadius: "1rem", padding: 0, minWidth: "25rem", maxHeight: "80vh", float: "right", margin: "1rem", marginTop: "17rem"}}>
           <Toast.Body id="event-info">
             Start by clicking on an event!
           </Toast.Body>
@@ -109,15 +111,9 @@ class MapViewPage extends Component {
     );
   }
 
-  async handleCheckboxChange() {
-    this.isChecked = !this.isChecked;
-    var category = null;
-    var date = null;
-
-    if(!this.isChecked) {
-      category = this.reduxState.filter_choice;
-      date = this.date;
-    }
+  async handleFilterClearChange() {
+    var category = this.reduxState.filter_choice;
+    var date = this.date;
 
     const newState = {
       location: this.state.location,
