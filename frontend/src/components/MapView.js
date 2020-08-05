@@ -177,25 +177,58 @@ class MapView extends Component {
       }
     });
     console.log('the end');
+    console.log(deferred.promise);
     return deferred.promise;
   }
 
   // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
+  async queryEventsAndStoreInMemory(plusCode) {
+    var deferred = new Deferred();
+    if (plusCode !== undefined) {
+      const eventsRef = fb.eventsRef;
+      eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", async (dataSnapshot) => {
+        if (dataSnapshot.numChildren() !== 0) {
+          var events = Object.values(dataSnapshot.val());
+          for (var i = 0; i < events.length; i++) {
+            await this.updateEventIdsAndLoadEvent(events[i]);
+          }
+          deferred.resolve();
+        } else {
+	  deferred.resolve();
+	}
+      });
+    } else {
+      const eventsRef = fb.eventsRef;
+      eventsRef.child("university").child("847X884Q+22").child("All").orderByKey().on("value", async (dataSnapshot) => {
+        if (dataSnapshot.numChildren() !== 0) {
+          var events = Object.values(dataSnapshot.val());
+          for (var i = 0; i < events.length; i++) {
+            await this.updateEventIdsAndLoadEvent(events[i]);
+          }
+          deferred.resolve();
+        } else {
+	  deferred.resolve();
+	}
+      });
+    }
+    return deferred.promise;
+  }
+
   async updateEventIdsAndLoadEvent(eventId) {
     var deferred = new Deferred();
+    // Events reference
     const eventsRef = fb.eventsRef;
-
     // Query and then listen for any changes of that event
     eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
-      const eventObj = dataSnapshot.val();
-
+      // The event object
+      const event = dataSnapshot.val();
       // If the state has the event then update the change
       if (this.state.allEvents[eventId] !== undefined) {
-        this.updateEvent(eventId, eventObj);
+        this.updateEvent(eventId, event);
       } else {
         // If the state doesnt have the event, add the event to the map
         this.setState(prevState => ({
-          allEvents: [...prevState.allEvents, eventObj]
+          allEvents: [...prevState.allEvents, event]
         }));
       }
       deferred.resolve();
