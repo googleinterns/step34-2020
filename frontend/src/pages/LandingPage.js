@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Welcome from '../components/Welcome';
 import TopNavbar from '../components/Navbar'
-import { Router} from 'react-router-dom';
 
 class LandingPage extends Component {
   constructor(props) {
@@ -11,10 +10,7 @@ class LandingPage extends Component {
   render() {
     return (
       <div>
-        <Router history={this.props.history}>
-          <TopNavbar />
-          <Welcome />
-        </Router>
+        <Welcome history={this.props.history}/>
       </div>
     );
   }

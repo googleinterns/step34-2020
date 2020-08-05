@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Form, Button, Jumbotron, Row, Col, Container, Spinner } from 'react-bootstrap';
-import TopNavbar from './Navbar';
+import TopNavbar from '../components/Navbar';
 import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 import Script from 'react-load-script';
@@ -19,8 +19,9 @@ const mapStateToProps = state => {
 }
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
-const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places"; 
-class UpdateEvent extends Component {
+const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+ 
+class UpdateEventPage extends Component {
   constructor(props) {
     super(props);
 
@@ -438,6 +439,6 @@ class UpdateEvent extends Component {
 const ConnectedUpdateEvent = connect(
   mapStateToProps,
   mapDispatchToProps
-)(UpdateEvent);
+)(UpdateEventPage);
 
 export default ConnectedUpdateEvent;

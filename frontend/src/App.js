@@ -3,12 +3,12 @@ import './App.css';
 import { Router, Switch, Route } from 'react-router-dom';
 import MapViewPage from './pages/MapViewPage';
 import { createBrowserHistory } from 'history';
-import Welcome from './components/Welcome';
-import Profile from './components/Profile';
+import LandingPage from './pages/LandingPage';
+import ProfilePage from './pages/ProfilePage';
 import Firebase from './components/Firebase';
-import Events from './components/CreateEvent';
+import CreateEventPage from './pages/CreateEventPage';
 import Footer  from './components/Footer';
-import Update from './components/UpdateEvent';
+import UpdateEventPage from './pages/UpdateEventPage';
 
 const history = createBrowserHistory();
 
@@ -18,11 +18,11 @@ function App() {
       <Router history={history}>
         <div>
           <Switch>
-            <Route exact path="/"  component={Welcome} />
+            <Route exact path="/"  component={LandingPage} />
             <Route path="/map" component={MapViewPage} />
-            <Route path="/profile" component={Profile} />
-            <Route path="/create" component={Events} />
-            <Route path="/update" component={Update} />
+            <Route path="/profile" component={ProfilePage} />
+            <Route path="/create" component={CreateEventPage} />
+            <Route path="/update" component={UpdateEventPage} />
           </Switch>
         </div>
       </Router>
