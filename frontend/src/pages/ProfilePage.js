@@ -1,22 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import TopNavbar from '../components/Navbar';
 import '../App.css';
-import { Badge, Carousel, Image, Container, Jumbotron, Row, Col } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
-import ButtonToolBar from 'react-bootstrap/ButtonToolbar';
+import { Container, Jumbotron, Row } from 'react-bootstrap';
 import { fb } from '../App';
-import Card from 'react-bootstrap/Card';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
-import ConfirmDelete from '../components/ConfirmDelete';
 import Profile from '../components/Profile';
 import ProfileEventCard from '../components/ProfileEventCard';
 import UserEvents from '../components/UserEvents';
-import moment from 'moment';
-import placeIcon from '../place-24px.svg';
-import timeIcon from '../access_time-24px.svg';
-import groupIcon from '../group-24px.svg';
 
 const PROFILE_PICTURE = "https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg";
 
