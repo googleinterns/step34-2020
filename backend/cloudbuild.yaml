@@ -1,6 +1,5 @@
 steps:
-- name: 'ubuntu'
-  args: ['cd', 'backend']
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['clean', 'package', 'appengine:deploy']
+  dir: 'backend'
 timeout: "1600s"
