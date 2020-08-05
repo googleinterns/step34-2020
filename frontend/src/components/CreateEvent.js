@@ -7,6 +7,7 @@ import { fb } from '../App';
 import Script from 'react-load-script';
 import { connect } from "react-redux";
 import { changeMapState } from "../actions/index";
+import PopUp from './PopUp';
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -19,7 +20,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
-const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places"; 
+const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 
 class Events extends Component {
   constructor(props) {
@@ -68,7 +69,7 @@ class Events extends Component {
     this.handleLocationChange = this.handleLocationChange.bind(this);
   }
 
-  handleScriptLoad() {  
+  handleScriptLoad() {
     /*global google*/
     const fields = ['name', 'address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
     this.universityAutocomplete = new google.maps.places.Autocomplete(document.getElementById('university-autocomplete'));
@@ -85,13 +86,13 @@ class Events extends Component {
        title: input.target.value
     });
   }
-  
+
   handleDateChange(input) {
     this.setState({
       date: input.target.value
     });
   }
-  
+
   handleStartTimeChange(input) {
     this.setState({
       startTime: input.target.value
@@ -110,6 +111,19 @@ class Events extends Component {
     });
   }
 
+  handlePopUp(message) {
+    ReactDOM.render(
+      <div>
+        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+      </div>,
+      document.getElementById('popup-wrapper'))
+  }
+
+  hidePopUp() {
+    const modal = document.getElementById('popup-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
+  }
+
   handlePlusCodeChange() {
     const universityAddressObject = this.universityAutocomplete.getPlace();
 
@@ -119,12 +133,12 @@ class Events extends Component {
       this.setState({
         plusCode: universityPlusCode
       });
-      console.log(universityPlusCode);
     } else {
       this.hasLocationError = true;
-      alert("MapIT does not support this location.  Please choose another.")
+      var message = "MapIT does not support this location.  Please choose another.";
+      this.handlePopUp(message);
     }
-    
+
   }
 
   handleLocationChange() {
@@ -134,8 +148,6 @@ class Events extends Component {
        location: locationObject.toString(),
        locationName: locationAddressObject.name + ", " + locationAddressObject.formatted_address
     });
-    console.log(locationAddressObject.name);
-    console.log(locationAddressObject.formatted_address);
   }
 
   // When the image is inputted, display the image
@@ -157,7 +169,7 @@ class Events extends Component {
     var imageRow = document.getElementById("imageRow");
     imageRow.innerHTML = innerCols;
   }
- 
+
   handleCategoryChange(input) {
     this.setState({
        category: input.target.value
@@ -175,14 +187,14 @@ class Events extends Component {
     const form = event.currentTarget;
     event.preventDefault();
     // Style each element was validated
-    event.target.className += " was-validated"; 
-    
+    event.target.className += " was-validated";
+
     // Check validity of each input field and make sure everything has been filled
     if (!form.checkValidity()) {
       // If some fields are left out, put a warning message next to the submit button
       event.stopPropagation();
       ReactDOM.render("Please fill in all required fields.", document.getElementById("warning"));
-    } else {  
+    } else {
       // Else, make the warning message empty and add a spinner on the side to show it processing
       ReactDOM.render("", document.getElementById("warning"));
       ReactDOM.render(<Spinner animation="border" variant="secondary"/>, document.getElementById("spinner-area"));
@@ -197,9 +209,9 @@ class Events extends Component {
       var endTime = this.state.endTime;
       var date = this.state.date;
       var locationName = this.state.locationName;
-      
+
       // If there were no images inputted then ignore image upload
-      var imageUrls = ""; 
+      var imageUrls = "";
       if (files.length > 0) {
         // Uploads images inputted from the form
         imageUrls = this.changeListToString(await this.uploadImages(files));
@@ -215,7 +227,7 @@ class Events extends Component {
         this.props.history.push({
           pathname: '/map/',
         })
-      } 
+      }
     }
   }
 
@@ -244,7 +256,7 @@ class Events extends Component {
     return "[" + string + "]";
   }
 
-  render() { 
+  render() {
     return (
       <div>
         <Script url={url} onLoad = {this.handleScriptLoad}/>
@@ -257,55 +269,55 @@ class Events extends Component {
               <Form.Control
                 required
                 onChange={this.handleTitleChange}
-                type="text" 
-                cols="1" 
-                placeholder="Your title" 
+                type="text"
+                cols="1"
+                placeholder="Your title"
                 size="lg" />
               <Form.Text className="text-muted">
                   Let's add a title to make your event shine!
               </Form.Text>
             </Form.Group>
-      	    <Form.Row>
-	      <Form.Group xs="auto">
-		<Form.Label>Date</Form.Label>
-		<Form.Control
-		  required
-		  onChange={this.handleDateChange}
-		  type="date"/>
-		<Form.Text className="text-muted">
-		  Tell people which your event is on!
-		</Form.Text>
-	      </Form.Group>
-      	    </Form.Row>
-      	    <Form.Row>
-	      <Form.Group as={Col} xs="auto">
-		<Form.Label>Start Time</Form.Label>
-		<Form.Control
-		  onChange={this.handleStartTimeChange}
-		  required
-		  type="time"/>
-		<Form.Text className="text-muted">
-		  Tell people when your event starts!
-		</Form.Text>
-	      </Form.Group>
-	      <Form.Group as={Col} xs="auto">
-		<Form.Label>End Time</Form.Label>
-		<Form.Control 
-		  onChange={this.handleEndTimeChange}
-		  required
-		  type="time"/>
-		<Form.Text className="text-muted">
-		  Tell people when your event ends!
-		</Form.Text>
-	      </Form.Group>
-      	    </Form.Row>
+            <Form.Row>
+              <Form.Group xs="auto">
+                <Form.Label>Date</Form.Label>
+                <Form.Control
+                  required
+                  onChange={this.handleDateChange}
+                  type="date"/>
+                <Form.Text className="text-muted">
+                  Tell people which day your event is on!
+                </Form.Text>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group as={Col} xs="auto">
+                <Form.Label>Start Time</Form.Label>
+                <Form.Control
+                  onChange={this.handleStartTimeChange}
+                  required
+                  type="time"/>
+                <Form.Text className="text-muted">
+                  Tell people when your event starts!
+                </Form.Text>
+              </Form.Group>
+              <Form.Group as={Col} xs="auto">
+                <Form.Label>End Time</Form.Label>
+                <Form.Control
+                  onChange={this.handleEndTimeChange}
+                  required
+                  type="time"/>
+                <Form.Text className="text-muted">
+                  Tell people when your event ends!
+                </Form.Text>
+              </Form.Group>
+            </Form.Row>
             <Form.Group>
               <Form.Label>Description of your event</Form.Label>
               <Form.Control
                 onChange={this.handleDescriptionChange}
                 required
-                as="textarea" 
-                rows="3" 
+                as="textarea"
+                rows="3"
                 placeholder="Your description" />
               <Form.Text className="text-muted">
                 Add a description to let people know what your event is all about!
@@ -317,7 +329,7 @@ class Events extends Component {
                 <Form.Control
                   id="university-autocomplete"
                   required
-                  type="text" 
+                  type="text"
                   placeholder="Stanford University" />
                 <Form.Text className="text-muted-university">
                   Tell people what university your event is at!
@@ -325,70 +337,70 @@ class Events extends Component {
               </Form.Group>
               <Form.Group as={Col} xs="auto">
               <Form.Label>Location</Form.Label>
-              <Form.Control 
-                    id="location-autocomplete"	
+              <Form.Control
+                    id="location-autocomplete"
                 required
                 type="text"
                 placeholder="12345 Main St" />
               <Form.Text className="text-muted-location">
                 Tell people where your event is at!
               </Form.Text>
-              </Form.Group> 
+              </Form.Group>
             </Form.Row>
-      	    <Form.Row>
-	      <Form.Group>
-		<Form.Label>Categories</Form.Label>
-		<Form.Control	
-		  onChange={this.handleCategoryChange}
-		  as="select"
-		  className="my-1 mr-sm-2"
-		  id="categoriesSelect"
-		  required
-		  custom="true">
-		  <option value="">Choose...</option>
-		  <option value="0">Social Gathering</option>
-		  <option value="1">Volunteer Event</option>
-		  <option value="2">Student Organization Event</option>
-		</Form.Control>
-		<Form.Text className="text-muted">
-		  Add some categories so people can find your event easier! 
-		</Form.Text>
-	      </Form.Group>
-      	    </Form.Row>
-      	    <Form.Row>
-	      <Form.Group>
-		<Form.Label>Images</Form.Label>
-		<Form.File 
-		  id="eventImages" 
-		  custom="true" >
-		<Form.File.Input
-		  id="inputGroup"
-		  type="image" 
-		  multiple
-		  accept=".jpg, .png"
-		  className="custom-file-input" 
-		  onChange={this.handleImageInput}/>
-		<Form.File.Label 
-		  data-browse="Browse"
-		  htmlFor="inputGroup"
-		  className="custom-file-label" >
-		  Click me to browse for images!
-		</Form.File.Label>
-		</Form.File>
-		<Form.Text className="text-muted">
-		  Add some pictures to show what your event is all about!
-		</Form.Text>
-	      </Form.Group>
-      	    </Form.Row>
+            <Form.Row>
+              <Form.Group>
+                <Form.Label>Categories</Form.Label>
+                <Form.Control
+                  onChange={this.handleCategoryChange}
+                  as="select"
+                  className="my-1 mr-sm-2"
+                  id="categoriesSelect"
+                  required
+                  custom="true">
+                  <option value="">Choose...</option>
+                  <option value="0">Social Gathering</option>
+                  <option value="1">Volunteer Event</option>
+                  <option value="2">Student Organization Event</option>
+                </Form.Control>
+                <Form.Text className="text-muted">
+                  Add some categories so people can find your event easier!
+                </Form.Text>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group>
+                <Form.Label>Images</Form.Label>
+                <Form.File
+                  id="eventImages"
+                  custom="true" >
+                <Form.File.Input
+                  id="inputGroup"
+                  type="image"
+                  multiple
+                  accept=".jpg, .png"
+                  className="custom-file-input"
+                  onChange={this.handleImageInput}/>
+                <Form.File.Label
+                  data-browse="Browse"
+                  htmlFor="inputGroup"
+                  className="custom-file-label" >
+                  Click me to browse for images!
+                </Form.File.Label>
+                </Form.File>
+                <Form.Text className="text-muted">
+                  Add some pictures to show what your event is all about!
+                </Form.Text>
+              </Form.Group>
+            </Form.Row>
             <Container>
               <Row id="imageRow">
               </Row>
             </Container>
             <Form.Group>
               <Form.Label>Organization</Form.Label>
-              <Form.Control 
+              <Form.Control
                 onChange={this.handleOrganizationChange}
-                type="text" 
+                type="text"
                 placeholder="Your organization" />
               <Form.Text className="text-muted">
                 Add an organization that's associated with this event!
@@ -396,9 +408,9 @@ class Events extends Component {
             </Form.Group>
             <Row>
               <Col md="auto">
-              <Button 
+              <Button
                 id="eventSubmit"
-                variant="primary" 
+                variant="primary"
                 type="submit">
                 Make your event!
               </Button>

@@ -7,6 +7,7 @@ import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import zxcvbn from 'zxcvbn';
 import tldjs from 'tldjs';
+import PopUp from './PopUp';
 
 const { getDomain, getPublicSuffix } = tldjs
 
@@ -25,7 +26,6 @@ class LogInAndSignUp extends Component {
     super(props);
 
     this.reduxState = this.props.articles[0];
-
     this.state = {
       loggedIn: false,
       showModal: true,
@@ -35,11 +35,11 @@ class LogInAndSignUp extends Component {
       recoverPasswordSuccess: null,
       credentials: null,
     };
+
+    this.handlePopUp = this.handlePopUp.bind(this);
   }
 
   updateRedux(userCredentials, userLoggedIn) {
-    console.log('updating redux')
-    console.log(this.reduxState)
     // update redux
     const currentState = {
       location: this.reduxState.location,
@@ -50,13 +50,12 @@ class LogInAndSignUp extends Component {
       loggedIn: userLoggedIn,
       credentials: userCredentials
     }
-    console.log(currentState)
+
     this.props.changeMapState(currentState);  
     this.reduxState = this.props.articles[0];
   }
 
   onLogin() {
-    console.log('onLogin')
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
 
@@ -66,17 +65,30 @@ class LogInAndSignUp extends Component {
         this.setState({credentials: response.user, loggedIn: true})
         await this.updateRedux(response.user, true);
         this.onLoginSuccess()})
-      .catch(function(error) {
+      .catch(error => {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
         if (errorCode === 'auth/wrong-password') {
-          alert('Wrong password.');
+          var message = 'Wrong password.';
+          this.handlePopUp(message);
         } else {
-          alert(errorMessage);
+          this.handlePopUp(errorMessage)
         }
-        console.log(error);
       });
+  }
+
+  handlePopUp(message) {
+    ReactDOM.render(
+      <div>
+        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+      </div>,
+      document.getElementById('popup-wrapper'))
+  }
+
+  hidePopUp() {
+    const modal = document.getElementById('popup-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
   }
 
   async onRegister() {
@@ -100,12 +112,12 @@ class LogInAndSignUp extends Component {
           this.onLoginSuccess()
         }
       } else if (suffix !== 'edu') {
-        alert('email should be .edu')
+        this.handlePopUp("email should be .edu");
       } else {
-        alert('password is short or weak')
+        this.handlePopUp("password is short or weak")
       }
     } else {
-      alert("Passwords don't match. Please try again")
+      this.handlePopUp("Passwords don't match. Please try again")
     }
   }
 
@@ -118,7 +130,7 @@ class LogInAndSignUp extends Component {
        this.onRecoverPasswordSuccess();
       })
       .catch(function(error) {
-          alert(error.message)
+        this.handlePopUp(error.message)
       });
   }
 
@@ -129,11 +141,9 @@ class LogInAndSignUp extends Component {
       loggedIn: true,
     })
 
-    console.log(this.reduxState)
     if (this.props.articles) {
       if (this.reduxState) {
         if (this.state.loggedIn && this.reduxState.credentials) {
-          console.log('here');
           this.props.history.push({
             pathname: '/profile'
           })

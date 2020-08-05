@@ -1,6 +1,9 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import { Deferred } from '@firebase/util';
+import ReactDOM from 'react-dom';
+import React from 'react';
+import PopUp from './PopUp';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -83,6 +86,7 @@ class Firebase {
       // Start the session
       this.startSession();
     }
+
   }
 
   // Starts the user session. This is where the front end gets the session id
@@ -144,21 +148,21 @@ class Firebase {
     var sessionId = this.sessionId;
 
     // Listen for responses under the RESPONSES path
-    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', async function(snapshot) {
+    var listener = ref.ref('RESPONSES').child(sessionId).on('child_added', async snapshot => {
       if (snapshot.key === requestId) {
         // Get the status and message
         var status = snapshot.child("status").val();
         var message = snapshot.child("message").val();
-        console.log(status);
         // When the status is "success" sign in and make deferred promise true
         if (status === "success") {
           let response = await firebase.auth().signInWithEmailAndPassword(email, password);
           deferred.resolve(response);
         // When the status is "failed" show error message and deferred promise as false
         } else { 
-          alert(message);
+          this.handlePopUp(message);
           deferred.resolve(null);
         }
+
       }
       // Remove the listener from this path
       ref.ref('RESPONSES').child(sessionId).off('child_added', listener);
@@ -225,6 +229,19 @@ class Firebase {
     return deferred.promise;
   }
 
+  handlePopUp(message) {
+    ReactDOM.render(
+      <div>
+        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+      </div>,
+      document.getElementById('popup-wrapper'))
+  }
+
+  hidePopUp() {
+    const modal = document.getElementById('popup-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
+  }
+
   // Requests event deletion with the given event id and the uid
   requestEventDeletion(eventId, uid) {
     var requestId = this.generateRequestId();
@@ -252,8 +269,6 @@ class Firebase {
       if (snapshot.key === requestId) {
         // Get the status and message
         var status = snapshot.child("status").val();
-        //var message = snapshot.child("message").val();
-        console.log(status);
         // When the status is "success" make deferred promise true
         if (status === "success") {
           successCallback(sessionId, requestId, ref);
@@ -261,8 +276,6 @@ class Firebase {
         // When the status is "failed" show error message and deferred promise as false
         } else { 
           failureCallback(sessionId, requestId, ref);
-          // alert(this)
-          // this.successCallback(sessionId, requestId);
           deferred.resolve(true);
         // When the status is "failed" show error message and deferred promise as false
         } 
@@ -274,13 +287,11 @@ class Firebase {
 
   // A callback to remove the request and print success
   successCallback(sessionId, requestId, ref) {
-    console.log("success");
     ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
   // A callback to remove the request and print failure
   failureCallback(sessionId, requestId, ref) {
-    console.log("failed");
     ref.ref('REQUESTS').child(sessionId).child(requestId).remove();
   }
 
@@ -305,7 +316,6 @@ class Firebase {
     for (var i = 0; i < images.length; i++) {
       // Upload image and wait to get a url
       let url = await this.uploadImage(images[i], uploadTask.child(i + ""));
-      console.log(url);
       // If a url is null then return
       if (url == null) {
         return;
@@ -321,34 +331,32 @@ class Firebase {
   async uploadImage(image, uploadTask) {
     var deferred = new Deferred();
     uploadTask.put(image).on('state_changed', function(snapshot){
-      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log('Upload is ' + progress + '% done');
       switch (snapshot.state) {
         case firebase.storage.TaskState.PAUSED: // or 'paused'
-          console.log('Upload is paused');
           break;
         case firebase.storage.TaskState.RUNNING: // or 'running'
-          console.log('Upload is running');
           break;
         default:
           break;
       }
-    }, function(error) {
+    }, error => {
       // Handle unsuccessful uploads
+      var message = "";
       switch (error.code) {
         case 'storage/unauthorized':
           // User doesn't have permission to access the object
-          alert("Don't have permission to upload images, are you logged in? Cancelling event creation...");
+          message = "Don't have permission to upload images, are you logged in? Cancelling event creation...";
+          this.handlePopUp(message);
           break;
         case 'storage/canceled':
           // User canceled the upload
-          alert("Cancelled upload. Cancelling event creation...");
+          message = "Cancelled upload. Cancelling event creation...";
+          this.handlePopUp(message);
           break;
         case 'storage/unknown':
           // Unknown error occurred, inspect error.serverResponse
-          alert("Unknown error. Cancelling event creation...");
-          console.log(error.serverResponse);
+          message = "Unknown error. Cancelling event creation...";
+          this.handlePopUp(message)
           break;
         default:
             break;

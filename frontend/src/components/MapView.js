@@ -26,9 +26,8 @@ class MapView extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
-
     this.reduxState = this.props.articles[0];
-    
+
     this.state = {
       allEvents: [],
       renderedEvents: [],
@@ -61,7 +60,9 @@ class MapView extends Component {
     if (newPlusCode !== this.state.plusCode) {
       await this.setState({ 
         allEvents: [], 
-        plusCode: newPlusCode 
+        plusCode: newPlusCode ,
+        lat: nextProps.articles[0].lat,
+        lng: nextProps.articles[0].lng
       });
       await this.queryEventsAndStoreInMemory(newPlusCode);
       await this.initializeRender();
@@ -73,20 +74,18 @@ class MapView extends Component {
     const newFilter = nextProps.articles[0].filter_choice;
     if (newFilter !== this.state.filter_choice) {
       await this.setState({ 
-        filter_choice: newFilter
+        filter_choice: newFilter 
       });
-      this.handleFilterChange();
+      this.handleCategoryFilterChanged();
     }
 
-    // If the today's events is checked, set the state and handle filter changes
-    const newCheckboxValue = nextProps.articles[0].isChecked;
-    if (newCheckboxValue) {
-      await this.setState({
-        isChecked: newCheckboxValue
-      });
-      this.handleTimeTodayChange();
+    //if the date filter option was selected
+    const newDate = nextProps.articles[0].date;
+    if(newDate) {
+      this.handleDateFilterChanged(newDate);
     }
   }
+
 
   // Initializes the render for whenever the map get loaded first or whenever the plus code props change
   async initializeRender() {  
@@ -105,43 +104,16 @@ class MapView extends Component {
     this.state.renderedEvents.forEach(element => element.eventRef.current.show());
   }
 
-  // Checks if we need to show only today, if we do, hide all events that are not today
-  handleTimeTodayChange() {
-    if (this.state.isChecked) {
-      const today = new Date();
-      const todayInfo = {
-        year: today.getFullYear(),
-        month: today.getMonth() + 1,
-        day: today.getDate()
+  handleDateFilterChanged(date) {
+    this.state.allEvents.map((event, index) => {
+      if (!(date === event.date)) {
+        this.state.renderedEvents[index].eventRef.current.hide();
       }
-      
-      this.state.allEvents.forEach((event, index) => {
-        // event.date is YYYY-MM-DD
-        //               0123456789
-        const eventDate = event.date;
-        const eventInfo = {
-          year: parseInt(eventDate.substring(0, 4)),
-          month: parseInt(eventDate.substring(5, 7)),
-          day: parseInt(eventDate.substring(8, 10)),
-        };
-
-        const matches = {
-          yearsMatch: todayInfo.year === eventInfo.year,
-          monthsMatch: todayInfo.month === eventInfo.month,
-          daysMatch: todayInfo.day === eventInfo.day
-        }
-
-        const datesMatch = matches.yearsMatch && matches.monthsMatch && matches.daysMatch;
-
-        if (!datesMatch) {
-          this.state.renderedEvents[index].eventRef.current.hide();
-        }
-      });
-    }
+    });
   }
 
   // Handles when the filter changes. Hides all event infowindows that are not part of that category
-  handleFilterChange() {
+  handleCategoryFilterChanged() {
     const filter_choice =  this.state.filter_choice;
     if (filter_choice !== null && typeof filter_choice !== 'undefined') {
       this.state.allEvents.forEach((element, index) => {
@@ -153,8 +125,8 @@ class MapView extends Component {
   }
 
   // Renders the map with the event info
-  renderInfo () { 
-    let container = document.getElementById('map-view');
+  renderInfo () {
+    let container = document.getElementById('map-view') 
     var map = (
       <Map
         ref={(map) => this.mapRef = map}

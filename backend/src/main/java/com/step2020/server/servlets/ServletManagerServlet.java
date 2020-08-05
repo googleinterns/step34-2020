@@ -61,9 +61,11 @@ public class ServletManagerServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) { 
     FirebaseOptions options = null;
+    SystemProperty.environment.set(SystemProperty.Environment.Value.Production);
+    isOnDeployedServer = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
     // Build new Firebase instance for this servlet instance
     try {
-      if (isOnDeployedServer) {
+      if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 	options = new FirebaseOptions.Builder()
 	  .setCredentials(GoogleCredentials.getApplicationDefault())
 	  .setDatabaseUrl("https://step-34-2020.firebaseio.com")
