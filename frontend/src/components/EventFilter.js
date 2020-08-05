@@ -53,44 +53,10 @@ class EventFilter extends Component {
     var category = this.reduxState.filter_choice;
     var date = this.date;
     this.updateReduxState(this.isChecked, category, date);
-
-    // const newState = {
-    //   location: this.state.location,
-    //   lat: this.state.lat,
-    //   lng: this.state.lng,
-    //   locationObject:this.state.locationObject,
-    //   plusCode: this.state.plusCode,
-    //   loggedIn: this.state.loggedIn,
-    //   credentials: this.state.credentials,
-    //   filter_choice: category,
-    //   isChecked: this.isChecked,
-    //   date: date,
-    // };
-
-    // await this.props.changeMapState(newState);
-    // this.reduxState = this.props.articles[0];
-    // this.setState(newState);
   }
 
   async handleDateChange(input) {
     this.updateReduxState(!this.isChecked, this.filter_choice, input.target.value)
-    // const newState = {
-    //   location: this.state.location,
-    //   lat: this.state.lat,
-    //   lng: this.state.lng,
-    //   locationObject:this.state.locationObject,
-    //   plusCode: this.state.plusCode,
-    //   loggedIn: this.state.loggedIn,
-    //   credentials: this.state.credentials,
-    //   filter_choice: this.filter_choice,
-    //   isChecked: !this.isChecked,
-    //   date: input.target.value,
-    // }
-
-
-    // await this.props.changeMapState(newState);
-    // this.reduxState = this.props.articles[0];
-    // this.setState(newState);
   }
 
   async handleFilterChange(input) {

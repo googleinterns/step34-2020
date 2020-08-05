@@ -27,7 +27,6 @@ class Search extends Component {
     super(props);
 
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
-    // this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
     this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
     this.onFindClick = this.onFindClick.bind(this);
@@ -244,11 +243,6 @@ class Search extends Component {
 
   async handleScriptLoad() {
     /*global google*/
-    // this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
-
-    // this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
-    // this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
-
     var defaultLatLng = new google.maps.LatLng({
       lat: 35.3050053,
       lng: -120.6624942
@@ -272,37 +266,7 @@ class Search extends Component {
       filter_choice: "",
       isChecked: false
     });
-    // await this.props.changeMapState(this.state);
   }
-
-//   async handlePlaceSelect() {
-//     const addressObject = await this.autocomplete.getPlace();
-//     const address = await addressObject.address_components;
-//     const addressGeometry = addressObject.geometry;
-
-//     var currentState = {};
-//     if (address && addressObject.plus_code) {
-//       currentState  = {
-//         location: addressGeometry.location,
-//         lat: addressGeometry.location.lat(),
-//         lng: addressGeometry.location.lng(),
-//         locationObject: addressObject,
-//         plusCode: addressObject.plus_code.global_code,
-//         loggedIn: this.state.loggedIn
-//       }
-//     } else {
-//       currentState  = {
-//         location: addressGeometry.location,
-//         lat: addressGeometry.location.lat(),
-//         lng: addressGeometry.location.lng(),
-//         locationObject: addressObject,
-//         plusCode: undefined,
-//         loggedIn: this.state.loggedIn
-//       }
-//     }
-//     this.props.changeMapState(currentState);
-//     this.setState(currentState);
-//   }
   
   rerenderParentCallback() {
     var updatedState = this.props.articles[0];
