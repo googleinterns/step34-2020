@@ -1,4 +1,6 @@
 steps:
+- name: 'gcr.io/cloud-builders/go'
+  dir: '/backend'
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['clean', 'package', 'appengine:deploy']
 timeout: "1600s"
