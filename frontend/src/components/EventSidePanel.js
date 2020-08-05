@@ -156,7 +156,7 @@ class EventSidePanel extends Component {
           <hr />
           <Row className = "justify-content-md-center">
             <Col md="auto">
-              {this.checkGoing(this.attendees)}
+              {this.checkGoing(this.info.attendees)}
               <div className="event-cards-attendText">Going</div>
             </Col>
             <Col md="auto">

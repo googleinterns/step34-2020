@@ -105,7 +105,7 @@ class MapView extends Component {
   }
 
   handleDateFilterChanged(date) {
-    this.state.allEvents.map((event, index) => {
+    this.state.allEvents.forEach((event, index) => {
       if (!(date === event.date)) {
         this.state.renderedEvents[index].eventRef.current.hide();
       }

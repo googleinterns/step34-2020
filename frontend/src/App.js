@@ -6,7 +6,7 @@ import { createBrowserHistory } from 'history';
 import Welcome from './components/Welcome';
 import ProfilePage from './pages/ProfilePage';
 import Firebase from './components/Firebase';
-import Events from './components/CreateEvent';
+import Events from './pages/CreateEventPage';
 import Footer  from './components/Footer';
 import Update from './components/UpdateEvent';
 

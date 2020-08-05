@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Form, Button, Jumbotron, Row, Col, Container, Spinner } from 'react-bootstrap';
-import TopNavbar from './Navbar';
+import TopNavbar from '../components/Navbar';
 import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 import Script from 'react-load-script';
 import { connect } from "react-redux";
 import { changeMapState } from "../actions/index";
-import PopUp from './PopUp';
+import PopUp from '../components/PopUp';
 
 const mapStateToProps = state => {
   return { articles: state.articles };
