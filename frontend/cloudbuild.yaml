@@ -3,6 +3,11 @@ steps:
     entrypoint: npm
     args: ['install']
     dir: 'frontend'
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["run", "create-env"]
+    env:
+      - 'REACT_APP_API_KEY=${_API_KEY}'
   - name: node
     entrypoint: npm
     args: ['run', 'build']
