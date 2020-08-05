@@ -1,7 +1,7 @@
 steps:
   - name: node
     entrypoint: npm
-    args: ['run', 'build']
+    args: ['install', 'run', 'build']
     dir: 'frontend'
   - name: gcr.io/step-34-2020/firebase
     args: ['deploy', '--project=step-34-2020', '--only=hosting']
