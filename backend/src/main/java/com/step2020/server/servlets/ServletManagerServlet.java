@@ -61,6 +61,7 @@ public class ServletManagerServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) { 
     FirebaseOptions options = null;
+    System.out.println("Deployed");
     SystemProperty.environment.set(SystemProperty.Environment.Value.Production);
     isOnDeployedServer = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
     // Build new Firebase instance for this servlet instance
