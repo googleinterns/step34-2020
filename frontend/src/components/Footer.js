@@ -33,7 +33,6 @@ const Footer = () => {
             <p>
               The objective of MapIT is to manage and visualize student-created public events, 
               and expose these events to their college community.<br />
-              We are here to help you explore campus events beyond your social circle.<br/>
             </p>
           </div>
           {/* source code's colum */}

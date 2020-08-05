@@ -45,6 +45,7 @@ class Search extends Component {
     };
   }
 
+  /* Comment out for responsive design
   // Handles scrolling navigation so to handle background color changes
   handleNavigation = (e) => {
     const window = e.currentTarget;
@@ -76,10 +77,10 @@ class Search extends Component {
     }
     this.prev = window.scrollY;
   };
-
+  */
   componentDidMount() {
     this.prev = window.scrollY;
-    window.addEventListener('scroll', e => this.handleNavigation(e));
+   // window.addEventListener('scroll', e => this.handleNavigation(e));
   }
 
   onFindClick() {
@@ -177,64 +178,69 @@ class Search extends Component {
   render() {
     return (
       <div className="welcomeContent">
-      <div className={this.state.background}>
-        <Script url = {url} onLoad = {this.handleScriptLoad}/>
-        <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
-        <Jumbotron>
-          <Container style={{textAlign: "center" }}>
-            <div className="title animate__animated animate__fadeInDown">
-              <span className="M" style={{color: "#4486F4"}}>M</span>
-              <span className="a" style={{color: "#0096EF"}}>a</span>
-              <span className="p" style={{color: "#00BDD3"}}>p</span>
-              <span className="I" style={{color: "#04D064"}}>I</span>
-              <span className="T" style={{color: "#1CA45C"}}>T</span>
-            </div>
-            <br/>
-            <Form>
-              <Form.Group>
-                <Form.Label className="subtitle">Find an event with a click of <br /> a button.</Form.Label>
-                <br/>
-                <Form.Label className="subtitle1">
-                  <span className="find animate__animated animate__fadeIn" style={{color: "#0096EF"}}>Find. </span>
-                  <span className="create animate__animated animate__fadeIn" style={{color: "#EA4335"}}>Create. </span>
-                  <span className="share animate__animated animate__fadeIn" style={{color: "#1CA45C"}}>Share.</span>
-                </Form.Label>
-                <br/>
-                <br/>
-                <br/>
-                <div className="inputUni animate__animated animate__fadeIn">
-                  <Form.Control
-                    size="lg"
-                    id="autocomplete"
-                    placeholder="Enter university"/>
-                </div>
-              </Form.Group>
-              <br/>
-              <Button
-                variant="primary"
-                type="submit"
-                className="findeventbutton animate__animated animate__fadeIn "
-                onClick={this.handleButtonClick}>
-                Launch MapIT
-              </Button>
-            </Form>
-          </Container>
-          <Container style={{width: "75vw", height: "80vh"}}>
-            <Col>
-              <h1 className="exploreTitle">Explore MapIT</h1>
-              <br/>
-              {this.renderCollapses()}
-            </Col>
-            <Col>
-            </Col>
-          </Container>
-          <Container style={{width: "75vw", height: "80vh"}}>
-            {this.renderMore()}
-          </Container>
-        </Jumbotron>
-      </div>
+	<div className={this.state.background}>
+	  <Script url = {url} onLoad = {this.handleScriptLoad}/>
+	  <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
+	  <Jumbotron style={{minHeight: "100vh"}}>
+	    <Container style={{textAlign: "center" }}>
+	      <div className="title animate__animated animate__fadeInDown">
+		<span className="M" style={{color: "#4486F4"}}>M</span>
+		<span className="a" style={{color: "#0096EF"}}>a</span>
+		<span className="p" style={{color: "#00BDD3"}}>p</span>
+		<span className="I" style={{color: "#04D064"}}>I</span>
+		<span className="T" style={{color: "#1CA45C"}}>T</span>
+	      </div>
+	      <br/>
+	      <Form>
+		<Form.Group>
+		  <Form.Label className="subtitle">Find an event with a click of <br /> a button.</Form.Label>
+		  <br/>
+		  <Form.Label className="subtitle1">
+		    <span className="find animate__animated animate__fadeIn" style={{color: "#0096EF"}}>Find. </span>
+		    <span className="create animate__animated animate__fadeIn" style={{color: "#EA4335"}}>Create. </span>
+		    <span className="share animate__animated animate__fadeIn" style={{color: "#1CA45C"}}>Share.</span>
+		  </Form.Label>
+		  <br/>
+		  <br/>
+		  <br/>
+		  <div className="inputUni animate__animated animate__fadeIn">
+		    <Form.Control
+		      size="lg"
+		      id="autocomplete"
+		      placeholder="Enter university"/>
+		  </div>
+		</Form.Group>
+		<br/>
+		<Button
+		  variant="primary"
+		  type="submit"
+		  className="findeventbutton animate__animated animate__fadeIn "
+		  onClick={this.handleButtonClick}>
+		  Launch MapIT
+		</Button>
+	      </Form>
+	    </Container>
+	  </Jumbotron>
+	</div>
       </div>
     );
+  }
+
+  renderBottomHalf() {
+    /*
+    <Container style={{width: "75vw", height: "80vh"}}>
+      <Col>
+	<h1 className="exploreTitle">Explore MapIT</h1>
+	<br/>
+	{this.renderCollapses()}
+      </Col>
+      <Col>
+      </Col>
+    </Container>
+    <Container style={{width: "75vw", height: "80vh"}}>
+      {this.renderMore()}
+    </Container>
+    */
   }
 
   handleScriptLoad() {
