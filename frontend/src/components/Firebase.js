@@ -37,7 +37,6 @@ const requestCodes = {
 
 class Firebase {
   constructor() {
-    console.log(process.env.REACT_APP_API_KEY);
     // Check if there are existing firebase apps already initialized
     if (!firebase.apps.length) {
       // Check if we are running on development or production
