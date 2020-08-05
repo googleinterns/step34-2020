@@ -25,7 +25,7 @@ function mapDispatchToProps(dispatch) {
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
 const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
 
-class Events extends Component {
+class CreateEventPage extends Component {
   constructor(props) {
     super(props);
 
@@ -433,6 +433,6 @@ class Events extends Component {
 const ConnectedEventPage = connect(
   mapStateToProps,
   mapDispatchToProps
-)(Events);
+)(CreateEventPage);
 
 export default ConnectedEventPage;

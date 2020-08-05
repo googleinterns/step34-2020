@@ -6,9 +6,9 @@ import { createBrowserHistory } from 'history';
 import Welcome from './components/Welcome';
 import ProfilePage from './pages/ProfilePage';
 import Firebase from './components/Firebase';
-import Events from './pages/CreateEventPage';
+import CreateEventPage from './pages/CreateEventPage';
 import Footer  from './components/Footer';
-import Update from './components/UpdateEvent';
+import UpdateEventPage from './pages/UpdateEventPage';
 
 const history = createBrowserHistory();
 
@@ -21,8 +21,8 @@ function App() {
             <Route exact path="/"  component={Welcome} />
             <Route path="/map" component={MapViewPage} />
             <Route path="/profile" component={ProfilePage} />
-            <Route path="/create" component={Events} />
-            <Route path="/update" component={Update} />
+            <Route path="/create" component={CreateEventPage} />
+            <Route path="/update" component={UpdateEventPage} />
           </Switch>
         </div>
       </Router>
