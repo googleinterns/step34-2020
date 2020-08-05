@@ -1,5 +1,7 @@
 steps:
 - name: 'gcr.io/cloud-builders/go'
+  args: ['install', '.']
+  env: ['PROJECT_ROOT=mapit']  
   dir: '/backend'
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['clean', 'package', 'appengine:deploy']
