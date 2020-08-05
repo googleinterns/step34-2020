@@ -55,16 +55,19 @@ class MapView extends Component {
 
   // Called whenever the props change (when the university, filter, or time today are changed)
   async UNSAFE_componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
     // If the plus code changes, requery with the new plus code and wipe all event data currently on the map
     const newPlusCode = nextProps.plusCode;
     if (newPlusCode !== this.state.plusCode) {
       await this.setState({ 
         allEvents: [], 
-        plusCode: newPlusCode ,
+        plusCode: newPlusCode,
         lat: nextProps.articles[0].lat,
         lng: nextProps.articles[0].lng
       });
+      console.log(this.state);
       await this.queryEventsAndStoreInMemory(newPlusCode);
+      await console.log('query done')
       await this.initializeRender();
     }
 
@@ -89,6 +92,7 @@ class MapView extends Component {
 
   // Initializes the render for whenever the map get loaded first or whenever the plus code props change
   async initializeRender() {  
+    console.log('init render');
     await this.setState({
       renderedEvents: []
     });
@@ -157,6 +161,7 @@ class MapView extends Component {
 
   // Queries all events with a given university plus code
   async queryEventsAndStoreInMemory(plusCode) {
+    console.log('querying...');
     var deferred = new Deferred();
     const eventsRef = fb.eventsRef;
     eventsRef.child("university")
@@ -171,6 +176,7 @@ class MapView extends Component {
         deferred.resolve();
       }
     });
+    console.log('the end');
     return deferred.promise;
   }
 
