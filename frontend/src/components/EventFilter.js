@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
-import { Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 
 // initialize global constant values
 const NONE_SELECTED_KEY = "";
@@ -13,8 +13,6 @@ const SOCIAL_GATHERING = "Social Gathering";
 const VOLUNTEER_EVENT = "Volunteer Event";
 const STUDENT_ORGANIZATION_EVENT = "Student Organization Event";
 const NO_FILTER_SELECTED = null;
-
-const CHECKBOX_TEXT = "Show today's events";
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -46,8 +44,53 @@ class EventFilter extends Component {
     this.isChecked = false;
 
     this.handleFilterChange = this.handleFilterChange.bind(this);
-    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.updateReduxState = this.updateReduxState.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
+    this.handleFilterClearChange = this.handleFilterClearChange.bind(this);
+  }
+
+  async handleFilterClearChange() {
+    var category = this.reduxState.filter_choice;
+    var date = this.date;
+    this.updateReduxState(this.isChecked, category, date);
+
+    // const newState = {
+    //   location: this.state.location,
+    //   lat: this.state.lat,
+    //   lng: this.state.lng,
+    //   locationObject:this.state.locationObject,
+    //   plusCode: this.state.plusCode,
+    //   loggedIn: this.state.loggedIn,
+    //   credentials: this.state.credentials,
+    //   filter_choice: category,
+    //   isChecked: this.isChecked,
+    //   date: date,
+    // };
+
+    // await this.props.changeMapState(newState);
+    // this.reduxState = this.props.articles[0];
+    // this.setState(newState);
+  }
+
+  async handleDateChange(input) {
+    this.updateReduxState(!this.isChecked, this.filter_choice, input.target.value)
+    // const newState = {
+    //   location: this.state.location,
+    //   lat: this.state.lat,
+    //   lng: this.state.lng,
+    //   locationObject:this.state.locationObject,
+    //   plusCode: this.state.plusCode,
+    //   loggedIn: this.state.loggedIn,
+    //   credentials: this.state.credentials,
+    //   filter_choice: this.filter_choice,
+    //   isChecked: !this.isChecked,
+    //   date: input.target.value,
+    // }
+
+
+    // await this.props.changeMapState(newState);
+    // this.reduxState = this.props.articles[0];
+    // this.setState(newState);
   }
 
   async handleFilterChange(input) {
@@ -68,15 +111,10 @@ class EventFilter extends Component {
       default:
         break;
     }
-    this.updateReduxState(filter_choice);
+    this.updateReduxState(this.state.isChecked, filter_choice, this.state.date);
   }
 
-  async handleCheckboxChange() {
-    this.isChecked = !this.isChecked;
-    this.updateReduxState(this.reduxState.filter_choice);
-  }
-
-  async updateReduxState(filter_choice) {
+  async updateReduxState(isChecked, filter_choice, date) {
     const updatedState = {
       location: this.state.location,
       lat: this.state.lat,
@@ -86,7 +124,8 @@ class EventFilter extends Component {
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
       filter_choice: filter_choice,
-      isChecked: this.isChecked
+      isChecked: isChecked,
+      date: date
     }
 
     await this.props.changeMapState(updatedState);
@@ -97,22 +136,31 @@ class EventFilter extends Component {
   render() {
     return(
       <Form>
-      <Form.Control
-        onChange={this.handleFilterChange}
-        as="select"
-        className="my-1 mr-sm-2"
-        id="categoriesSelect"
-        custom="true">
-        <option value={NONE_SELECTED_KEY}>Filter</option>
-        <option value={SOCIAL_GATHERING_KEY}>Social Gathering</option>
-        <option value={VOLUNTEER_EVENT_KEY}>Volunteer Event</option>
-        <option value={STUDENT_ORGANIZATION_EVENT_KEY}>Student Organization Event</option>
-      </Form.Control>
-      <Form.Check
-        onChange={this.handleCheckboxChange}
-        defaultChecked={this.isChecked}
-        type="checkbox"
-        label={CHECKBOX_TEXT}/>
+        <Form.Control
+          onChange={this.handleFilterChange}
+          as="select"
+          className="my-1 mr-sm-2"
+          id="categoriesSelect"
+          custom="true">
+          <option value={NONE_SELECTED_KEY}>Filter</option>
+          <option value={SOCIAL_GATHERING_KEY}>Social Gathering</option>
+          <option value={VOLUNTEER_EVENT_KEY}>Volunteer Event</option>
+          <option value={STUDENT_ORGANIZATION_EVENT_KEY}>Student Organization Event</option>
+        </Form.Control>
+        <Form.Group>
+          <Form.Control
+            required
+            onChange={this.handleDateChange}
+            type="date"
+            label="choose a date"/>
+      	</Form.Group>
+      	<Form.Group>
+          <Button
+      		className="btn btn-sm"
+            onClick={this.handleFilterClearChange}
+            variant="primary"
+            label="clear filters">Clear Filters</Button>
+        </Form.Group>
       </Form>
     )
   }

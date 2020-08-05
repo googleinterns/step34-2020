@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import Script from 'react-load-script';
 import { Form } from 'react-bootstrap';
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
+import PopUp from './PopUp';
 
 /* global google */
 
@@ -74,8 +76,21 @@ class Searchbar extends Component {
       this.updateReduxState(addressObject, addressGeometry);
       this.props.rerenderParentCallback();
     } else {
-      alert(INVALID_LOCATION_ALERT);
+      ReactDOM.render(
+        <div>
+          <PopUp 
+            show={true}
+            onHide={this.hidePopUp.bind(this)}
+            message={INVALID_LOCATION_ALERT}/>
+        </div>
+      );
+      document.getElementById('popup-wrapper');
     }
+  }
+
+  hidePopUp() {
+    const modal = document.getElementById('popup-wrapper');
+    ReactDOM.unmountComponentAtNode(modal);
   }
 
   async updateReduxState(addressObject, addressGeometry) {
