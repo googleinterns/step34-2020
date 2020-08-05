@@ -1,0 +1,6 @@
+steps:
+  - name: 'gcr.io/cloud-builders/npm'
+    entrypoint: 'node'
+    args: ['run', 'build']
+  - name: gcr.io/step-34-2020/firebase
+    args: ['deploy', '--project=step-34-2020', '--only=hosting']
