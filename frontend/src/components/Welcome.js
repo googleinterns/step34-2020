@@ -176,18 +176,19 @@ class Search extends Component {
 
   render() {
     return (
+      <div className="welcomeContent">
       <div className={this.state.background}>
         <Script url = {url} onLoad = {this.handleScriptLoad}/>
         <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
         <Jumbotron>
-          <Container style={{textAlign: "center", height: "100vh"}}>
-            <h1 className="title animate__animated animate__fadeInDown">
-              <span style={{color: "#4486F4"}}>M</span>
-              <span style={{color: "#0096EF"}}>a</span>
-              <span style={{color: "#00BDD3"}}>p</span>
-              <span style={{color: "#04D064"}}>I</span>
-              <span style={{color: "#1CA45C"}}>T</span>
-            </h1>
+          <Container style={{textAlign: "center" }}>
+            <div className="title animate__animated animate__fadeInDown">
+              <span className="M" style={{color: "#4486F4"}}>M</span>
+              <span className="a" style={{color: "#0096EF"}}>a</span>
+              <span className="p" style={{color: "#00BDD3"}}>p</span>
+              <span className="I" style={{color: "#04D064"}}>I</span>
+              <span className="T" style={{color: "#1CA45C"}}>T</span>
+            </div>
             <br/>
             <Form>
               <Form.Group>
@@ -231,6 +232,7 @@ class Search extends Component {
             {this.renderMore()}
           </Container>
         </Jumbotron>
+      </div>
       </div>
     );
   }
