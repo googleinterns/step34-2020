@@ -9,6 +9,9 @@ import { connect } from "react-redux";
 import { changeMapState } from "../actions/index";
 import PopUp from '../components/PopUp';
 
+const FIELDS = ['name', 'address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
+const ERROR_MESSAGE = "MapIT does not support this location.  Please choose another.";
+
 const mapStateToProps = state => {
   return { articles: state.articles };
 };
@@ -71,13 +74,12 @@ class Events extends Component {
 
   handleScriptLoad() {
     /*global google*/
-    const fields = ['name', 'address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
     this.universityAutocomplete = new google.maps.places.Autocomplete(document.getElementById('university-autocomplete'));
-    this.universityAutocomplete.setFields(fields);
+    this.universityAutocomplete.setFields(FIELDS);
     this.universityAutocomplete.addListener('place_changed', this.handlePlusCodeChange);
 
     this.locationAutocomplete = new google.maps.places.Autocomplete(document.getElementById('location-autocomplete'));
-    this.locationAutocomplete.setFields(fields);
+    this.locationAutocomplete.setFields(FIELDS);
     this.locationAutocomplete.addListener('place_changed', this.handleLocationChange);
   }
 
@@ -114,7 +116,10 @@ class Events extends Component {
   handlePopUp(message) {
     ReactDOM.render(
       <div>
-        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+        <PopUp 
+          show={true}
+          onHide={this.hidePopUp.bind(this)}
+          message={message} />
       </div>,
       document.getElementById('popup-wrapper'))
   }
@@ -135,8 +140,7 @@ class Events extends Component {
       });
     } else {
       this.hasLocationError = true;
-      var message = "MapIT does not support this location.  Please choose another.";
-      this.handlePopUp(message);
+      this.handlePopUp(ERROR_MESSAGE);
     }
 
   }
