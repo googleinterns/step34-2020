@@ -30,7 +30,7 @@ const EVENT_INFO_TOAST_STYLE = {
   maxHeight: "80vh",
   float: "right",
   margin: "1rem",
-  marginTop: "13rem"
+  marginTop: "17rem"
 };
 const CARD_STYLE = {
   border: 0

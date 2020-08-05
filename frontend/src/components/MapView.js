@@ -161,22 +161,24 @@ class MapView extends Component {
 
   // Queries all events with a given university plus code
   async queryEventsAndStoreInMemory(plusCode) {
-    console.log('querying...');
     var deferred = new Deferred();
-    const eventsRef = fb.eventsRef;
-    eventsRef.child("university")
-    .child(plusCode).child("All")
-    .orderByKey()
-    .on("value", async (dataSnapshot) => {
-      if (dataSnapshot.numChildren() !== 0) {
-        var events = Object.values(dataSnapshot.val());
-        for (var i = 0; i < events.length; i++) {
-          await this.updateEventIdsAndLoadEvent(events[i]);
-        }
-        deferred.resolve();
-      }
-    });
-    console.log('the end');
+    if (plusCode !== undefined) {
+      const eventsRef = fb.eventsRef;
+      eventsRef.child("university")
+      .child(plusCode).child("All")
+      .orderByKey()
+      .on("value", async (dataSnapshot) => {
+	if (dataSnapshot.numChildren() !== 0) {
+	  var events = Object.values(dataSnapshot.val());
+	  for (var i = 0; i < events.length; i++) {
+	    await this.updateEventIdsAndLoadEvent(events[i]);
+	  }
+	  deferred.resolve();
+	} else {
+	  deferred.resolve();
+	}
+      });
+    }
     return deferred.promise;
   }
 
@@ -184,11 +186,9 @@ class MapView extends Component {
   async updateEventIdsAndLoadEvent(eventId) {
     var deferred = new Deferred();
     const eventsRef = fb.eventsRef;
-
     // Query and then listen for any changes of that event
     eventsRef.child("events").child(eventId).on("value", (dataSnapshot) => {
       const eventObj = dataSnapshot.val();
-
       // If the state has the event then update the change
       if (this.state.allEvents[eventId] !== undefined) {
         this.updateEvent(eventId, eventObj);
