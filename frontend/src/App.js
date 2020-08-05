@@ -3,7 +3,7 @@ import './App.css';
 import { Router, Switch, Route } from 'react-router-dom';
 import MapViewPage from './pages/MapViewPage';
 import { createBrowserHistory } from 'history';
-import Welcome from './components/Welcome';
+import LandingPage from './pages/LandingPage';
 import ProfilePage from './pages/ProfilePage';
 import Firebase from './components/Firebase';
 import CreateEventPage from './pages/CreateEventPage';
@@ -18,7 +18,7 @@ function App() {
       <Router history={history}>
         <div>
           <Switch>
-            <Route exact path="/"  component={Welcome} />
+            <Route exact path="/"  component={LandingPage} />
             <Route path="/map" component={MapViewPage} />
             <Route path="/profile" component={ProfilePage} />
             <Route path="/create" component={CreateEventPage} />

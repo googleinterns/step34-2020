@@ -73,8 +73,10 @@ class Searchbar extends Component {
     const validPlusCode = typeof addressObject.plus_code != 'undefined';
 
     if (address && validPlusCode) {
-      this.updateReduxState(addressObject, addressGeometry);
-      this.props.rerenderParentCallback();
+      this.updateReduxState(addressObject, addressGeometry, addressObject.plus_code.global_code);
+      if (this.props.rerenderParentCallback) {
+        this.props.rerenderParentCallback();
+      }
     } else {
       ReactDOM.render(
         <div>
@@ -93,13 +95,15 @@ class Searchbar extends Component {
     ReactDOM.unmountComponentAtNode(modal);
   }
 
-  async updateReduxState(addressObject, addressGeometry) {
+  async updateReduxState(addressObject, addressGeometry, plus_code_global_code) {
+    this.updateReduxStateValue();
+    this.setState(this.reduxState);
     const updatedState = {
       location: addressGeometry.location,
       lat: addressGeometry.location.lat(),
       lng: addressGeometry.location.lng(),
       locationObject: addressObject,
-      plusCode: addressObject.plus_code.global_code,
+      plusCode: plus_code_global_code,
       loggedIn: this.state.loggedIn,
       credentials: this.state.credentials,
       filter_choice: this.state.filter_choice,

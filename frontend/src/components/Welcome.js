@@ -4,6 +4,7 @@ import { Collapse, Container, Col, Form, Button, Jumbotron } from 'react-bootstr
 import { changeMapState } from "../actions/index";
 import { connect } from "react-redux";
 import TopNavbar from './Navbar';
+import Searchbar from './Searchbar';
 import 'animate.css';
 import '../App.css';
 
@@ -19,12 +20,15 @@ const mapStateToProps = state => {
   return { articles : state.articles }
 }
 
+/* global google */
+
 class Search extends Component {
   constructor(props) {
     super(props);
 
     this.handleScriptLoad = this.handleScriptLoad.bind(this);
-    this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    // this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
     this.onFindClick = this.onFindClick.bind(this);
     this.onCreateClick = this.onCreateClick.bind(this);
@@ -177,8 +181,12 @@ class Search extends Component {
   render() {
     return (
       <div className={this.state.background}>
-        <Script url = {url} onLoad = {this.handleScriptLoad}/>
-        <TopNavbar loggedIn={this.state.loggedIn} history={this.props.history}/>
+        <Script
+          url = {url}
+          onLoad = {this.handleScriptLoad}/>
+        <TopNavbar
+          loggedIn={this.state.loggedIn}
+          history={this.props.history}/>
         <Jumbotron>
           <Container style={{textAlign: "center", height: "100vh"}}>
             <h1 className="title animate__animated animate__fadeInDown">
@@ -202,10 +210,9 @@ class Search extends Component {
                 <br/>
                 <br/>
                 <div className="inputUni animate__animated animate__fadeIn">
-                  <Form.Control
+                  <Searchbar 
                     size="lg"
-                    id="autocomplete"
-                    placeholder="Enter university"/>
+                    rerenderParentCallback={this.rerenderParentCallback}/>
                 </div>
               </Form.Group>
               <br/>
@@ -235,52 +242,71 @@ class Search extends Component {
     );
   }
 
-  handleScriptLoad() {
+  async handleScriptLoad() {
     /*global google*/
-    this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
+    // this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), this.types);
 
-    this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
-    this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
+    // this.autocomplete.setFields(['address_components', 'name', 'geometry', 'plus_code']);
+    // this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
 
     var defaultLatLng = new google.maps.LatLng({
       lat: 35.3050053,
       lng: -120.6624942
     });
 
-    this.setState({
+
+    var updatedState = {
       lat: defaultLatLng.lat(),
-      lng: defaultLatLng.lng()
+      lng: defaultLatLng.lng(),
+      loggedIn: false,
+      credentials: null,
+      filter_choice: "",
+      isChecked: false
+    };
+    await this.props.changeMapState(updatedState);
+    await this.setState({
+      lat: defaultLatLng.lat(),
+      lng: defaultLatLng.lng(),
+      loggedIn: false,
+      credentials: null,
+      filter_choice: "",
+      isChecked: false
     });
-    this.props.changeMapState(this.state);
+    // await this.props.changeMapState(this.state);
   }
 
-  async handlePlaceSelect() {
-    const addressObject = await this.autocomplete.getPlace();
-    const address = await addressObject.address_components;
-    const addressGeometry = addressObject.geometry;
+//   async handlePlaceSelect() {
+//     const addressObject = await this.autocomplete.getPlace();
+//     const address = await addressObject.address_components;
+//     const addressGeometry = addressObject.geometry;
 
-    var currentState = {};
-    if (address && addressObject.plus_code) {
-      currentState  = {
-        location: addressGeometry.location,
-        lat: addressGeometry.location.lat(),
-        lng: addressGeometry.location.lng(),
-        locationObject: addressObject,
-        plusCode: addressObject.plus_code.global_code,
-        loggedIn: this.state.loggedIn
-      }
-    } else {
-      currentState  = {
-        location: addressGeometry.location,
-        lat: addressGeometry.location.lat(),
-        lng: addressGeometry.location.lng(),
-        locationObject: addressObject,
-        plusCode: undefined,
-        loggedIn: this.state.loggedIn
-      }
-    }
-    this.props.changeMapState(currentState);
-    this.setState(currentState);
+//     var currentState = {};
+//     if (address && addressObject.plus_code) {
+//       currentState  = {
+//         location: addressGeometry.location,
+//         lat: addressGeometry.location.lat(),
+//         lng: addressGeometry.location.lng(),
+//         locationObject: addressObject,
+//         plusCode: addressObject.plus_code.global_code,
+//         loggedIn: this.state.loggedIn
+//       }
+//     } else {
+//       currentState  = {
+//         location: addressGeometry.location,
+//         lat: addressGeometry.location.lat(),
+//         lng: addressGeometry.location.lng(),
+//         locationObject: addressObject,
+//         plusCode: undefined,
+//         loggedIn: this.state.loggedIn
+//       }
+//     }
+//     this.props.changeMapState(currentState);
+//     this.setState(currentState);
+//   }
+  
+  rerenderParentCallback() {
+    var updatedState = this.props.articles[0];
+    this.setState(updatedState);
   }
 
   handleButtonClick(event) {
