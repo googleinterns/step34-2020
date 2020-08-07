@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Badge, Container, Card, Carousel, Row, Col, Image } from 'react-bootstrap';
-import { Map, GoogleApiWrapper, } from 'google-maps-react';
+import { Card } from 'react-bootstrap';
+import { Map, GoogleApiWrapper } from 'google-maps-react';
 import { fb } from '../App';
-import { connect } from "react-redux";
+import { Provider, connect } from "react-redux";
 import { Deferred } from '@firebase/util';
 import EventInfoWindow from "./EventInfoWindow";
+import EventInfoWindowCard from "./EventInfoWindowCard";
+import EventSidePanel from "./EventSidePanel";
+import moment from 'moment';
 import '../gm-styles.css';
 import '../App.css';
-import moment from 'moment';
-import PlaceIcon from '@material-ui/icons/Place';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import GroupIcon from '@material-ui/icons/Group';
-import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
-
+import store from "../store/index";
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -30,100 +26,90 @@ class MapView extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
-
     this.reduxState = this.props.articles[0];
-    
-    if (this.reduxState) {
-      this.state = {
-        allEvents: [],
-        renderedEvents: [],
-        location: this.reduxState.location,
-        lat: this.reduxState.lat,
-        lng: this.reduxState.lng,
-        plusCode: this.reduxState.plusCode,
-        showInfoWindows: true,
-        contents: null,
-        resizeState: false,
-        filter_choice: props.articles[0].filter_choice,
-        isChecked: false,
-        date: this.reduxState.date,
-      };
-    } else {
-      this.state = {
-        allEvents: [],
-        renderedEvents: [],
-        location: undefined,
-        plusCode: '',
-        showInfoWindows: false,
-        contents: null,
-        resizeState: false,
-        filter_choice: props.articles[0].filter_choice,
-        isChecked: false,
-        date: this.reduxState.date,
-      };
-    }
-    
-    var plusCode = this.state.plusCode;
+
+    this.state = {
+      allEvents: [],
+      renderedEvents: [],
+      location: this.reduxState.location,
+      lat: this.reduxState.lat,
+      lng: this.reduxState.lng,
+      plusCode: this.reduxState.plusCode,
+      showInfoWindows: true,
+      contents: null,
+      resizeState: false,
+      filter_choice: this.reduxState.filter_choice,
+      isChecked: false
+    };
+
     this.renderInfo = this.renderInfo.bind(this);
   }
 
   async componentDidMount() {
-    await this.setState({ allEvents: [] });
+    await this.setState({
+      allEvents: [] 
+    });
     await this.queryEventsAndStoreInMemory(this.state.plusCode);
     await this.initializeRender();
   }
 
   // Called whenever the props change (when the university, filter, or time today are changed)
   async UNSAFE_componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
     // If the plus code changes, requery with the new plus code and wipe all event data currently on the map
-    if (nextProps.plusCode !== this.state.plusCode) {
-      await this.setState(
-	{
-	  allEvents: [], 
-	  plusCode: nextProps.plusCode, 
-	  lat: nextProps.articles[0].lat, 
-	  lng: nextProps.articles[0].lng
-	}
-      );
-      await this.queryEventsAndStoreInMemory(nextProps.plusCode);
+    const newPlusCode = nextProps.plusCode;
+    if (newPlusCode !== this.state.plusCode) {
+      await this.setState({ 
+        allEvents: [], 
+        plusCode: newPlusCode,
+        lat: nextProps.articles[0].lat,
+        lng: nextProps.articles[0].lng
+      });
+      console.log(this.state);
+      await this.queryEventsAndStoreInMemory(newPlusCode);
+      await console.log('query done')
       await this.initializeRender();
     }
 
-    // Shows all the events
     this.showAllEvents();
     
     // If the filter has changed, set the state and handle filter changes
-    if (nextProps.articles[0].filter_choice !== this.state.filter_choice) {
-      await this.setState({ filter_choice: nextProps.articles[0].filter_choice });
+    const newFilter = nextProps.articles[0].filter_choice;
+    if (newFilter !== this.state.filter_choice) {
+      await this.setState({ 
+        filter_choice: newFilter 
+      });
       this.handleCategoryFilterChanged();
     }
 
     //if the date filter option was selected
-    if(nextProps.articles[0].date) {
-      this.handleDateFilterChanged(nextProps.articles[0].date);
+    const newDate = nextProps.articles[0].date;
+    if(newDate) {
+      this.handleDateFilterChanged(newDate);
     }
   }
 
 
   // Initializes the render for whenever the map get loaded first or whenever the plus code props change
   async initializeRender() {  
-    // Render the map with events twice
-    // For some strange reason, whenever we dont call renderInfo a second time, the events wont show
-    await this.setState({ renderedEvents: [] });
+    console.log('init render');
+    await this.setState({
+      renderedEvents: []
+    });
     this.renderInfo();
-    await this.setState({ renderedEvents: [] });
+
+    await this.setState({
+      renderedEvents: []
+    });
     this.renderInfo();
   }
 
-  // Shows all events
   showAllEvents() {
-    this.state.renderedEvents.map((element) => {
-      element.eventRef.current.show();
-    });
+    this.state.renderedEvents.forEach(element => element.eventRef.current.show());
   }
 
   handleDateFilterChanged(date) {
-    this.state.allEvents.map((event, index) => {
+    this.state.allEvents.forEach((event, index) => {
       if (!(date === event.date)) {
         this.state.renderedEvents[index].eventRef.current.hide();
       }
@@ -134,7 +120,7 @@ class MapView extends Component {
   handleCategoryFilterChanged() {
     const filter_choice =  this.state.filter_choice;
     if (filter_choice !== null && typeof filter_choice !== 'undefined') {
-      this.state.allEvents.map((element, index) => {
+      this.state.allEvents.forEach((element, index) => {
         if (element.category.toLowerCase() !== (filter_choice).toLowerCase()) {
           this.state.renderedEvents[index].eventRef.current.hide();
         }
@@ -178,6 +164,29 @@ class MapView extends Component {
     var deferred = new Deferred();
     if (plusCode !== undefined) {
       const eventsRef = fb.eventsRef;
+      eventsRef.child("university")
+      .child(plusCode).child("All")
+      .orderByKey()
+      .on("value", async (dataSnapshot) => {
+	if (dataSnapshot.numChildren() !== 0) {
+	  var events = Object.values(dataSnapshot.val());
+	  for (var i = 0; i < events.length; i++) {
+	    await this.updateEventIdsAndLoadEvent(events[i]);
+	  }
+	  deferred.resolve();
+	} else {
+	  deferred.resolve();
+	}
+      });
+    }
+    return deferred.promise;
+  }
+
+  // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
+  async queryEventsAndStoreInMemory(plusCode) {
+    var deferred = new Deferred();
+    if (plusCode !== undefined) {
+      const eventsRef = fb.eventsRef;
       eventsRef.child("university").child(plusCode).child("All").orderByKey().on("value", async (dataSnapshot) => {
         if (dataSnapshot.numChildren() !== 0) {
           var events = Object.values(dataSnapshot.val());
@@ -191,7 +200,7 @@ class MapView extends Component {
       });
     } else {
       const eventsRef = fb.eventsRef;
-      eventsRef.child("university").child("8QC7XP32+PC").child("All").orderByKey().on("value", async (dataSnapshot) => {
+      eventsRef.child("university").child("847X884Q+22").child("All").orderByKey().on("value", async (dataSnapshot) => {
         if (dataSnapshot.numChildren() !== 0) {
           var events = Object.values(dataSnapshot.val());
           for (var i = 0; i < events.length; i++) {
@@ -206,7 +215,6 @@ class MapView extends Component {
     return deferred.promise;
   }
 
-  // Updates the allEvents map with the given eventId. Listens for changes from the eventId.
   async updateEventIdsAndLoadEvent(eventId) {
     var deferred = new Deferred();
     // Events reference
@@ -253,6 +261,14 @@ class MapView extends Component {
       let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
 
       var eventRef = React.createRef();
+      const eventInfoWindowCardProps = {
+        eventName: event.eventName,
+        locationName: event.locationName,
+        date: date,
+        startTime: startTime,
+        endTime: endTime,
+        category: event.category 
+      }
 
       var eventInfoWindow = (
         <EventInfoWindow
@@ -260,28 +276,16 @@ class MapView extends Component {
           index={index}
           ref={eventRef}
           visible={this.state.showInfoWindows}
-          position={{lat: lat, lng: lng}}>
+          position={{
+            lat: lat,
+            lng: lng
+          }}>
           <Card
             border="light"
             tag="a"
             onClick={this.infoWindowOnClick.bind(this, index)}
             style={{cursor: 'pointer'}}>
-            <Card.Body>
-              <Card.Title>{event.eventName}</Card.Title>
-              <hr/>
-              <Card.Text>
-                <PlaceIcon/>
-                {event.locationName}
-              </Card.Text>
-              <Card.Text>
-                <AccessTimeIcon/>
-                  {date}, {startTime} - {endTime}
-              </Card.Text>
-              <Badge variant="secondary">
-                {event.category}
-              </Badge>
-              <hr/>
-            </Card.Body>
+            <EventInfoWindowCard eventInfo={eventInfoWindowCardProps}/>
           </Card>
         </EventInfoWindow>
       );
@@ -300,7 +304,7 @@ class MapView extends Component {
       length = location.length;
     }
     if (length > 0) {
-      coords = location.slice(1, length-2);
+      coords = location.slice(1, length - 2);
       coords = coords.split(",");
     }
     return coords;
@@ -311,129 +315,24 @@ class MapView extends Component {
     let event = this.state.allEvents[index];
     let coords = this.getCoords(event.location);
 
-    // Change coords to parses and pan to the location
     var lat = parseFloat(coords[0]);
     var lng = parseFloat(coords[1]);
     let googleMapCoords = new this.mapRef.props.google.maps.LatLng(lat, lng);
     this.mapRef.map.panTo(googleMapCoords);
 
-    // Render the side panel
     this.renderSidePanel(event);
   }
 
   renderSidePanel(event) {
-
-    var images = "";
-    var length = 0;
-
-    // Check image urls are not undefined
-    var imageUrl = "";
-    if (event.imageUrls !== undefined) {
-      length = event.imageUrls.length;
-    }
-
-    // Convert each image into a carousel item
-    if (length > 0) {
-      imageUrl = event.imageUrls.slice(1, length - 2);
-      imageUrl = imageUrl.split(","); 
-      images = imageUrl.map((url, index) =>
-    <Carousel.Item key={index}>
-      <Image className="rounded" fluid src={url} />
-    </Carousel.Item>);
-    }
-
-    var attendees = event.attendees.slice(1, event.attendees.length-1).split(",");
-    let num = attendees.length;
-
-    let startTime = moment(event.startTime, 'HH:mm').format('h:mm a');
-    let endTime = moment(event.endTime, 'HH:mm').format('h:mm a');
-    let date = moment(event.date, 'YYYY-MM-DD').format('MMM  Do');
     var eventInfo = (
-      <Container>
-        <Card
-          className="event-cards"
-          key={Math.random(1001,5000)}
-          text={'light' ? 'dark' : 'white'}>
-          <Carousel className="fill-parent">
-                  {images}
-          </Carousel>
-          <Card.Body>
-            <Card.Title>
-              <h1 className="event-cards-title">{event.eventName}</h1>
-            </Card.Title>
-            <div className="event-text">
-              <Row>
-                <Col xs={1}>
-                  <PlaceIcon/>
-                </Col>
-                <Col>
-                  {event.locationName}
-                </Col>
-              </Row>
-            </div>
-            <div>
-              <Row>
-                <Col xs={1}>
-                  <AccessTimeIcon/>
-                </Col>
-                <Col>
-                  {date}, {startTime} - {endTime}
-                </Col>
-              </Row>
-            </div>
-            <div>
-              <Row>
-                <Col xs={1}>
-                  <GroupIcon/>
-                </Col>
-                <Col>
-                  {num} attending
-                </Col>
-              </Row>
-            </div>
-            <hr/>
-            <Card.Text className="event-cards-description">
-              About
-            </Card.Text>
-            <Card.Text>{event.description}</Card.Text>
-            <Badge variant="secondary">
-              {event.category}
-            </Badge>
-            <hr/>
-            <Row className="justify-content-md-center">
-              <Col md="auto">
-                {this.checkGoing(attendees)}
-                <div className="event-cards-attendtext">Going</div>
-              </Col>
-              <Col md="auto">
-                <StarBorderIcon style={{color: "#ffe733", padding: 0, fontSize: "60px"}}/>
-                <div className="event-cards-attendtext">Interested</div>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      </Container>
+      <Provider store={store}>
+        <EventSidePanel event={event}/>
+      </Provider>
     );
 
     let eventInfoContainer = document.getElementById("event-info");
     ReactDOM.render(eventInfo, eventInfoContainer);
   }
-
-  checkGoing(attendees) {
-    if (this.reduxState.credentials === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
-    }
-
-    const uid = this.reduxState.credentials.uid;
-    const found = attendees.find(element => element === uid);
-
-    if (found === undefined) {
-      return (<CheckCircleOutlinedIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
-    } else {
-      return (<CheckCircleIcon style={{color: "#1CA45C", padding: 0, fontSize: "60px"}}/>);
-    }
-  }
-
 
   onReady = () => {
     this.setState({
@@ -447,7 +346,6 @@ class MapView extends Component {
     )
   }
 }
-
 
 const ConnectMapViewToStore = connect(mapStateToProps);
 

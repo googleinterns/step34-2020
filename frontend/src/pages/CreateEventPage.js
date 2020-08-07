@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Form, Button, Jumbotron, Row, Col, Container, Spinner } from 'react-bootstrap';
-import TopNavbar from './Navbar';
+import TopNavbar from '../components/Navbar';
 import bsCustomFileInput from 'bs-custom-file-input';
 import { fb } from '../App';
 import Script from 'react-load-script';
 import { connect } from "react-redux";
 import { changeMapState } from "../actions/index";
-import PopUp from './PopUp';
+import PopUp from '../components/PopUp';
+
+const FIELDS = ['name', 'address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
+const ERROR_MESSAGE = "MapIT does not support this location.  Please choose another.";
 
 const mapStateToProps = state => {
   return { articles: state.articles };
@@ -20,8 +23,9 @@ function mapDispatchToProps(dispatch) {
 }
 
 const categories = ["Social Gathering", "Volunteer Event", "Student Organization Event"];
-const url="https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
-class Events extends Component {
+const url = "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_API_KEY + "&libraries=places";
+
+class CreateEventPage extends Component {
   constructor(props) {
     super(props);
 
@@ -70,13 +74,12 @@ class Events extends Component {
 
   handleScriptLoad() {
     /*global google*/
-    const fields = ['name', 'address_components', 'formatted_address', 'geometry', 'adr_address', 'plus_code'];
     this.universityAutocomplete = new google.maps.places.Autocomplete(document.getElementById('university-autocomplete'));
-    this.universityAutocomplete.setFields(fields);
+    this.universityAutocomplete.setFields(FIELDS);
     this.universityAutocomplete.addListener('place_changed', this.handlePlusCodeChange);
 
     this.locationAutocomplete = new google.maps.places.Autocomplete(document.getElementById('location-autocomplete'));
-    this.locationAutocomplete.setFields(fields);
+    this.locationAutocomplete.setFields(FIELDS);
     this.locationAutocomplete.addListener('place_changed', this.handleLocationChange);
   }
 
@@ -113,7 +116,10 @@ class Events extends Component {
   handlePopUp(message) {
     ReactDOM.render(
       <div>
-        <PopUp show={true} onHide={this.hidePopUp.bind(this)} message={message} />
+        <PopUp 
+          show={true}
+          onHide={this.hidePopUp.bind(this)}
+          message={message} />
       </div>,
       document.getElementById('popup-wrapper'))
   }
@@ -134,8 +140,7 @@ class Events extends Component {
       });
     } else {
       this.hasLocationError = true;
-      var message = "MapIT does not support this location.  Please choose another.";
-      this.handlePopUp(message);
+      this.handlePopUp(ERROR_MESSAGE);
     }
 
   }
@@ -428,6 +433,6 @@ class Events extends Component {
 const ConnectedEventPage = connect(
   mapStateToProps,
   mapDispatchToProps
-)(Events);
+)(CreateEventPage);
 
 export default ConnectedEventPage;

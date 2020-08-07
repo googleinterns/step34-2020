@@ -2,16 +2,17 @@ import React, { Component } from 'react';
 import { Modal, Button} from 'react-bootstrap';
 import { fb } from '../App';
 
-export default class ConfirmDelete extends Component {
+const DELETE_FAILED_ALERT = "Something went wrong while deleting the event.  Please try again.";
+const DELETE_EVENT_CONFIRM = "The event will be permanently deleted and all attendees will be removed from the event list.";
+const DELETE_EVENT_WARNING = "WARNING: This event will be deleted permanently";
+const DELETE_EVENT_NOTE = "This action cannot be undone";
 
+export default class ConfirmDelete extends Component {
   handleDelete() {
-    // Get uid and event id from props
     let uid = this.props.uid;
     let eventId = this.props.reference;
-    console.log(this.props);
     let isSuccess = fb.requestEventDeletion(eventId, uid);
     
-    // Check if the response is success
     // If success then hide the modal, if not send in an alert
     if (isSuccess) {
       this.props.onHide();
@@ -21,7 +22,7 @@ export default class ConfirmDelete extends Component {
   }
 
   onDeleteFailed() {
-    alert("Something went wrong deleting the event. Please try again.");
+    alert(DELETE_FAILED_ALERT);
   }
 
   render() {
@@ -33,18 +34,21 @@ export default class ConfirmDelete extends Component {
         centered>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-          WARNING: This event will be deleted permenantly
+          {DELETE_EVENT_WARNING}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>This event will be permenantly deleted and all user going to this event will be removed from the event list.
-          </p>
+          <p>{DELETE_EVENT_CONFIRM}</p>
           <h5>Note:</h5>
-          <p>You cannot undo the changes after you confirm</p>
+          <p>{DELETE_EVENT_NOTE}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={this.handleDelete.bind(this)}>Delete Event</Button>
-          <Button variant="outline-secondary" onClick={this.props.onHide}>Cancel</Button>
+          <Button 
+            variant="danger"
+            onClick={this.handleDelete.bind(this)}>Delete Event</Button>
+          <Button
+            variant="outline-secondary"
+            onClick={this.props.onHide}>Cancel</Button>
         </Modal.Footer>
       </Modal>
     )
